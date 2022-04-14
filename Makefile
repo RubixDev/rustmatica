@@ -1,8 +1,10 @@
 build:
 	cargo build --release
 
-run:
-	cargo run
+update:
+	cargo update
+	./run_data_extractor.bash
+	python make_blocks.py
 
 test:
 	cargo test
