@@ -3,9 +3,12 @@ on: [push]
 name: build
 
 jobs:
-  linux:
-    name: rustmatica_linux
-    runs-on: ubuntu-latest
+  desktop:
+    name: rustmatica_desktop
+    strategy:
+      matrix:
+        os: [ubuntu_latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Install Toolchain
