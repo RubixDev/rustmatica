@@ -3,9 +3,9 @@ use std::borrow::Cow;
 use bitvec::{view::BitView, order::Lsb0, prelude::BitVec};
 use fastnbt::LongArray;
 
-use crate::{schema::{BlockState, self}, util::{Vec3, UVec3}};
+use crate::{schema, util::{Vec3, UVec3}, block_state::BlockState};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Region<'l> {
     pub name: Cow<'l, str>,
     pub position: Vec3,
@@ -20,17 +20,14 @@ impl <'l> Region<'l> {
             name,
             position,
             size,
-            palette: vec![BlockState {
-                name: Cow::Borrowed("minecraft:air"),
-                properties: None,
-            }],
+            palette: vec![BlockState::Air],
             blocks: vec![0; size.volume()],
         };
     }
 
-    pub fn from_raw(raw: Cow<'l, schema::Region<'l>>, name: Cow<'l, str>) -> Self {
+    pub fn from_raw(raw: Cow<'l, schema::Region>, name: Cow<'l, str>) -> Self {
         let mut new = Self::new(name, raw.position, raw.size);
-        new.palette = raw.block_state_palette.clone();
+        new.palette = raw.block_state_palette.iter().map(|b| b.into()).collect();
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
@@ -48,7 +45,7 @@ impl <'l> Region<'l> {
         let mut new = schema::Region {
             position: self.position,
             size: self.size,
-            block_state_palette: self.palette.to_owned(),
+            block_state_palette: self.palette.iter().map(|b| b.into()).collect(),
             tile_entities: vec![],
             entities: vec![],
             pending_fluid_ticks: vec![],
@@ -83,7 +80,7 @@ impl <'l> Region<'l> {
              + pos.z * size.y * size.x;
     }
 
-    pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState<'l> {
+    pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState {
         &self.palette[self.blocks[self.pos_to_index(pos)]]
     }
 

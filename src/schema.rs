@@ -26,20 +26,11 @@ pub struct Region<'a> {
     pub block_states: LongArray,
 }
 
-// TODO: custom BlockState enum
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct BlockState<'a> {
     pub name: Cow<'a, str>,
     pub properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>>,
-}
-impl <'a> BlockState<'a> {
-    pub fn new(name: &'a str) -> Self {
-        Self {
-            name: Cow::Borrowed(name),
-            properties: None,
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
