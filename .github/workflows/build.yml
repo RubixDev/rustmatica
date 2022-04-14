@@ -1,6 +1,6 @@
 on: [push]
 
-name: run_tests
+name: build
 
 jobs:
   linux:
@@ -12,10 +12,10 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: Run
+      - name: Build
         uses: actions-rs/cargo@v1
         with:
-          command: test
+          command: build --release --all-features
   wasm:
     name: rustmatica_wasm
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - name: Run
-        run: wasm-pack test --node --profile wasm-test
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build --release --all-features --target wasm32-unknown-unknown
