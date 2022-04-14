@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod block_state;
 pub mod util;
 pub mod error;
@@ -63,6 +64,30 @@ mod tests {
                     (Cow::Borrowed("powered"), Cow::Borrowed("true")),
                 ])),
             },
+        );
+    }
+
+    #[test]
+    fn macros() {
+        assert_eq!(BlockState::Air, block!());
+        assert_eq!(BlockState::Stone, block!(Stone));
+        assert_eq!(BlockState::GrassBlock { snowy: false }, block!(GrassBlock { snowy: false }));
+        assert_eq!(BlockState::Stone, block!("minecraft:stone"));
+        assert_eq!(BlockState::GrassBlock { snowy: true }, block!("minecraft:grass_block"; "snowy" => "true"));
+        assert_eq!(
+            BlockState::Repeater {
+                delay: 2,
+                facing: HorizontalDirection::South,
+                locked: false,
+                powered: false,
+            },
+            block!(
+                "minecraft:repeater";
+                "delay" => "2",
+                "facing" => "south",
+                "locked" => "false",
+                "powered" => "false",
+            ),
         );
     }
 }
