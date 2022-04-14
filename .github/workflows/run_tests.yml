@@ -27,6 +27,6 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
       - name: Install wasm-pack
-        run: cargo install wasm-pack
+        uses: jetli/wasm-pack-action@v0.3.0
       - name: Run
         run: wasm-pack test --node --profile wasm-test
