@@ -69,15 +69,15 @@ pub enum BlockState<'a> {{
 ser_rs = r"""use std::str::FromStr;
 
 use crate::schema;
-use super::{types::*, list::BlockState};
+use super::list::BlockState;
 
 macro_rules! try_make {
-    ($block:ident, $state:ident; $($name:ident => $type:ty),+) => {
+    ($block:ident, $state:ident; $($name:ident),+) => {
         match $state.properties.as_ref() {
             Some(props) => Self::$block {
                 $(
                     $name: match props.get(stringify!($name)) {
-                        Some(val) => match <$type>::from_str(val).ok() {
+                        Some(val) => match <_>::from_str(val).ok() {
                             Some(val) => val,
                             None => return Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
                         },
@@ -97,11 +97,11 @@ impl <'a> From<&schema::BlockState<'a>> for BlockState<'a> {{
                 f'"minecraft:{k}" => '
                 + (
                     f'Self::{k.title().replace("_", "")}'
-                    if v == []
+                    if not v
                     else (
                         f'try_make!(' + k.title().replace('_', '') + ', state; '
                         + ', '.join([
-                            f'{pk if pk != "type" else "r#type"} => {get_type(pv, k)}'
+                            f'{pk if pk != "type" else "r#type"}'
                             for pk, pv in v
                         ]) + ')'
                     )
@@ -124,13 +124,13 @@ impl <'a> From<&BlockState<'a>> for schema::BlockState<'a> {{
             {(nn+i+i).join([
                 'BlockState::' + k.title().replace('_', '')
                 + (
-                    '' if v == []
+                    '' if not v
                     else ' { ' + ', '.join([
                         pk if pk != 'type' else 'r#type' for pk, _ in v
                     ]) + ' }'
                 ) + ' => Self { ' + f'name: Cow::Borrowed("minecraft:{k}"), properties: '
                 + (
-                    'None' if v == []
+                    'None' if not v
                     else (
                         'Some(HashMap::from(['
                         + ', '.join([
