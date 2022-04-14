@@ -15,7 +15,8 @@ jobs:
       - name: Build
         uses: actions-rs/cargo@v1
         with:
-          command: build --release --all-features
+          command: build
+          args: --release --all-features
   wasm:
     name: rustmatica_wasm
     runs-on: ubuntu-latest
@@ -29,4 +30,5 @@ jobs:
       - name: Build
         uses: actions-rs/cargo@v1
         with:
-          command: build --release --all-features --target wasm32-unknown-unknown
+          command: build
+          args: --release --all-features --target wasm32-unknown-unknown
