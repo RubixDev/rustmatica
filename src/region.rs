@@ -31,7 +31,7 @@ impl <'l> Region<'l> {
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
-            .map(|block| (*block as u64).view_bits::<Lsb0>().to_bitvec())
+            .map(|block| block.to_le_bytes().iter().map(|byte| byte.view_bits::<Lsb0>()).flatten().collect::<BitVec>())
             .flatten()
             .collect::<BitVec>()
             .chunks(num_bits)

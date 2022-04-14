@@ -1,0 +1,31 @@
+on: [push]
+
+name: run_tests
+
+jobs:
+  linux:
+    name: rustmatica_linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --release --all-features
+  wasm:
+    name: rustmatica_wasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+      - run: cargo install wasm-bindgen-cli --vers "0.3.30"
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --release --all-features --target wasm32-unknown-unknown

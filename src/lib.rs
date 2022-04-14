@@ -13,6 +13,7 @@ pub use block_state::BlockState;
 #[cfg(test)]
 mod tests {
     use std::{borrow::Cow, collections::HashMap};
+    use wasm_bindgen_test::wasm_bindgen_test;
 
     use crate::{Litematic, BlockState, util::UVec3, block_state::types::HorizontalDirection};
 
@@ -33,7 +34,23 @@ mod tests {
         Ok(())
     }
 
+    #[wasm_bindgen_test]
+    fn read_write_wasm() {
+        let mut donut = Litematic::from_bytes(include_bytes!("../test_files/donut.litematic")).unwrap();
+        assert_eq!(donut.regions[0].get_block(UVec3::new(1, 1, 1)), &BlockState::Air);
+        donut.regions[0].set_block(UVec3::new(1, 1, 1), BlockState::GrassBlock { snowy: false });
+        assert_eq!(donut.regions[0].get_block(UVec3::new(1, 1, 1)), &BlockState::GrassBlock { snowy: false });
+        let buf = donut.to_bytes().unwrap();
+
+        let mut new_donut = Litematic::from_bytes(&buf).unwrap();
+        assert_eq!(new_donut.regions[0].get_block(UVec3::new(1, 1, 1)), &BlockState::GrassBlock { snowy: false });
+        new_donut.regions[0].set_block(UVec3::new(1, 1, 1), BlockState::Air);
+        assert_eq!(new_donut.regions[0].get_block(UVec3::new(1, 1, 1)), &BlockState::Air);
+        new_donut.to_bytes().unwrap();
+    }
+
     #[test]
+    #[wasm_bindgen_test]
     fn block_state_eq() {
         assert_eq!(
             BlockState::Air,
@@ -68,6 +85,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn macros() {
         assert_eq!(BlockState::Air, block!());
         assert_eq!(BlockState::Stone, block!(Stone));
