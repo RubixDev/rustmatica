@@ -11,7 +11,7 @@ _exit () {
 git clone https://github.com/FabricMC/fabric-example-mod.git temp || exit 1
 cd temp || _exit 1
 cp -v ../DataExtractor.java src/main/java/net/fabricmc/example/ExampleMod.java
-./gradlew runServer 2> ../blocks.txt
+./gradlew runServer 2> ../data.txt
 cd .. || _exit 1
 rm -rf temp
 git reset -- temp

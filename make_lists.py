@@ -1,5 +1,5 @@
 """
-This script uses the data extracted from Minecraft by GetBlockInfo.java in blocks.txt
+This script uses the data extracted from Minecraft by DataExtractor.java in data.txt
 to create the following Rust source files:
 
 - `src/block_state/list.rs`
@@ -21,7 +21,7 @@ def chunked(data: dict, size: int):
         yield dict(items[i:i + size])
 
 
-with open('blocks.txt', 'r') as file:
+with open('data.txt', 'r') as file:
     raw_block_info = file.read()
 
 blocks = {
