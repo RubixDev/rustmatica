@@ -44,3 +44,15 @@ jobs:
           java-version: 17
       - name: build
         run: ./run_data_extractor.bash
+  python:
+    name: make_lists
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+      - name: build
+        run: python make_lists.py

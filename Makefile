@@ -4,7 +4,7 @@ build:
 update:
 	cargo update
 	./run_data_extractor.bash
-	python make_blocks.py
+	python make_lists.py
 
 test:
 	cargo test

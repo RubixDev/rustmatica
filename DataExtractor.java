@@ -2,7 +2,7 @@
  * This file contains java code to get the block list from minecraft.
  * It is run by `run_data_extractor.bash` inside a temporary mod.
  * The output is piped into `blocks.txt`. After this you can run
- * make_blocks.py to generate the Rust source files.
+ * make_lists.py to generate the Rust source files.
  */
 
 package net.fabricmc.example;
