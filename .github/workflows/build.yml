@@ -32,3 +32,15 @@ jobs:
         with:
           command: build
           args: --release --all-features --target wasm32-unknown-unknown
+  java:
+    name: data_extractor
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+      - name: setup jdk 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: build
+        run: ./run_data_extractor.bash
