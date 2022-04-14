@@ -24,7 +24,7 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - run: cargo install wasm-bindgen-cli --vers "0.3.30"
+      - run: cargo install wasm-bindgen-cli
       - uses: actions-rs/cargo@v1
         with:
           command: test
