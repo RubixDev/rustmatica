@@ -1,0 +1,927 @@
+BLOCKINFO --- air - 
+BLOCKINFO --- stone - 
+BLOCKINFO --- granite - 
+BLOCKINFO --- polished_granite - 
+BLOCKINFO --- diorite - 
+BLOCKINFO --- polished_diorite - 
+BLOCKINFO --- andesite - 
+BLOCKINFO --- polished_andesite - 
+BLOCKINFO --- grass_block - snowy:bool 
+BLOCKINFO --- dirt - 
+BLOCKINFO --- coarse_dirt - 
+BLOCKINFO --- podzol - snowy:bool 
+BLOCKINFO --- cobblestone - 
+BLOCKINFO --- oak_planks - 
+BLOCKINFO --- spruce_planks - 
+BLOCKINFO --- birch_planks - 
+BLOCKINFO --- jungle_planks - 
+BLOCKINFO --- acacia_planks - 
+BLOCKINFO --- dark_oak_planks - 
+BLOCKINFO --- oak_sapling - stage:u8 
+BLOCKINFO --- spruce_sapling - stage:u8 
+BLOCKINFO --- birch_sapling - stage:u8 
+BLOCKINFO --- jungle_sapling - stage:u8 
+BLOCKINFO --- acacia_sapling - stage:u8 
+BLOCKINFO --- dark_oak_sapling - stage:u8 
+BLOCKINFO --- bedrock - 
+BLOCKINFO --- water - level:u8 
+BLOCKINFO --- lava - level:u8 
+BLOCKINFO --- sand - 
+BLOCKINFO --- red_sand - 
+BLOCKINFO --- gravel - 
+BLOCKINFO --- gold_ore - 
+BLOCKINFO --- deepslate_gold_ore - 
+BLOCKINFO --- iron_ore - 
+BLOCKINFO --- deepslate_iron_ore - 
+BLOCKINFO --- coal_ore - 
+BLOCKINFO --- deepslate_coal_ore - 
+BLOCKINFO --- nether_gold_ore - 
+BLOCKINFO --- oak_log - axis:Axis 
+BLOCKINFO --- spruce_log - axis:Axis 
+BLOCKINFO --- birch_log - axis:Axis 
+BLOCKINFO --- jungle_log - axis:Axis 
+BLOCKINFO --- acacia_log - axis:Axis 
+BLOCKINFO --- dark_oak_log - axis:Axis 
+BLOCKINFO --- stripped_spruce_log - axis:Axis 
+BLOCKINFO --- stripped_birch_log - axis:Axis 
+BLOCKINFO --- stripped_jungle_log - axis:Axis 
+BLOCKINFO --- stripped_acacia_log - axis:Axis 
+BLOCKINFO --- stripped_dark_oak_log - axis:Axis 
+BLOCKINFO --- stripped_oak_log - axis:Axis 
+BLOCKINFO --- oak_wood - axis:Axis 
+BLOCKINFO --- spruce_wood - axis:Axis 
+BLOCKINFO --- birch_wood - axis:Axis 
+BLOCKINFO --- jungle_wood - axis:Axis 
+BLOCKINFO --- acacia_wood - axis:Axis 
+BLOCKINFO --- dark_oak_wood - axis:Axis 
+BLOCKINFO --- stripped_oak_wood - axis:Axis 
+BLOCKINFO --- stripped_spruce_wood - axis:Axis 
+BLOCKINFO --- stripped_birch_wood - axis:Axis 
+BLOCKINFO --- stripped_jungle_wood - axis:Axis 
+BLOCKINFO --- stripped_acacia_wood - axis:Axis 
+BLOCKINFO --- stripped_dark_oak_wood - axis:Axis 
+BLOCKINFO --- oak_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- spruce_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- birch_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- jungle_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- acacia_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- dark_oak_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- azalea_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- flowering_azalea_leaves - distance:u8 persistent:bool 
+BLOCKINFO --- sponge - 
+BLOCKINFO --- wet_sponge - 
+BLOCKINFO --- glass - 
+BLOCKINFO --- lapis_ore - 
+BLOCKINFO --- deepslate_lapis_ore - 
+BLOCKINFO --- lapis_block - 
+BLOCKINFO --- dispenser - facing:Direction triggered:bool 
+BLOCKINFO --- sandstone - 
+BLOCKINFO --- chiseled_sandstone - 
+BLOCKINFO --- cut_sandstone - 
+BLOCKINFO --- note_block - instrument:Instrument note:u8 powered:bool 
+BLOCKINFO --- white_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- orange_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- magenta_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- light_blue_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- yellow_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- lime_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- pink_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- gray_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- light_gray_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- cyan_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- purple_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- blue_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- brown_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- green_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- red_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- black_bed - facing:HorizontalDirection occupied:bool part:BedPart 
+BLOCKINFO --- powered_rail - powered:bool shape:StraightRailShape waterlogged:bool 
+BLOCKINFO --- detector_rail - powered:bool shape:StraightRailShape waterlogged:bool 
+BLOCKINFO --- sticky_piston - extended:bool facing:Direction 
+BLOCKINFO --- cobweb - 
+BLOCKINFO --- grass - 
+BLOCKINFO --- fern - 
+BLOCKINFO --- dead_bush - 
+BLOCKINFO --- seagrass - 
+BLOCKINFO --- tall_seagrass - half:DoubleBlockHalf 
+BLOCKINFO --- piston - extended:bool facing:Direction 
+BLOCKINFO --- piston_head - facing:Direction short:bool type:PistonType 
+BLOCKINFO --- white_wool - 
+BLOCKINFO --- orange_wool - 
+BLOCKINFO --- magenta_wool - 
+BLOCKINFO --- light_blue_wool - 
+BLOCKINFO --- yellow_wool - 
+BLOCKINFO --- lime_wool - 
+BLOCKINFO --- pink_wool - 
+BLOCKINFO --- gray_wool - 
+BLOCKINFO --- light_gray_wool - 
+BLOCKINFO --- cyan_wool - 
+BLOCKINFO --- purple_wool - 
+BLOCKINFO --- blue_wool - 
+BLOCKINFO --- brown_wool - 
+BLOCKINFO --- green_wool - 
+BLOCKINFO --- red_wool - 
+BLOCKINFO --- black_wool - 
+BLOCKINFO --- moving_piston - facing:Direction type:PistonType 
+BLOCKINFO --- dandelion - 
+BLOCKINFO --- poppy - 
+BLOCKINFO --- blue_orchid - 
+BLOCKINFO --- allium - 
+BLOCKINFO --- azure_bluet - 
+BLOCKINFO --- red_tulip - 
+BLOCKINFO --- orange_tulip - 
+BLOCKINFO --- white_tulip - 
+BLOCKINFO --- pink_tulip - 
+BLOCKINFO --- oxeye_daisy - 
+BLOCKINFO --- cornflower - 
+BLOCKINFO --- wither_rose - 
+BLOCKINFO --- lily_of_the_valley - 
+BLOCKINFO --- brown_mushroom - 
+BLOCKINFO --- red_mushroom - 
+BLOCKINFO --- gold_block - 
+BLOCKINFO --- iron_block - 
+BLOCKINFO --- bricks - 
+BLOCKINFO --- tnt - unstable:bool 
+BLOCKINFO --- bookshelf - 
+BLOCKINFO --- mossy_cobblestone - 
+BLOCKINFO --- obsidian - 
+BLOCKINFO --- torch - 
+BLOCKINFO --- wall_torch - facing:HorizontalDirection 
+BLOCKINFO --- fire - age:u8 east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- soul_fire - 
+BLOCKINFO --- spawner - 
+BLOCKINFO --- oak_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- chest - facing:HorizontalDirection type:ChestType waterlogged:bool 
+BLOCKINFO --- redstone_wire - east:WireConnection north:WireConnection power:u8 south:WireConnection west:WireConnection 
+BLOCKINFO --- diamond_ore - 
+BLOCKINFO --- deepslate_diamond_ore - 
+BLOCKINFO --- diamond_block - 
+BLOCKINFO --- crafting_table - 
+BLOCKINFO --- wheat - age:u8 
+BLOCKINFO --- farmland - moisture:u8 
+BLOCKINFO --- furnace - facing:HorizontalDirection lit:bool 
+BLOCKINFO --- oak_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- spruce_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- birch_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- acacia_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- jungle_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- dark_oak_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- oak_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- ladder - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- rail - shape:RailShape waterlogged:bool 
+BLOCKINFO --- cobblestone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- oak_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- spruce_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- birch_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- acacia_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- jungle_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- dark_oak_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- lever - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- stone_pressure_plate - powered:bool 
+BLOCKINFO --- iron_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- oak_pressure_plate - powered:bool 
+BLOCKINFO --- spruce_pressure_plate - powered:bool 
+BLOCKINFO --- birch_pressure_plate - powered:bool 
+BLOCKINFO --- jungle_pressure_plate - powered:bool 
+BLOCKINFO --- acacia_pressure_plate - powered:bool 
+BLOCKINFO --- dark_oak_pressure_plate - powered:bool 
+BLOCKINFO --- redstone_ore - lit:bool 
+BLOCKINFO --- deepslate_redstone_ore - lit:bool 
+BLOCKINFO --- redstone_torch - lit:bool 
+BLOCKINFO --- redstone_wall_torch - facing:HorizontalDirection lit:bool 
+BLOCKINFO --- stone_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- snow - layers:u8 
+BLOCKINFO --- ice - 
+BLOCKINFO --- snow_block - 
+BLOCKINFO --- cactus - age:u8 
+BLOCKINFO --- clay - 
+BLOCKINFO --- sugar_cane - age:u8 
+BLOCKINFO --- jukebox - has_record:bool 
+BLOCKINFO --- oak_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- pumpkin - 
+BLOCKINFO --- netherrack - 
+BLOCKINFO --- soul_sand - 
+BLOCKINFO --- soul_soil - 
+BLOCKINFO --- basalt - axis:Axis 
+BLOCKINFO --- polished_basalt - axis:Axis 
+BLOCKINFO --- soul_torch - 
+BLOCKINFO --- soul_wall_torch - facing:HorizontalDirection 
+BLOCKINFO --- glowstone - 
+BLOCKINFO --- nether_portal - axis:HorizontalAxis 
+BLOCKINFO --- carved_pumpkin - facing:HorizontalDirection 
+BLOCKINFO --- jack_o_lantern - facing:HorizontalDirection 
+BLOCKINFO --- cake - bites:u8 
+BLOCKINFO --- repeater - delay:u8 facing:HorizontalDirection locked:bool powered:bool 
+BLOCKINFO --- white_stained_glass - 
+BLOCKINFO --- orange_stained_glass - 
+BLOCKINFO --- magenta_stained_glass - 
+BLOCKINFO --- light_blue_stained_glass - 
+BLOCKINFO --- yellow_stained_glass - 
+BLOCKINFO --- lime_stained_glass - 
+BLOCKINFO --- pink_stained_glass - 
+BLOCKINFO --- gray_stained_glass - 
+BLOCKINFO --- light_gray_stained_glass - 
+BLOCKINFO --- cyan_stained_glass - 
+BLOCKINFO --- purple_stained_glass - 
+BLOCKINFO --- blue_stained_glass - 
+BLOCKINFO --- brown_stained_glass - 
+BLOCKINFO --- green_stained_glass - 
+BLOCKINFO --- red_stained_glass - 
+BLOCKINFO --- black_stained_glass - 
+BLOCKINFO --- oak_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- spruce_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- birch_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- jungle_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- acacia_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- dark_oak_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- stone_bricks - 
+BLOCKINFO --- mossy_stone_bricks - 
+BLOCKINFO --- cracked_stone_bricks - 
+BLOCKINFO --- chiseled_stone_bricks - 
+BLOCKINFO --- infested_stone - 
+BLOCKINFO --- infested_cobblestone - 
+BLOCKINFO --- infested_stone_bricks - 
+BLOCKINFO --- infested_mossy_stone_bricks - 
+BLOCKINFO --- infested_cracked_stone_bricks - 
+BLOCKINFO --- infested_chiseled_stone_bricks - 
+BLOCKINFO --- brown_mushroom_block - down:bool east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- red_mushroom_block - down:bool east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- mushroom_stem - down:bool east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- iron_bars - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- chain - axis:Axis waterlogged:bool 
+BLOCKINFO --- glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- melon - 
+BLOCKINFO --- attached_pumpkin_stem - facing:HorizontalDirection 
+BLOCKINFO --- attached_melon_stem - facing:HorizontalDirection 
+BLOCKINFO --- pumpkin_stem - age:u8 
+BLOCKINFO --- melon_stem - age:u8 
+BLOCKINFO --- vine - east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- glow_lichen - down:bool east:bool north:bool south:bool up:bool waterlogged:bool west:bool 
+BLOCKINFO --- oak_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- stone_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- mycelium - snowy:bool 
+BLOCKINFO --- lily_pad - 
+BLOCKINFO --- nether_bricks - 
+BLOCKINFO --- nether_brick_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- nether_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- nether_wart - age:u8 
+BLOCKINFO --- enchanting_table - 
+BLOCKINFO --- brewing_stand - has_bottle_0:bool has_bottle_1:bool has_bottle_2:bool 
+BLOCKINFO --- cauldron - 
+BLOCKINFO --- water_cauldron - level:u8 
+BLOCKINFO --- lava_cauldron - 
+BLOCKINFO --- powder_snow_cauldron - level:u8 
+BLOCKINFO --- end_portal - 
+BLOCKINFO --- end_portal_frame - eye:bool facing:HorizontalDirection 
+BLOCKINFO --- end_stone - 
+BLOCKINFO --- dragon_egg - 
+BLOCKINFO --- redstone_lamp - lit:bool 
+BLOCKINFO --- cocoa - age:u8 facing:HorizontalDirection 
+BLOCKINFO --- sandstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- emerald_ore - 
+BLOCKINFO --- deepslate_emerald_ore - 
+BLOCKINFO --- ender_chest - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- tripwire_hook - attached:bool facing:HorizontalDirection powered:bool 
+BLOCKINFO --- tripwire - attached:bool disarmed:bool east:bool north:bool powered:bool south:bool west:bool 
+BLOCKINFO --- emerald_block - 
+BLOCKINFO --- spruce_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- birch_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- jungle_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- command_block - conditional:bool facing:Direction 
+BLOCKINFO --- beacon - 
+BLOCKINFO --- cobblestone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- mossy_cobblestone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- flower_pot - 
+BLOCKINFO --- potted_oak_sapling - 
+BLOCKINFO --- potted_spruce_sapling - 
+BLOCKINFO --- potted_birch_sapling - 
+BLOCKINFO --- potted_jungle_sapling - 
+BLOCKINFO --- potted_acacia_sapling - 
+BLOCKINFO --- potted_dark_oak_sapling - 
+BLOCKINFO --- potted_fern - 
+BLOCKINFO --- potted_dandelion - 
+BLOCKINFO --- potted_poppy - 
+BLOCKINFO --- potted_blue_orchid - 
+BLOCKINFO --- potted_allium - 
+BLOCKINFO --- potted_azure_bluet - 
+BLOCKINFO --- potted_red_tulip - 
+BLOCKINFO --- potted_orange_tulip - 
+BLOCKINFO --- potted_white_tulip - 
+BLOCKINFO --- potted_pink_tulip - 
+BLOCKINFO --- potted_oxeye_daisy - 
+BLOCKINFO --- potted_cornflower - 
+BLOCKINFO --- potted_lily_of_the_valley - 
+BLOCKINFO --- potted_wither_rose - 
+BLOCKINFO --- potted_red_mushroom - 
+BLOCKINFO --- potted_brown_mushroom - 
+BLOCKINFO --- potted_dead_bush - 
+BLOCKINFO --- potted_cactus - 
+BLOCKINFO --- carrots - age:u8 
+BLOCKINFO --- potatoes - age:u8 
+BLOCKINFO --- oak_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- spruce_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- birch_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- jungle_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- acacia_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- dark_oak_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- skeleton_skull - rotation:u8 
+BLOCKINFO --- skeleton_wall_skull - facing:HorizontalDirection 
+BLOCKINFO --- wither_skeleton_skull - rotation:u8 
+BLOCKINFO --- wither_skeleton_wall_skull - facing:HorizontalDirection 
+BLOCKINFO --- zombie_head - rotation:u8 
+BLOCKINFO --- zombie_wall_head - facing:HorizontalDirection 
+BLOCKINFO --- player_head - rotation:u8 
+BLOCKINFO --- player_wall_head - facing:HorizontalDirection 
+BLOCKINFO --- creeper_head - rotation:u8 
+BLOCKINFO --- creeper_wall_head - facing:HorizontalDirection 
+BLOCKINFO --- dragon_head - rotation:u8 
+BLOCKINFO --- dragon_wall_head - facing:HorizontalDirection 
+BLOCKINFO --- anvil - facing:HorizontalDirection 
+BLOCKINFO --- chipped_anvil - facing:HorizontalDirection 
+BLOCKINFO --- damaged_anvil - facing:HorizontalDirection 
+BLOCKINFO --- trapped_chest - facing:HorizontalDirection type:ChestType waterlogged:bool 
+BLOCKINFO --- light_weighted_pressure_plate - power:u8 
+BLOCKINFO --- heavy_weighted_pressure_plate - power:u8 
+BLOCKINFO --- comparator - facing:HorizontalDirection mode:ComparatorMode powered:bool 
+BLOCKINFO --- daylight_detector - inverted:bool power:u8 
+BLOCKINFO --- redstone_block - 
+BLOCKINFO --- nether_quartz_ore - 
+BLOCKINFO --- hopper - enabled:bool facing:HopperDirection 
+BLOCKINFO --- quartz_block - 
+BLOCKINFO --- chiseled_quartz_block - 
+BLOCKINFO --- quartz_pillar - axis:Axis 
+BLOCKINFO --- quartz_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- activator_rail - powered:bool shape:StraightRailShape waterlogged:bool 
+BLOCKINFO --- dropper - facing:Direction triggered:bool 
+BLOCKINFO --- white_terracotta - 
+BLOCKINFO --- orange_terracotta - 
+BLOCKINFO --- magenta_terracotta - 
+BLOCKINFO --- light_blue_terracotta - 
+BLOCKINFO --- yellow_terracotta - 
+BLOCKINFO --- lime_terracotta - 
+BLOCKINFO --- pink_terracotta - 
+BLOCKINFO --- gray_terracotta - 
+BLOCKINFO --- light_gray_terracotta - 
+BLOCKINFO --- cyan_terracotta - 
+BLOCKINFO --- purple_terracotta - 
+BLOCKINFO --- blue_terracotta - 
+BLOCKINFO --- brown_terracotta - 
+BLOCKINFO --- green_terracotta - 
+BLOCKINFO --- red_terracotta - 
+BLOCKINFO --- black_terracotta - 
+BLOCKINFO --- white_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- orange_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- magenta_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- light_blue_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- yellow_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- lime_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- pink_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- gray_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- light_gray_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- cyan_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- purple_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- blue_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- brown_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- green_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- red_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- black_stained_glass_pane - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- acacia_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- dark_oak_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- slime_block - 
+BLOCKINFO --- barrier - 
+BLOCKINFO --- light - level:u8 waterlogged:bool 
+BLOCKINFO --- iron_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- prismarine - 
+BLOCKINFO --- prismarine_bricks - 
+BLOCKINFO --- dark_prismarine - 
+BLOCKINFO --- prismarine_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- prismarine_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- dark_prismarine_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- prismarine_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- prismarine_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- dark_prismarine_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- sea_lantern - 
+BLOCKINFO --- hay_block - axis:Axis 
+BLOCKINFO --- white_carpet - 
+BLOCKINFO --- orange_carpet - 
+BLOCKINFO --- magenta_carpet - 
+BLOCKINFO --- light_blue_carpet - 
+BLOCKINFO --- yellow_carpet - 
+BLOCKINFO --- lime_carpet - 
+BLOCKINFO --- pink_carpet - 
+BLOCKINFO --- gray_carpet - 
+BLOCKINFO --- light_gray_carpet - 
+BLOCKINFO --- cyan_carpet - 
+BLOCKINFO --- purple_carpet - 
+BLOCKINFO --- blue_carpet - 
+BLOCKINFO --- brown_carpet - 
+BLOCKINFO --- green_carpet - 
+BLOCKINFO --- red_carpet - 
+BLOCKINFO --- black_carpet - 
+BLOCKINFO --- terracotta - 
+BLOCKINFO --- coal_block - 
+BLOCKINFO --- packed_ice - 
+BLOCKINFO --- sunflower - half:DoubleBlockHalf 
+BLOCKINFO --- lilac - half:DoubleBlockHalf 
+BLOCKINFO --- rose_bush - half:DoubleBlockHalf 
+BLOCKINFO --- peony - half:DoubleBlockHalf 
+BLOCKINFO --- tall_grass - half:DoubleBlockHalf 
+BLOCKINFO --- large_fern - half:DoubleBlockHalf 
+BLOCKINFO --- white_banner - rotation:u8 
+BLOCKINFO --- orange_banner - rotation:u8 
+BLOCKINFO --- magenta_banner - rotation:u8 
+BLOCKINFO --- light_blue_banner - rotation:u8 
+BLOCKINFO --- yellow_banner - rotation:u8 
+BLOCKINFO --- lime_banner - rotation:u8 
+BLOCKINFO --- pink_banner - rotation:u8 
+BLOCKINFO --- gray_banner - rotation:u8 
+BLOCKINFO --- light_gray_banner - rotation:u8 
+BLOCKINFO --- cyan_banner - rotation:u8 
+BLOCKINFO --- purple_banner - rotation:u8 
+BLOCKINFO --- blue_banner - rotation:u8 
+BLOCKINFO --- brown_banner - rotation:u8 
+BLOCKINFO --- green_banner - rotation:u8 
+BLOCKINFO --- red_banner - rotation:u8 
+BLOCKINFO --- black_banner - rotation:u8 
+BLOCKINFO --- white_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- orange_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- magenta_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- light_blue_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- yellow_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- lime_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- pink_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- gray_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- light_gray_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- cyan_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- purple_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- blue_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- brown_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- green_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- red_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- black_wall_banner - facing:HorizontalDirection 
+BLOCKINFO --- red_sandstone - 
+BLOCKINFO --- chiseled_red_sandstone - 
+BLOCKINFO --- cut_red_sandstone - 
+BLOCKINFO --- red_sandstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- oak_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- spruce_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- birch_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- jungle_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- acacia_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- dark_oak_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- stone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- smooth_stone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- cut_sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- petrified_oak_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- cobblestone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- stone_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- nether_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- quartz_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- red_sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- cut_red_sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- purpur_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- smooth_stone - 
+BLOCKINFO --- smooth_sandstone - 
+BLOCKINFO --- smooth_quartz - 
+BLOCKINFO --- smooth_red_sandstone - 
+BLOCKINFO --- spruce_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- birch_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- jungle_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- acacia_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- dark_oak_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- spruce_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- birch_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- jungle_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- acacia_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- dark_oak_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- spruce_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- birch_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- jungle_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- acacia_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- dark_oak_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- end_rod - facing:Direction 
+BLOCKINFO --- chorus_plant - down:bool east:bool north:bool south:bool up:bool west:bool 
+BLOCKINFO --- chorus_flower - age:u8 
+BLOCKINFO --- purpur_block - 
+BLOCKINFO --- purpur_pillar - axis:Axis 
+BLOCKINFO --- purpur_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- end_stone_bricks - 
+BLOCKINFO --- beetroots - age:u8 
+BLOCKINFO --- dirt_path - 
+BLOCKINFO --- end_gateway - 
+BLOCKINFO --- repeating_command_block - conditional:bool facing:Direction 
+BLOCKINFO --- chain_command_block - conditional:bool facing:Direction 
+BLOCKINFO --- frosted_ice - age:u8 
+BLOCKINFO --- magma_block - 
+BLOCKINFO --- nether_wart_block - 
+BLOCKINFO --- red_nether_bricks - 
+BLOCKINFO --- bone_block - axis:Axis 
+BLOCKINFO --- structure_void - 
+BLOCKINFO --- observer - facing:Direction powered:bool 
+BLOCKINFO --- shulker_box - facing:Direction 
+BLOCKINFO --- white_shulker_box - facing:Direction 
+BLOCKINFO --- orange_shulker_box - facing:Direction 
+BLOCKINFO --- magenta_shulker_box - facing:Direction 
+BLOCKINFO --- light_blue_shulker_box - facing:Direction 
+BLOCKINFO --- yellow_shulker_box - facing:Direction 
+BLOCKINFO --- lime_shulker_box - facing:Direction 
+BLOCKINFO --- pink_shulker_box - facing:Direction 
+BLOCKINFO --- gray_shulker_box - facing:Direction 
+BLOCKINFO --- light_gray_shulker_box - facing:Direction 
+BLOCKINFO --- cyan_shulker_box - facing:Direction 
+BLOCKINFO --- purple_shulker_box - facing:Direction 
+BLOCKINFO --- blue_shulker_box - facing:Direction 
+BLOCKINFO --- brown_shulker_box - facing:Direction 
+BLOCKINFO --- green_shulker_box - facing:Direction 
+BLOCKINFO --- red_shulker_box - facing:Direction 
+BLOCKINFO --- black_shulker_box - facing:Direction 
+BLOCKINFO --- white_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- orange_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- magenta_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- light_blue_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- yellow_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- lime_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- pink_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- gray_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- light_gray_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- cyan_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- purple_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- blue_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- brown_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- green_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- red_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- black_glazed_terracotta - facing:HorizontalDirection 
+BLOCKINFO --- white_concrete - 
+BLOCKINFO --- orange_concrete - 
+BLOCKINFO --- magenta_concrete - 
+BLOCKINFO --- light_blue_concrete - 
+BLOCKINFO --- yellow_concrete - 
+BLOCKINFO --- lime_concrete - 
+BLOCKINFO --- pink_concrete - 
+BLOCKINFO --- gray_concrete - 
+BLOCKINFO --- light_gray_concrete - 
+BLOCKINFO --- cyan_concrete - 
+BLOCKINFO --- purple_concrete - 
+BLOCKINFO --- blue_concrete - 
+BLOCKINFO --- brown_concrete - 
+BLOCKINFO --- green_concrete - 
+BLOCKINFO --- red_concrete - 
+BLOCKINFO --- black_concrete - 
+BLOCKINFO --- white_concrete_powder - 
+BLOCKINFO --- orange_concrete_powder - 
+BLOCKINFO --- magenta_concrete_powder - 
+BLOCKINFO --- light_blue_concrete_powder - 
+BLOCKINFO --- yellow_concrete_powder - 
+BLOCKINFO --- lime_concrete_powder - 
+BLOCKINFO --- pink_concrete_powder - 
+BLOCKINFO --- gray_concrete_powder - 
+BLOCKINFO --- light_gray_concrete_powder - 
+BLOCKINFO --- cyan_concrete_powder - 
+BLOCKINFO --- purple_concrete_powder - 
+BLOCKINFO --- blue_concrete_powder - 
+BLOCKINFO --- brown_concrete_powder - 
+BLOCKINFO --- green_concrete_powder - 
+BLOCKINFO --- red_concrete_powder - 
+BLOCKINFO --- black_concrete_powder - 
+BLOCKINFO --- kelp - age:u8 
+BLOCKINFO --- kelp_plant - 
+BLOCKINFO --- dried_kelp_block - 
+BLOCKINFO --- turtle_egg - eggs:u8 hatch:u8 
+BLOCKINFO --- dead_tube_coral_block - 
+BLOCKINFO --- dead_brain_coral_block - 
+BLOCKINFO --- dead_bubble_coral_block - 
+BLOCKINFO --- dead_fire_coral_block - 
+BLOCKINFO --- dead_horn_coral_block - 
+BLOCKINFO --- tube_coral_block - 
+BLOCKINFO --- brain_coral_block - 
+BLOCKINFO --- bubble_coral_block - 
+BLOCKINFO --- fire_coral_block - 
+BLOCKINFO --- horn_coral_block - 
+BLOCKINFO --- dead_tube_coral - waterlogged:bool 
+BLOCKINFO --- dead_brain_coral - waterlogged:bool 
+BLOCKINFO --- dead_bubble_coral - waterlogged:bool 
+BLOCKINFO --- dead_fire_coral - waterlogged:bool 
+BLOCKINFO --- dead_horn_coral - waterlogged:bool 
+BLOCKINFO --- tube_coral - waterlogged:bool 
+BLOCKINFO --- brain_coral - waterlogged:bool 
+BLOCKINFO --- bubble_coral - waterlogged:bool 
+BLOCKINFO --- fire_coral - waterlogged:bool 
+BLOCKINFO --- horn_coral - waterlogged:bool 
+BLOCKINFO --- dead_tube_coral_fan - waterlogged:bool 
+BLOCKINFO --- dead_brain_coral_fan - waterlogged:bool 
+BLOCKINFO --- dead_bubble_coral_fan - waterlogged:bool 
+BLOCKINFO --- dead_fire_coral_fan - waterlogged:bool 
+BLOCKINFO --- dead_horn_coral_fan - waterlogged:bool 
+BLOCKINFO --- tube_coral_fan - waterlogged:bool 
+BLOCKINFO --- brain_coral_fan - waterlogged:bool 
+BLOCKINFO --- bubble_coral_fan - waterlogged:bool 
+BLOCKINFO --- fire_coral_fan - waterlogged:bool 
+BLOCKINFO --- horn_coral_fan - waterlogged:bool 
+BLOCKINFO --- dead_tube_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- dead_brain_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- dead_bubble_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- dead_fire_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- dead_horn_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- tube_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- brain_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- bubble_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- fire_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- horn_coral_wall_fan - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- sea_pickle - pickles:u8 waterlogged:bool 
+BLOCKINFO --- blue_ice - 
+BLOCKINFO --- conduit - waterlogged:bool 
+BLOCKINFO --- bamboo_sapling - 
+BLOCKINFO --- bamboo - age:u8 leaves:BambooLeaves stage:u8 
+BLOCKINFO --- potted_bamboo - 
+BLOCKINFO --- void_air - 
+BLOCKINFO --- cave_air - 
+BLOCKINFO --- bubble_column - drag:bool 
+BLOCKINFO --- polished_granite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- smooth_red_sandstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- mossy_stone_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_diorite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- mossy_cobblestone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- end_stone_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- stone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- smooth_sandstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- smooth_quartz_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- granite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- andesite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- red_nether_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_andesite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- diorite_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_granite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- smooth_red_sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- mossy_stone_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_diorite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- mossy_cobblestone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- end_stone_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- smooth_sandstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- smooth_quartz_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- granite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- andesite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- red_nether_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_andesite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- diorite_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- prismarine_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- red_sandstone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- mossy_stone_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- granite_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- stone_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- nether_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- andesite_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- red_nether_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- sandstone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- end_stone_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- diorite_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- scaffolding - bottom:bool distance:u8 waterlogged:bool 
+BLOCKINFO --- loom - facing:HorizontalDirection 
+BLOCKINFO --- barrel - facing:Direction open:bool 
+BLOCKINFO --- smoker - facing:HorizontalDirection lit:bool 
+BLOCKINFO --- blast_furnace - facing:HorizontalDirection lit:bool 
+BLOCKINFO --- cartography_table - 
+BLOCKINFO --- fletching_table - 
+BLOCKINFO --- grindstone - face:WallMountLocation facing:HorizontalDirection 
+BLOCKINFO --- lectern - facing:HorizontalDirection has_book:bool powered:bool 
+BLOCKINFO --- smithing_table - 
+BLOCKINFO --- stonecutter - facing:HorizontalDirection 
+BLOCKINFO --- bell - attachment:Attachment facing:HorizontalDirection powered:bool 
+BLOCKINFO --- lantern - hanging:bool waterlogged:bool 
+BLOCKINFO --- soul_lantern - hanging:bool waterlogged:bool 
+BLOCKINFO --- campfire - facing:HorizontalDirection lit:bool signal_fire:bool waterlogged:bool 
+BLOCKINFO --- soul_campfire - facing:HorizontalDirection lit:bool signal_fire:bool waterlogged:bool 
+BLOCKINFO --- sweet_berry_bush - age:u8 
+BLOCKINFO --- warped_stem - axis:Axis 
+BLOCKINFO --- stripped_warped_stem - axis:Axis 
+BLOCKINFO --- warped_hyphae - axis:Axis 
+BLOCKINFO --- stripped_warped_hyphae - axis:Axis 
+BLOCKINFO --- warped_nylium - 
+BLOCKINFO --- warped_fungus - 
+BLOCKINFO --- warped_wart_block - 
+BLOCKINFO --- warped_roots - 
+BLOCKINFO --- nether_sprouts - 
+BLOCKINFO --- crimson_stem - axis:Axis 
+BLOCKINFO --- stripped_crimson_stem - axis:Axis 
+BLOCKINFO --- crimson_hyphae - axis:Axis 
+BLOCKINFO --- stripped_crimson_hyphae - axis:Axis 
+BLOCKINFO --- crimson_nylium - 
+BLOCKINFO --- crimson_fungus - 
+BLOCKINFO --- shroomlight - 
+BLOCKINFO --- weeping_vines - age:u8 
+BLOCKINFO --- weeping_vines_plant - 
+BLOCKINFO --- twisting_vines - age:u8 
+BLOCKINFO --- twisting_vines_plant - 
+BLOCKINFO --- crimson_roots - 
+BLOCKINFO --- crimson_planks - 
+BLOCKINFO --- warped_planks - 
+BLOCKINFO --- crimson_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- warped_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- crimson_pressure_plate - powered:bool 
+BLOCKINFO --- warped_pressure_plate - powered:bool 
+BLOCKINFO --- crimson_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- warped_fence - east:bool north:bool south:bool waterlogged:bool west:bool 
+BLOCKINFO --- crimson_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- warped_trapdoor - facing:HorizontalDirection half:BlockHalf open:bool powered:bool waterlogged:bool 
+BLOCKINFO --- crimson_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- warped_fence_gate - facing:HorizontalDirection in_wall:bool open:bool powered:bool 
+BLOCKINFO --- crimson_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- warped_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- crimson_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- warped_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- crimson_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- warped_door - facing:HorizontalDirection half:DoubleBlockHalf hinge:DoorHinge open:bool powered:bool 
+BLOCKINFO --- crimson_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- warped_sign - rotation:u8 waterlogged:bool 
+BLOCKINFO --- crimson_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- warped_wall_sign - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- structure_block - mode:StructureBlockMode 
+BLOCKINFO --- jigsaw - orientation:JigsawOrientation 
+BLOCKINFO --- composter - level:u8 
+BLOCKINFO --- target - power:u8 
+BLOCKINFO --- bee_nest - facing:HorizontalDirection honey_level:u8 
+BLOCKINFO --- beehive - facing:HorizontalDirection honey_level:u8 
+BLOCKINFO --- honey_block - 
+BLOCKINFO --- honeycomb_block - 
+BLOCKINFO --- netherite_block - 
+BLOCKINFO --- ancient_debris - 
+BLOCKINFO --- crying_obsidian - 
+BLOCKINFO --- respawn_anchor - charges:u8 
+BLOCKINFO --- potted_crimson_fungus - 
+BLOCKINFO --- potted_warped_fungus - 
+BLOCKINFO --- potted_crimson_roots - 
+BLOCKINFO --- potted_warped_roots - 
+BLOCKINFO --- lodestone - 
+BLOCKINFO --- blackstone - 
+BLOCKINFO --- blackstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- blackstone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- blackstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_blackstone - 
+BLOCKINFO --- polished_blackstone_bricks - 
+BLOCKINFO --- cracked_polished_blackstone_bricks - 
+BLOCKINFO --- chiseled_polished_blackstone - 
+BLOCKINFO --- polished_blackstone_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_blackstone_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_blackstone_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- gilded_blackstone - 
+BLOCKINFO --- polished_blackstone_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_blackstone_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_blackstone_pressure_plate - powered:bool 
+BLOCKINFO --- polished_blackstone_button - face:WallMountLocation facing:HorizontalDirection powered:bool 
+BLOCKINFO --- polished_blackstone_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- chiseled_nether_bricks - 
+BLOCKINFO --- cracked_nether_bricks - 
+BLOCKINFO --- quartz_bricks - 
+BLOCKINFO --- candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- white_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- orange_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- magenta_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- light_blue_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- yellow_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- lime_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- pink_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- gray_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- light_gray_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- cyan_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- purple_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- blue_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- brown_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- green_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- red_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- black_candle - candles:u8 lit:bool waterlogged:bool 
+BLOCKINFO --- candle_cake - lit:bool 
+BLOCKINFO --- white_candle_cake - lit:bool 
+BLOCKINFO --- orange_candle_cake - lit:bool 
+BLOCKINFO --- magenta_candle_cake - lit:bool 
+BLOCKINFO --- light_blue_candle_cake - lit:bool 
+BLOCKINFO --- yellow_candle_cake - lit:bool 
+BLOCKINFO --- lime_candle_cake - lit:bool 
+BLOCKINFO --- pink_candle_cake - lit:bool 
+BLOCKINFO --- gray_candle_cake - lit:bool 
+BLOCKINFO --- light_gray_candle_cake - lit:bool 
+BLOCKINFO --- cyan_candle_cake - lit:bool 
+BLOCKINFO --- purple_candle_cake - lit:bool 
+BLOCKINFO --- blue_candle_cake - lit:bool 
+BLOCKINFO --- brown_candle_cake - lit:bool 
+BLOCKINFO --- green_candle_cake - lit:bool 
+BLOCKINFO --- red_candle_cake - lit:bool 
+BLOCKINFO --- black_candle_cake - lit:bool 
+BLOCKINFO --- amethyst_block - 
+BLOCKINFO --- budding_amethyst - 
+BLOCKINFO --- amethyst_cluster - facing:Direction waterlogged:bool 
+BLOCKINFO --- large_amethyst_bud - facing:Direction waterlogged:bool 
+BLOCKINFO --- medium_amethyst_bud - facing:Direction waterlogged:bool 
+BLOCKINFO --- small_amethyst_bud - facing:Direction waterlogged:bool 
+BLOCKINFO --- tuff - 
+BLOCKINFO --- calcite - 
+BLOCKINFO --- tinted_glass - 
+BLOCKINFO --- powder_snow - 
+BLOCKINFO --- sculk_sensor - power:u8 sculk_sensor_phase:SculkSensorPhase waterlogged:bool 
+BLOCKINFO --- oxidized_copper - 
+BLOCKINFO --- weathered_copper - 
+BLOCKINFO --- exposed_copper - 
+BLOCKINFO --- copper_block - 
+BLOCKINFO --- copper_ore - 
+BLOCKINFO --- deepslate_copper_ore - 
+BLOCKINFO --- oxidized_cut_copper - 
+BLOCKINFO --- weathered_cut_copper - 
+BLOCKINFO --- exposed_cut_copper - 
+BLOCKINFO --- cut_copper - 
+BLOCKINFO --- oxidized_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- weathered_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- exposed_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- oxidized_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- weathered_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- exposed_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- waxed_copper_block - 
+BLOCKINFO --- waxed_weathered_copper - 
+BLOCKINFO --- waxed_exposed_copper - 
+BLOCKINFO --- waxed_oxidized_copper - 
+BLOCKINFO --- waxed_oxidized_cut_copper - 
+BLOCKINFO --- waxed_weathered_cut_copper - 
+BLOCKINFO --- waxed_exposed_cut_copper - 
+BLOCKINFO --- waxed_cut_copper - 
+BLOCKINFO --- waxed_oxidized_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- waxed_weathered_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- waxed_exposed_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- waxed_cut_copper_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- waxed_oxidized_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- waxed_weathered_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- waxed_exposed_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- waxed_cut_copper_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- lightning_rod - facing:Direction powered:bool waterlogged:bool 
+BLOCKINFO --- pointed_dripstone - thickness:Thickness vertical_direction:VerticalDirection waterlogged:bool 
+BLOCKINFO --- dripstone_block - 
+BLOCKINFO --- cave_vines - age:u8 berries:bool 
+BLOCKINFO --- cave_vines_plant - berries:bool 
+BLOCKINFO --- spore_blossom - 
+BLOCKINFO --- azalea - 
+BLOCKINFO --- flowering_azalea - 
+BLOCKINFO --- moss_carpet - 
+BLOCKINFO --- moss_block - 
+BLOCKINFO --- big_dripleaf - facing:HorizontalDirection tilt:Tilt waterlogged:bool 
+BLOCKINFO --- big_dripleaf_stem - facing:HorizontalDirection waterlogged:bool 
+BLOCKINFO --- small_dripleaf - facing:HorizontalDirection half:DoubleBlockHalf waterlogged:bool 
+BLOCKINFO --- hanging_roots - waterlogged:bool 
+BLOCKINFO --- rooted_dirt - 
+BLOCKINFO --- deepslate - axis:Axis 
+BLOCKINFO --- cobbled_deepslate - 
+BLOCKINFO --- cobbled_deepslate_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- cobbled_deepslate_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- cobbled_deepslate_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- polished_deepslate - 
+BLOCKINFO --- polished_deepslate_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- polished_deepslate_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- polished_deepslate_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- deepslate_tiles - 
+BLOCKINFO --- deepslate_tile_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- deepslate_tile_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- deepslate_tile_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- deepslate_bricks - 
+BLOCKINFO --- deepslate_brick_stairs - facing:HorizontalDirection half:BlockHalf shape:StairShape waterlogged:bool 
+BLOCKINFO --- deepslate_brick_slab - type:SlabType waterlogged:bool 
+BLOCKINFO --- deepslate_brick_wall - east:WallShape north:WallShape south:WallShape up:bool waterlogged:bool west:WallShape 
+BLOCKINFO --- chiseled_deepslate - 
+BLOCKINFO --- cracked_deepslate_bricks - 
+BLOCKINFO --- cracked_deepslate_tiles - 
+BLOCKINFO --- infested_deepslate - axis:Axis 
+BLOCKINFO --- smooth_basalt - 
+BLOCKINFO --- raw_iron_block - 
+BLOCKINFO --- raw_copper_block - 
+BLOCKINFO --- raw_gold_block - 
+BLOCKINFO --- potted_azalea_bush - 
+BLOCKINFO --- potted_flowering_azalea_bush - 
+
+ENUMINFO --- SlabType - top,bottom,double
+ENUMINFO --- Attachment - floor,ceiling,single_wall,double_wall
+ENUMINFO --- Direction - north,east,south,west,up,down
+ENUMINFO --- WallShape - none,low,tall
+ENUMINFO --- SculkSensorPhase - inactive,active,cooldown
+ENUMINFO --- DoubleBlockHalf - upper,lower
+ENUMINFO --- Axis - x,y,z
+ENUMINFO --- BambooLeaves - none,small,large
+ENUMINFO --- JigsawOrientation - down_east,down_north,down_south,down_west,up_east,up_north,up_south,up_west,west_up,east_up,north_up,south_up
+ENUMINFO --- StairShape - straight,inner_left,inner_right,outer_left,outer_right
+ENUMINFO --- HopperDirection - down,north,south,west,east
+ENUMINFO --- DoorHinge - left,right
+ENUMINFO --- WireConnection - up,side,none
+ENUMINFO --- StructureBlockMode - save,load,corner,data
+ENUMINFO --- PistonType - normal,sticky
+ENUMINFO --- BlockHalf - top,bottom
+ENUMINFO --- ComparatorMode - compare,subtract
+ENUMINFO --- BedPart - head,foot
+ENUMINFO --- Thickness - tip_merge,tip,frustum,middle,base
+ENUMINFO --- VerticalDirection - up,down
+ENUMINFO --- HorizontalAxis - x,z
+ENUMINFO --- WallMountLocation - floor,wall,ceiling
+ENUMINFO --- RailShape - north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south,south_east,south_west,north_west,north_east
+ENUMINFO --- Instrument - harp,basedrum,snare,hat,bass,flute,bell,guitar,chime,xylophone,iron_xylophone,cow_bell,didgeridoo,bit,banjo,pling
+ENUMINFO --- HorizontalDirection - north,south,west,east
+ENUMINFO --- Tilt - none,unstable,partial,full
+ENUMINFO --- ChestType - single,left,right
+ENUMINFO --- StraightRailShape - north_south,east_west,ascending_east,ascending_west,ascending_north,ascending_south

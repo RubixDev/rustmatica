@@ -1,56 +1,36 @@
 """
-Disclaimer:
-This file is not currently very clean made with very unintuitive
-variable names. I did not originally plan to publish this but
-have it as a temporary script.
+This script uses the data extracted from Minecraft by GetBlockInfo.java in blocks.txt
+to create the following Rust source files:
+
+- `src/block_state/list.rs`
+- `src/block_state/ser.rs`
+- `src/block_state/de.rs`
+- `src/block_state/types.rs`
 """
 
 import re
-import json
 
-with open('block_list.json', 'r') as file:
-    block_list = json.load(file)
-    m = block_list['default_states']
-    enums = block_list['enum_properties']
-    property_clarity = block_list['property_clarity']
 
-m = {k: [p.split('=') for p in v.split(',')] if v != '' else [] for k, v in m.items()}
+def pascal(name: str) -> str:
+    return name.title().replace('_', '')
+
+
+with open('blocks.txt', 'r') as file:
+    raw_block_info = file.read()
+
+blocks = {
+    match.group(1): [
+        prop.split(':') for prop in [e for e in match.group(2).split(' ') if e]
+    ] if match.group(2) else []
+    for match in re.compile(r'BLOCKINFO --- (\w+) - (.*)').finditer(raw_block_info)
+}
+enums = {
+    match.group(1): match.group(2).split(',')
+    for match in re.compile(r'ENUMINFO --- (\w+) - (.*)').finditer(raw_block_info)
+}
 
 n = '\n'
-q = '"'
-i = '    '
-nn = n + i
-
-
-def get_type(val: str, block: str) -> str:
-    if val in ['true', 'false']:
-        return 'bool'
-    if re.compile(r'\d+').fullmatch(val):
-        return 'u8'
-    found = []
-    for name, vals in enums.items():
-        if val in vals:
-            found.append(name)
-    while len(found) > 1:
-        for i, f in enumerate(found):
-            if f in property_clarity:
-                if block in property_clarity[f]:
-                    return f
-                del found[i]
-            continue
-    if len(found) == 1:
-        return found[0]
-    return '(), /* TODO: ' + val + ' */'
-
-
-def get_properties(props: list[list[str]], block: str) -> str:
-    if not props:
-        return ''
-
-    return ' { ' + ', '.join([
-        f'{k if k != "type" else "r#type"}: {get_type(v, block)}'
-        for k, v in props
-    ]) + ' }'
+indent = '    '
 
 
 list_rs = r"""use std::{borrow::Cow, collections::HashMap};
@@ -59,9 +39,21 @@ use super::types::*;
 """ + f"""
 #[derive(Debug, Clone)]
 pub enum BlockState<'a> {{
-    {nn.join([
-        f'{k.title().replace("_", "")}{get_properties(v, k)},'
-        for k, v in m.items()
+    {(n+indent).join([
+        pascal(name)
+        + (
+            ''
+            if not props
+            else (
+                ' { '
+                + ', '.join([
+                    f'{prop if prop != "type" else "r#type"}: {_type}'
+                    for prop, _type in props
+                ])
+                + ' }'
+            )
+        ) + ','
+        for name, props in blocks.items()
     ])}
     Other {{ name: Cow<'a, str>, properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>> }},
 }}
@@ -93,20 +85,20 @@ macro_rules! try_make {
 impl <'a> From<&schema::BlockState<'a>> for BlockState<'a> {{
     fn from(state: &schema::BlockState<'a>) -> Self {{
         match state.name.as_ref() {{
-            {(nn+i+i).join([
-                f'"minecraft:{k}" => '
+            {(n+3*indent).join([
+                f'"minecraft:{name}" => '
                 + (
-                    f'Self::{k.title().replace("_", "")}'
-                    if not v
+                    f'Self::{pascal(name)}'
+                    if not props
                     else (
-                        f'try_make!(' + k.title().replace('_', '') + ', state; '
+                        f'try_make!({pascal(name)}, state; '
                         + ', '.join([
-                            f'{pk if pk != "type" else "r#type"}'
-                            for pk, pv in v
+                            f'{prop if prop != "type" else "r#type"}'
+                            for prop, _type in props
                         ]) + ')'
                     )
                 ) + ','
-                for k, v in m.items()
+                for name, props in blocks.items()
             ])}
             _ => Self::Other {{ name: state.name.to_owned(), properties: state.properties.to_owned() }},
         }}
@@ -121,25 +113,25 @@ use super::list::BlockState;
 impl <'a> From<&BlockState<'a>> for schema::BlockState<'a> {{
     fn from(state: &BlockState<'a>) -> Self {{
         match state {{
-            {(nn+i+i).join([
-                'BlockState::' + k.title().replace('_', '')
+            {(n+3*indent).join([
+                f'BlockState::{pascal(name)}'
                 + (
-                    '' if not v
+                    '' if not props
                     else ' { ' + ', '.join([
-                        pk if pk != 'type' else 'r#type' for pk, _ in v
+                        prop if prop != 'type' else 'r#type' for prop, _ in props
                     ]) + ' }'
-                ) + ' => Self { ' + f'name: Cow::Borrowed("minecraft:{k}"), properties: '
+                ) + ' => Self { name: Cow::Borrowed("minecraft:' + name + '"), properties: '
                 + (
-                    'None' if not v
+                    'None' if not props
                     else (
                         'Some(HashMap::from(['
                         + ', '.join([
-                            f'(Cow::Borrowed("{pk}"), Cow::Owned({pk if pk != "type" else "r#type"}.to_string()))'
-                            for pk, _ in v
+                            f'(Cow::Borrowed("{prop}"), Cow::Owned({prop if prop != "type" else "r#type"}.to_string()))'
+                            for prop, _ in props
                         ]) + '])),'
                     )
                 ) + ' },'
-                for k, v in m.items()
+                for name, props in blocks.items()
             ])}
             BlockState::Other {{ name, properties }} => Self {{ name: name.to_owned(), properties: properties.to_owned() }},
         }}
@@ -149,13 +141,13 @@ impl <'a> From<&BlockState<'a>> for schema::BlockState<'a> {{
 types_rs = n.join([
     r'#[derive(Debug, strum::Display, strum::EnumString, Clone, PartialEq, Eq)]' + n
     + r'#[strum(serialize_all = "snake_case")]' + n
-    + 'pub enum ' + k + ' {'
+    + 'pub enum ' + name + ' {'
     + (
-        ' '+', '.join([n.title().replace('_', '') for n in v])+' '
-        if len(v) <= 8
-        else n+i+nn.join([n.title().replace('_', '')+',' for n in v])+n
+        ' ' + ', '.join([pascal(variant) for variant in variants]) + ' '
+        if len(variants) <= 8
+        else n+indent + (n+indent).join([pascal(variant)+',' for variant in variants]) + n
     ) + '}'
-    for k, v in enums.items()
+    for name, variants in enums.items()
 ]) + '\n'
 
 with open('src/block_state/list.rs', 'w') as file:
