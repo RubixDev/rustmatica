@@ -5,9 +5,6 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[target.wasm32-unknown-unknown]
-runner = 'wasm-bindgen-test-runner'
-
 [dependencies]
 fastnbt = "2.0.0-alpha"
 flate2 = "1.0.23"
