@@ -5,6 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.wasm-test]
+inherits = "test"
+opt-level = 1
+
 [dependencies]
 fastnbt = "2.0.0-alpha"
 flate2 = "1.0.23"

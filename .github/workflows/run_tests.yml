@@ -8,21 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: Install
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: actions-rs/cargo@v1
+      - name: Run
+        uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --release --all-features
   wasm:
     name: rustmatica_wasm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: Install Toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
-      - run: cargo install wasm-pack
-      - run: wasm-pack test --node --release
+      - name: Install wasm-pack
+        run: cargo install wasm-pack
+      - name: Run
+        run: wasm-pack test --node --profile wasm-test

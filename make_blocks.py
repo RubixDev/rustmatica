@@ -15,6 +15,12 @@ def pascal(name: str) -> str:
     return name.title().replace('_', '')
 
 
+def chunked(data: dict, size: int):
+    items = list(data.items())
+    for i in range(0, len(data), size):
+        yield dict(items[i:i + size])
+
+
 with open('blocks.txt', 'r') as file:
     raw_block_info = file.read()
 
@@ -24,6 +30,7 @@ blocks = {
     ] if match.group(2) else []
     for match in re.compile(r'BLOCKINFO --- (\w+) - (.*)').finditer(raw_block_info)
 }
+blocks_chunked = [d for d in chunked(blocks, 200)]
 enums = {
     match.group(1): match.group(2).split(',')
     for match in re.compile(r'ENUMINFO --- (\w+) - (.*)').finditer(raw_block_info)
@@ -66,42 +73,53 @@ use super::list::BlockState;
 macro_rules! try_make {
     ($block:ident, $state:ident; $($name:ident),+) => {
         match $state.properties.as_ref() {
-            Some(props) => Self::$block {
+            Some(props) => _Self::$block {
                 $(
                     $name: match props.get(stringify!($name)) {
                         Some(val) => match <_>::from_str(val).ok() {
                             Some(val) => val,
-                            None => return Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
+                            None => return _Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
                         },
-                        None => return Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
+                        None => return _Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
                     }
                 ),+
             },
-            None => Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
+            None => _Self::Other { name: $state.name.to_owned(), properties: $state.properties.to_owned() },
         }
     };
 }
+
+type _Self<'a> = BlockState<'a>;
 """ + f"""
+{n.join([
+    f'fn from_chunk_{index}'"<'a>(state: &schema::BlockState<'a>) -> _Self<'a> {"+n
+    + indent+'match state.name.as_ref() {'+n
+    + 2*indent + (n+2*indent).join([
+        f'"minecraft:{name}" => '
+        + (
+            f'_Self::{pascal(name)}'
+            if not props
+            else (
+                    f'try_make!({pascal(name)}, state; '
+                    + ', '.join([
+                f'{prop if prop != "type" else "r#type"}'
+                for prop, _type in props
+            ]) + ')'
+            )
+        ) + ','
+        for name, props in chunk.items()
+    ]) + n
+    + 2*indent+'_ => ' + (
+        f'from_chunk_{index + 1}(state)'
+        if index != len(blocks_chunked) - 1
+        else '_Self::Other { name: state.name.to_owned(), properties: state.properties.to_owned() }'
+    ) + ','+n+indent+'}'+n+'}'
+    for index, chunk in enumerate(blocks_chunked)
+])}
+
 impl <'a> From<&schema::BlockState<'a>> for BlockState<'a> {{
     fn from(state: &schema::BlockState<'a>) -> Self {{
-        match state.name.as_ref() {{
-            {(n+3*indent).join([
-                f'"minecraft:{name}" => '
-                + (
-                    f'Self::{pascal(name)}'
-                    if not props
-                    else (
-                        f'try_make!({pascal(name)}, state; '
-                        + ', '.join([
-                            f'{prop if prop != "type" else "r#type"}'
-                            for prop, _type in props
-                        ]) + ')'
-                    )
-                ) + ','
-                for name, props in blocks.items()
-            ])}
-            _ => Self::Other {{ name: state.name.to_owned(), properties: state.properties.to_owned() }},
-        }}
+        from_chunk_0(state)
     }}
 }}
 """
@@ -109,32 +127,46 @@ de_rs = r"""use std::{borrow::Cow, collections::HashMap};
 
 use crate::schema;
 use super::list::BlockState;
+
+type _Self<'a> = schema::BlockState<'a>;
 """ + f"""
+{n.join([
+    f'fn from_chunk_{index}'"<'a>(state: &BlockState<'a>) -> _Self<'a> {"+n
+    + indent+'match state {'+n
+    + 2*indent + (n+2*indent).join([
+        f'BlockState::{pascal(name)}'
+        + (
+            '' if not props
+            else ' { ' + ', '.join([
+                prop if prop != 'type' else 'r#type' for prop, _ in props
+            ]) + ' }'
+        ) + ' => _Self { name: Cow::Borrowed("minecraft:' + name + '"), properties: '
+        + (
+            'None' if not props
+            else (
+                    'Some(HashMap::from(['
+                    + ', '.join([
+                f'(Cow::Borrowed("{prop}"), Cow::Owned({prop if prop != "type" else "r#type"}.to_string()))'
+                for prop, _ in props
+            ]) + '])),'
+            )
+        ) + ' },'
+        for name, props in chunk.items()
+    ]) + n
+    + 2*indent + (
+        f'_ => from_chunk_{index + 1}(state),'
+        if index != len(blocks_chunked) - 1
+        else ('BlockState::Other { name, properties } => '
+            + '_Self { name: name.to_owned(), properties: properties.to_owned() },'+n+2*indent
+            + '_ => unreachable!(),')
+    ) + n+indent + '}' + n
+    + '}'
+    for index, chunk in enumerate(blocks_chunked)
+])}
+
 impl <'a> From<&BlockState<'a>> for schema::BlockState<'a> {{
     fn from(state: &BlockState<'a>) -> Self {{
-        match state {{
-            {(n+3*indent).join([
-                f'BlockState::{pascal(name)}'
-                + (
-                    '' if not props
-                    else ' { ' + ', '.join([
-                        prop if prop != 'type' else 'r#type' for prop, _ in props
-                    ]) + ' }'
-                ) + ' => Self { name: Cow::Borrowed("minecraft:' + name + '"), properties: '
-                + (
-                    'None' if not props
-                    else (
-                        'Some(HashMap::from(['
-                        + ', '.join([
-                            f'(Cow::Borrowed("{prop}"), Cow::Owned({prop if prop != "type" else "r#type"}.to_string()))'
-                            for prop, _ in props
-                        ]) + '])),'
-                    )
-                ) + ' },'
-                for name, props in blocks.items()
-            ])}
-            BlockState::Other {{ name, properties }} => Self {{ name: name.to_owned(), properties: properties.to_owned() }},
-        }}
+        from_chunk_0(state)
     }}
 }}
 """
