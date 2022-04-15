@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use bitvec::{view::BitView, order::Lsb0, prelude::BitVec};
 use fastnbt::LongArray;
 
 use crate::{schema, util::{Vec3, UVec3}, block_state::BlockState};
@@ -31,9 +30,9 @@ impl <'l> Region<'l> {
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
-            .map(|block| block.to_le_bytes().iter().map(|byte| byte.view_bits::<Lsb0>()).flatten().collect::<BitVec>())
+            .map(|block| (0..64).map(move |bit| block >> bit & 1))
             .flatten()
-            .collect::<BitVec>()
+            .collect::<Vec<i64>>()
             .chunks(num_bits)
             .map(|slice| slice.iter().rev().fold(0, |acc, bit| acc << 1 | *bit as usize))
             .collect::<Vec<usize>>();
@@ -55,9 +54,9 @@ impl <'l> Region<'l> {
 
         let num_bits = self.num_bits();
         new.block_states = LongArray::new(self.blocks.iter()
-            .map(|id| (&id.view_bits::<Lsb0>()[..num_bits]).iter().collect::<BitVec>())
+            .map(|id| (0..num_bits).map(move |bit| id >> bit & 1))
             .flatten()
-            .collect::<BitVec>()
+            .collect::<Vec<usize>>()
             .chunks(64)
             .map(|bits| bits.iter().rev().fold(0, |acc, bit| acc << 1 | *bit as i64))
             .collect());
