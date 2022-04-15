@@ -1,6 +1,6 @@
 use std::{time::SystemTime, io::{Read, Write}, borrow::Cow, collections::HashMap, fs::File};
 
-use fastnbt::{de::from_bytes, ser::to_bytes};
+use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 
 use crate::{schema, util::Vec3, error::Result};

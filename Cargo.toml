@@ -10,7 +10,7 @@ inherits = "test"
 opt-level = 1
 
 [dependencies]
-fastnbt = "2.0.0-alpha"
+fastnbt = "2.0.1"
 flate2 = "1.0.23"
 serde = "1.0.136"
 bitvec = "1.0.0"
