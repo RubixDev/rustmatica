@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use fastnbt::LongArray;
 
-use crate::{schema, util::{Vec3, UVec3}, block_state::BlockState};
+use crate::{schema, util::{Vec3, UVec3}, BlockState};
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Region<'l> {
@@ -26,7 +26,7 @@ impl <'l> Region<'l> {
 
     pub fn from_raw(raw: Cow<'l, schema::Region>, name: Cow<'l, str>) -> Self {
         let mut new = Self::new(name, raw.position, raw.size);
-        new.palette = raw.block_state_palette.iter().map(|b| b.into()).collect();
+        new.palette = raw.block_state_palette.to_owned();
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
@@ -44,7 +44,7 @@ impl <'l> Region<'l> {
         let mut new = schema::Region {
             position: self.position,
             size: self.size,
-            block_state_palette: self.palette.iter().map(|b| b.into()).collect(),
+            block_state_palette: self.palette.to_owned(),
             tile_entities: vec![],
             entities: vec![],
             pending_fluid_ticks: vec![],

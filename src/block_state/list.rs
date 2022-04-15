@@ -1,906 +1,905 @@
-use std::{borrow::Cow, collections::HashMap};
-
+use core::marker::PhantomData;
+use std::{borrow::Cow, collections::HashMap, str::FromStr};
+use serde::{Deserialize, de::Visitor};
 use super::types::*;
 
-#[derive(Debug, Clone)]
-pub enum BlockState<'a> {
-    Air,
-    Stone,
-    Granite,
-    PolishedGranite,
-    Diorite,
-    PolishedDiorite,
-    Andesite,
-    PolishedAndesite,
-    GrassBlock { snowy: bool },
-    Dirt,
-    CoarseDirt,
-    Podzol { snowy: bool },
-    Cobblestone,
-    OakPlanks,
-    SprucePlanks,
-    BirchPlanks,
-    JunglePlanks,
-    AcaciaPlanks,
-    DarkOakPlanks,
-    OakSapling { stage: u8 },
-    SpruceSapling { stage: u8 },
-    BirchSapling { stage: u8 },
-    JungleSapling { stage: u8 },
-    AcaciaSapling { stage: u8 },
-    DarkOakSapling { stage: u8 },
-    Bedrock,
-    Water { level: u8 },
-    Lava { level: u8 },
-    Sand,
-    RedSand,
-    Gravel,
-    GoldOre,
-    DeepslateGoldOre,
-    IronOre,
-    DeepslateIronOre,
-    CoalOre,
-    DeepslateCoalOre,
-    NetherGoldOre,
-    OakLog { axis: Axis },
-    SpruceLog { axis: Axis },
-    BirchLog { axis: Axis },
-    JungleLog { axis: Axis },
-    AcaciaLog { axis: Axis },
-    DarkOakLog { axis: Axis },
-    StrippedSpruceLog { axis: Axis },
-    StrippedBirchLog { axis: Axis },
-    StrippedJungleLog { axis: Axis },
-    StrippedAcaciaLog { axis: Axis },
-    StrippedDarkOakLog { axis: Axis },
-    StrippedOakLog { axis: Axis },
-    OakWood { axis: Axis },
-    SpruceWood { axis: Axis },
-    BirchWood { axis: Axis },
-    JungleWood { axis: Axis },
-    AcaciaWood { axis: Axis },
-    DarkOakWood { axis: Axis },
-    StrippedOakWood { axis: Axis },
-    StrippedSpruceWood { axis: Axis },
-    StrippedBirchWood { axis: Axis },
-    StrippedJungleWood { axis: Axis },
-    StrippedAcaciaWood { axis: Axis },
-    StrippedDarkOakWood { axis: Axis },
-    OakLeaves { distance: u8, persistent: bool },
-    SpruceLeaves { distance: u8, persistent: bool },
-    BirchLeaves { distance: u8, persistent: bool },
-    JungleLeaves { distance: u8, persistent: bool },
-    AcaciaLeaves { distance: u8, persistent: bool },
-    DarkOakLeaves { distance: u8, persistent: bool },
-    AzaleaLeaves { distance: u8, persistent: bool },
-    FloweringAzaleaLeaves { distance: u8, persistent: bool },
-    Sponge,
-    WetSponge,
-    Glass,
-    LapisOre,
-    DeepslateLapisOre,
-    LapisBlock,
-    Dispenser { facing: Direction, triggered: bool },
-    Sandstone,
-    ChiseledSandstone,
-    CutSandstone,
-    NoteBlock { instrument: Instrument, note: u8, powered: bool },
-    WhiteBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    OrangeBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    MagentaBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    LightBlueBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    YellowBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    LimeBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    PinkBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    GrayBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    LightGrayBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    CyanBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    PurpleBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    BlueBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    BrownBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    GreenBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    RedBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    BlackBed { facing: HorizontalDirection, occupied: bool, part: BedPart },
-    PoweredRail { powered: bool, shape: StraightRailShape, waterlogged: bool },
-    DetectorRail { powered: bool, shape: StraightRailShape, waterlogged: bool },
-    StickyPiston { extended: bool, facing: Direction },
-    Cobweb,
-    Grass,
-    Fern,
-    DeadBush,
-    Seagrass,
-    TallSeagrass { half: DoubleBlockHalf },
-    Piston { extended: bool, facing: Direction },
-    PistonHead { facing: Direction, short: bool, r#type: PistonType },
-    WhiteWool,
-    OrangeWool,
-    MagentaWool,
-    LightBlueWool,
-    YellowWool,
-    LimeWool,
-    PinkWool,
-    GrayWool,
-    LightGrayWool,
-    CyanWool,
-    PurpleWool,
-    BlueWool,
-    BrownWool,
-    GreenWool,
-    RedWool,
-    BlackWool,
-    MovingPiston { facing: Direction, r#type: PistonType },
-    Dandelion,
-    Poppy,
-    BlueOrchid,
-    Allium,
-    AzureBluet,
-    RedTulip,
-    OrangeTulip,
-    WhiteTulip,
-    PinkTulip,
-    OxeyeDaisy,
-    Cornflower,
-    WitherRose,
-    LilyOfTheValley,
-    BrownMushroom,
-    RedMushroom,
-    GoldBlock,
-    IronBlock,
-    Bricks,
-    Tnt { unstable: bool },
-    Bookshelf,
-    MossyCobblestone,
-    Obsidian,
-    Torch,
-    WallTorch { facing: HorizontalDirection },
-    Fire { age: u8, east: bool, north: bool, south: bool, up: bool, west: bool },
-    SoulFire,
-    Spawner,
-    OakStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    Chest { facing: HorizontalDirection, r#type: ChestType, waterlogged: bool },
-    RedstoneWire { east: WireConnection, north: WireConnection, power: u8, south: WireConnection, west: WireConnection },
-    DiamondOre,
-    DeepslateDiamondOre,
-    DiamondBlock,
-    CraftingTable,
-    Wheat { age: u8 },
-    Farmland { moisture: u8 },
-    Furnace { facing: HorizontalDirection, lit: bool },
-    OakSign { rotation: u8, waterlogged: bool },
-    SpruceSign { rotation: u8, waterlogged: bool },
-    BirchSign { rotation: u8, waterlogged: bool },
-    AcaciaSign { rotation: u8, waterlogged: bool },
-    JungleSign { rotation: u8, waterlogged: bool },
-    DarkOakSign { rotation: u8, waterlogged: bool },
-    OakDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    Ladder { facing: HorizontalDirection, waterlogged: bool },
-    Rail { shape: RailShape, waterlogged: bool },
-    CobblestoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    OakWallSign { facing: HorizontalDirection, waterlogged: bool },
-    SpruceWallSign { facing: HorizontalDirection, waterlogged: bool },
-    BirchWallSign { facing: HorizontalDirection, waterlogged: bool },
-    AcaciaWallSign { facing: HorizontalDirection, waterlogged: bool },
-    JungleWallSign { facing: HorizontalDirection, waterlogged: bool },
-    DarkOakWallSign { facing: HorizontalDirection, waterlogged: bool },
-    Lever { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    StonePressurePlate { powered: bool },
-    IronDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    OakPressurePlate { powered: bool },
-    SprucePressurePlate { powered: bool },
-    BirchPressurePlate { powered: bool },
-    JunglePressurePlate { powered: bool },
-    AcaciaPressurePlate { powered: bool },
-    DarkOakPressurePlate { powered: bool },
-    RedstoneOre { lit: bool },
-    DeepslateRedstoneOre { lit: bool },
-    RedstoneTorch { lit: bool },
-    RedstoneWallTorch { facing: HorizontalDirection, lit: bool },
-    StoneButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    Snow { layers: u8 },
-    Ice,
-    SnowBlock,
-    Cactus { age: u8 },
-    Clay,
-    SugarCane { age: u8 },
-    Jukebox { has_record: bool },
-    OakFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    Pumpkin,
-    Netherrack,
-    SoulSand,
-    SoulSoil,
-    Basalt { axis: Axis },
-    PolishedBasalt { axis: Axis },
-    SoulTorch,
-    SoulWallTorch { facing: HorizontalDirection },
-    Glowstone,
-    NetherPortal { axis: HorizontalAxis },
-    CarvedPumpkin { facing: HorizontalDirection },
-    JackOLantern { facing: HorizontalDirection },
-    Cake { bites: u8 },
-    Repeater { delay: u8, facing: HorizontalDirection, locked: bool, powered: bool },
-    WhiteStainedGlass,
-    OrangeStainedGlass,
-    MagentaStainedGlass,
-    LightBlueStainedGlass,
-    YellowStainedGlass,
-    LimeStainedGlass,
-    PinkStainedGlass,
-    GrayStainedGlass,
-    LightGrayStainedGlass,
-    CyanStainedGlass,
-    PurpleStainedGlass,
-    BlueStainedGlass,
-    BrownStainedGlass,
-    GreenStainedGlass,
-    RedStainedGlass,
-    BlackStainedGlass,
-    OakTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    SpruceTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    BirchTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    JungleTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    AcaciaTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    DarkOakTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    StoneBricks,
-    MossyStoneBricks,
-    CrackedStoneBricks,
-    ChiseledStoneBricks,
-    InfestedStone,
-    InfestedCobblestone,
-    InfestedStoneBricks,
-    InfestedMossyStoneBricks,
-    InfestedCrackedStoneBricks,
-    InfestedChiseledStoneBricks,
-    BrownMushroomBlock { down: bool, east: bool, north: bool, south: bool, up: bool, west: bool },
-    RedMushroomBlock { down: bool, east: bool, north: bool, south: bool, up: bool, west: bool },
-    MushroomStem { down: bool, east: bool, north: bool, south: bool, up: bool, west: bool },
-    IronBars { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    Chain { axis: Axis, waterlogged: bool },
-    GlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    Melon,
-    AttachedPumpkinStem { facing: HorizontalDirection },
-    AttachedMelonStem { facing: HorizontalDirection },
-    PumpkinStem { age: u8 },
-    MelonStem { age: u8 },
-    Vine { east: bool, north: bool, south: bool, up: bool, west: bool },
-    GlowLichen { down: bool, east: bool, north: bool, south: bool, up: bool, waterlogged: bool, west: bool },
-    OakFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    BrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    StoneBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    Mycelium { snowy: bool },
-    LilyPad,
-    NetherBricks,
-    NetherBrickFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    NetherBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    NetherWart { age: u8 },
-    EnchantingTable,
-    BrewingStand { has_bottle_0: bool, has_bottle_1: bool, has_bottle_2: bool },
-    Cauldron,
-    WaterCauldron { level: u8 },
-    LavaCauldron,
-    PowderSnowCauldron { level: u8 },
-    EndPortal,
-    EndPortalFrame { eye: bool, facing: HorizontalDirection },
-    EndStone,
-    DragonEgg,
-    RedstoneLamp { lit: bool },
-    Cocoa { age: u8, facing: HorizontalDirection },
-    SandstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    EmeraldOre,
-    DeepslateEmeraldOre,
-    EnderChest { facing: HorizontalDirection, waterlogged: bool },
-    TripwireHook { attached: bool, facing: HorizontalDirection, powered: bool },
-    Tripwire { attached: bool, disarmed: bool, east: bool, north: bool, powered: bool, south: bool, west: bool },
-    EmeraldBlock,
-    SpruceStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    BirchStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    JungleStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    CommandBlock { conditional: bool, facing: Direction },
-    Beacon,
-    CobblestoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    MossyCobblestoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    FlowerPot,
-    PottedOakSapling,
-    PottedSpruceSapling,
-    PottedBirchSapling,
-    PottedJungleSapling,
-    PottedAcaciaSapling,
-    PottedDarkOakSapling,
-    PottedFern,
-    PottedDandelion,
-    PottedPoppy,
-    PottedBlueOrchid,
-    PottedAllium,
-    PottedAzureBluet,
-    PottedRedTulip,
-    PottedOrangeTulip,
-    PottedWhiteTulip,
-    PottedPinkTulip,
-    PottedOxeyeDaisy,
-    PottedCornflower,
-    PottedLilyOfTheValley,
-    PottedWitherRose,
-    PottedRedMushroom,
-    PottedBrownMushroom,
-    PottedDeadBush,
-    PottedCactus,
-    Carrots { age: u8 },
-    Potatoes { age: u8 },
-    OakButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    SpruceButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    BirchButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    JungleButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    AcaciaButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    DarkOakButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    SkeletonSkull { rotation: u8 },
-    SkeletonWallSkull { facing: HorizontalDirection },
-    WitherSkeletonSkull { rotation: u8 },
-    WitherSkeletonWallSkull { facing: HorizontalDirection },
-    ZombieHead { rotation: u8 },
-    ZombieWallHead { facing: HorizontalDirection },
-    PlayerHead { rotation: u8 },
-    PlayerWallHead { facing: HorizontalDirection },
-    CreeperHead { rotation: u8 },
-    CreeperWallHead { facing: HorizontalDirection },
-    DragonHead { rotation: u8 },
-    DragonWallHead { facing: HorizontalDirection },
-    Anvil { facing: HorizontalDirection },
-    ChippedAnvil { facing: HorizontalDirection },
-    DamagedAnvil { facing: HorizontalDirection },
-    TrappedChest { facing: HorizontalDirection, r#type: ChestType, waterlogged: bool },
-    LightWeightedPressurePlate { power: u8 },
-    HeavyWeightedPressurePlate { power: u8 },
-    Comparator { facing: HorizontalDirection, mode: ComparatorMode, powered: bool },
-    DaylightDetector { inverted: bool, power: u8 },
-    RedstoneBlock,
-    NetherQuartzOre,
-    Hopper { enabled: bool, facing: HopperDirection },
-    QuartzBlock,
-    ChiseledQuartzBlock,
-    QuartzPillar { axis: Axis },
-    QuartzStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    ActivatorRail { powered: bool, shape: StraightRailShape, waterlogged: bool },
-    Dropper { facing: Direction, triggered: bool },
-    WhiteTerracotta,
-    OrangeTerracotta,
-    MagentaTerracotta,
-    LightBlueTerracotta,
-    YellowTerracotta,
-    LimeTerracotta,
-    PinkTerracotta,
-    GrayTerracotta,
-    LightGrayTerracotta,
-    CyanTerracotta,
-    PurpleTerracotta,
-    BlueTerracotta,
-    BrownTerracotta,
-    GreenTerracotta,
-    RedTerracotta,
-    BlackTerracotta,
-    WhiteStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    OrangeStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    MagentaStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    LightBlueStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    YellowStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    LimeStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    PinkStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    GrayStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    LightGrayStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    CyanStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    PurpleStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    BlueStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    BrownStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    GreenStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    RedStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    BlackStainedGlassPane { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    AcaciaStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    DarkOakStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    SlimeBlock,
-    Barrier,
-    Light { level: u8, waterlogged: bool },
-    IronTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    Prismarine,
-    PrismarineBricks,
-    DarkPrismarine,
-    PrismarineStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PrismarineBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    DarkPrismarineStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PrismarineSlab { r#type: SlabType, waterlogged: bool },
-    PrismarineBrickSlab { r#type: SlabType, waterlogged: bool },
-    DarkPrismarineSlab { r#type: SlabType, waterlogged: bool },
-    SeaLantern,
-    HayBlock { axis: Axis },
-    WhiteCarpet,
-    OrangeCarpet,
-    MagentaCarpet,
-    LightBlueCarpet,
-    YellowCarpet,
-    LimeCarpet,
-    PinkCarpet,
-    GrayCarpet,
-    LightGrayCarpet,
-    CyanCarpet,
-    PurpleCarpet,
-    BlueCarpet,
-    BrownCarpet,
-    GreenCarpet,
-    RedCarpet,
-    BlackCarpet,
-    Terracotta,
-    CoalBlock,
-    PackedIce,
-    Sunflower { half: DoubleBlockHalf },
-    Lilac { half: DoubleBlockHalf },
-    RoseBush { half: DoubleBlockHalf },
-    Peony { half: DoubleBlockHalf },
-    TallGrass { half: DoubleBlockHalf },
-    LargeFern { half: DoubleBlockHalf },
-    WhiteBanner { rotation: u8 },
-    OrangeBanner { rotation: u8 },
-    MagentaBanner { rotation: u8 },
-    LightBlueBanner { rotation: u8 },
-    YellowBanner { rotation: u8 },
-    LimeBanner { rotation: u8 },
-    PinkBanner { rotation: u8 },
-    GrayBanner { rotation: u8 },
-    LightGrayBanner { rotation: u8 },
-    CyanBanner { rotation: u8 },
-    PurpleBanner { rotation: u8 },
-    BlueBanner { rotation: u8 },
-    BrownBanner { rotation: u8 },
-    GreenBanner { rotation: u8 },
-    RedBanner { rotation: u8 },
-    BlackBanner { rotation: u8 },
-    WhiteWallBanner { facing: HorizontalDirection },
-    OrangeWallBanner { facing: HorizontalDirection },
-    MagentaWallBanner { facing: HorizontalDirection },
-    LightBlueWallBanner { facing: HorizontalDirection },
-    YellowWallBanner { facing: HorizontalDirection },
-    LimeWallBanner { facing: HorizontalDirection },
-    PinkWallBanner { facing: HorizontalDirection },
-    GrayWallBanner { facing: HorizontalDirection },
-    LightGrayWallBanner { facing: HorizontalDirection },
-    CyanWallBanner { facing: HorizontalDirection },
-    PurpleWallBanner { facing: HorizontalDirection },
-    BlueWallBanner { facing: HorizontalDirection },
-    BrownWallBanner { facing: HorizontalDirection },
-    GreenWallBanner { facing: HorizontalDirection },
-    RedWallBanner { facing: HorizontalDirection },
-    BlackWallBanner { facing: HorizontalDirection },
-    RedSandstone,
-    ChiseledRedSandstone,
-    CutRedSandstone,
-    RedSandstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    OakSlab { r#type: SlabType, waterlogged: bool },
-    SpruceSlab { r#type: SlabType, waterlogged: bool },
-    BirchSlab { r#type: SlabType, waterlogged: bool },
-    JungleSlab { r#type: SlabType, waterlogged: bool },
-    AcaciaSlab { r#type: SlabType, waterlogged: bool },
-    DarkOakSlab { r#type: SlabType, waterlogged: bool },
-    StoneSlab { r#type: SlabType, waterlogged: bool },
-    SmoothStoneSlab { r#type: SlabType, waterlogged: bool },
-    SandstoneSlab { r#type: SlabType, waterlogged: bool },
-    CutSandstoneSlab { r#type: SlabType, waterlogged: bool },
-    PetrifiedOakSlab { r#type: SlabType, waterlogged: bool },
-    CobblestoneSlab { r#type: SlabType, waterlogged: bool },
-    BrickSlab { r#type: SlabType, waterlogged: bool },
-    StoneBrickSlab { r#type: SlabType, waterlogged: bool },
-    NetherBrickSlab { r#type: SlabType, waterlogged: bool },
-    QuartzSlab { r#type: SlabType, waterlogged: bool },
-    RedSandstoneSlab { r#type: SlabType, waterlogged: bool },
-    CutRedSandstoneSlab { r#type: SlabType, waterlogged: bool },
-    PurpurSlab { r#type: SlabType, waterlogged: bool },
-    SmoothStone,
-    SmoothSandstone,
-    SmoothQuartz,
-    SmoothRedSandstone,
-    SpruceFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    BirchFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    JungleFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    AcaciaFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    DarkOakFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    SpruceFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    BirchFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    JungleFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    AcaciaFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    DarkOakFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    SpruceDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    BirchDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    JungleDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    AcaciaDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    DarkOakDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    EndRod { facing: Direction },
-    ChorusPlant { down: bool, east: bool, north: bool, south: bool, up: bool, west: bool },
-    ChorusFlower { age: u8 },
-    PurpurBlock,
-    PurpurPillar { axis: Axis },
-    PurpurStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    EndStoneBricks,
-    Beetroots { age: u8 },
-    DirtPath,
-    EndGateway,
-    RepeatingCommandBlock { conditional: bool, facing: Direction },
-    ChainCommandBlock { conditional: bool, facing: Direction },
-    FrostedIce { age: u8 },
-    MagmaBlock,
-    NetherWartBlock,
-    RedNetherBricks,
-    BoneBlock { axis: Axis },
-    StructureVoid,
-    Observer { facing: Direction, powered: bool },
-    ShulkerBox { facing: Direction },
-    WhiteShulkerBox { facing: Direction },
-    OrangeShulkerBox { facing: Direction },
-    MagentaShulkerBox { facing: Direction },
-    LightBlueShulkerBox { facing: Direction },
-    YellowShulkerBox { facing: Direction },
-    LimeShulkerBox { facing: Direction },
-    PinkShulkerBox { facing: Direction },
-    GrayShulkerBox { facing: Direction },
-    LightGrayShulkerBox { facing: Direction },
-    CyanShulkerBox { facing: Direction },
-    PurpleShulkerBox { facing: Direction },
-    BlueShulkerBox { facing: Direction },
-    BrownShulkerBox { facing: Direction },
-    GreenShulkerBox { facing: Direction },
-    RedShulkerBox { facing: Direction },
-    BlackShulkerBox { facing: Direction },
-    WhiteGlazedTerracotta { facing: HorizontalDirection },
-    OrangeGlazedTerracotta { facing: HorizontalDirection },
-    MagentaGlazedTerracotta { facing: HorizontalDirection },
-    LightBlueGlazedTerracotta { facing: HorizontalDirection },
-    YellowGlazedTerracotta { facing: HorizontalDirection },
-    LimeGlazedTerracotta { facing: HorizontalDirection },
-    PinkGlazedTerracotta { facing: HorizontalDirection },
-    GrayGlazedTerracotta { facing: HorizontalDirection },
-    LightGrayGlazedTerracotta { facing: HorizontalDirection },
-    CyanGlazedTerracotta { facing: HorizontalDirection },
-    PurpleGlazedTerracotta { facing: HorizontalDirection },
-    BlueGlazedTerracotta { facing: HorizontalDirection },
-    BrownGlazedTerracotta { facing: HorizontalDirection },
-    GreenGlazedTerracotta { facing: HorizontalDirection },
-    RedGlazedTerracotta { facing: HorizontalDirection },
-    BlackGlazedTerracotta { facing: HorizontalDirection },
-    WhiteConcrete,
-    OrangeConcrete,
-    MagentaConcrete,
-    LightBlueConcrete,
-    YellowConcrete,
-    LimeConcrete,
-    PinkConcrete,
-    GrayConcrete,
-    LightGrayConcrete,
-    CyanConcrete,
-    PurpleConcrete,
-    BlueConcrete,
-    BrownConcrete,
-    GreenConcrete,
-    RedConcrete,
-    BlackConcrete,
-    WhiteConcretePowder,
-    OrangeConcretePowder,
-    MagentaConcretePowder,
-    LightBlueConcretePowder,
-    YellowConcretePowder,
-    LimeConcretePowder,
-    PinkConcretePowder,
-    GrayConcretePowder,
-    LightGrayConcretePowder,
-    CyanConcretePowder,
-    PurpleConcretePowder,
-    BlueConcretePowder,
-    BrownConcretePowder,
-    GreenConcretePowder,
-    RedConcretePowder,
-    BlackConcretePowder,
-    Kelp { age: u8 },
-    KelpPlant,
-    DriedKelpBlock,
-    TurtleEgg { eggs: u8, hatch: u8 },
-    DeadTubeCoralBlock,
-    DeadBrainCoralBlock,
-    DeadBubbleCoralBlock,
-    DeadFireCoralBlock,
-    DeadHornCoralBlock,
-    TubeCoralBlock,
-    BrainCoralBlock,
-    BubbleCoralBlock,
-    FireCoralBlock,
-    HornCoralBlock,
-    DeadTubeCoral { waterlogged: bool },
-    DeadBrainCoral { waterlogged: bool },
-    DeadBubbleCoral { waterlogged: bool },
-    DeadFireCoral { waterlogged: bool },
-    DeadHornCoral { waterlogged: bool },
-    TubeCoral { waterlogged: bool },
-    BrainCoral { waterlogged: bool },
-    BubbleCoral { waterlogged: bool },
-    FireCoral { waterlogged: bool },
-    HornCoral { waterlogged: bool },
-    DeadTubeCoralFan { waterlogged: bool },
-    DeadBrainCoralFan { waterlogged: bool },
-    DeadBubbleCoralFan { waterlogged: bool },
-    DeadFireCoralFan { waterlogged: bool },
-    DeadHornCoralFan { waterlogged: bool },
-    TubeCoralFan { waterlogged: bool },
-    BrainCoralFan { waterlogged: bool },
-    BubbleCoralFan { waterlogged: bool },
-    FireCoralFan { waterlogged: bool },
-    HornCoralFan { waterlogged: bool },
-    DeadTubeCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    DeadBrainCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    DeadBubbleCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    DeadFireCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    DeadHornCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    TubeCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    BrainCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    BubbleCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    FireCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    HornCoralWallFan { facing: HorizontalDirection, waterlogged: bool },
-    SeaPickle { pickles: u8, waterlogged: bool },
-    BlueIce,
-    Conduit { waterlogged: bool },
-    BambooSapling,
-    Bamboo { age: u8, leaves: BambooLeaves, stage: u8 },
-    PottedBamboo,
-    VoidAir,
-    CaveAir,
-    BubbleColumn { drag: bool },
-    PolishedGraniteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    SmoothRedSandstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    MossyStoneBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedDioriteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    MossyCobblestoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    EndStoneBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    StoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    SmoothSandstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    SmoothQuartzStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    GraniteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    AndesiteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    RedNetherBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedAndesiteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    DioriteStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedGraniteSlab { r#type: SlabType, waterlogged: bool },
-    SmoothRedSandstoneSlab { r#type: SlabType, waterlogged: bool },
-    MossyStoneBrickSlab { r#type: SlabType, waterlogged: bool },
-    PolishedDioriteSlab { r#type: SlabType, waterlogged: bool },
-    MossyCobblestoneSlab { r#type: SlabType, waterlogged: bool },
-    EndStoneBrickSlab { r#type: SlabType, waterlogged: bool },
-    SmoothSandstoneSlab { r#type: SlabType, waterlogged: bool },
-    SmoothQuartzSlab { r#type: SlabType, waterlogged: bool },
-    GraniteSlab { r#type: SlabType, waterlogged: bool },
-    AndesiteSlab { r#type: SlabType, waterlogged: bool },
-    RedNetherBrickSlab { r#type: SlabType, waterlogged: bool },
-    PolishedAndesiteSlab { r#type: SlabType, waterlogged: bool },
-    DioriteSlab { r#type: SlabType, waterlogged: bool },
-    BrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    PrismarineWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    RedSandstoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    MossyStoneBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    GraniteWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    StoneBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    NetherBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    AndesiteWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    RedNetherBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    SandstoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    EndStoneBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    DioriteWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    Scaffolding { bottom: bool, distance: u8, waterlogged: bool },
-    Loom { facing: HorizontalDirection },
-    Barrel { facing: Direction, open: bool },
-    Smoker { facing: HorizontalDirection, lit: bool },
-    BlastFurnace { facing: HorizontalDirection, lit: bool },
-    CartographyTable,
-    FletchingTable,
-    Grindstone { face: WallMountLocation, facing: HorizontalDirection },
-    Lectern { facing: HorizontalDirection, has_book: bool, powered: bool },
-    SmithingTable,
-    Stonecutter { facing: HorizontalDirection },
-    Bell { attachment: Attachment, facing: HorizontalDirection, powered: bool },
-    Lantern { hanging: bool, waterlogged: bool },
-    SoulLantern { hanging: bool, waterlogged: bool },
-    Campfire { facing: HorizontalDirection, lit: bool, signal_fire: bool, waterlogged: bool },
-    SoulCampfire { facing: HorizontalDirection, lit: bool, signal_fire: bool, waterlogged: bool },
-    SweetBerryBush { age: u8 },
-    WarpedStem { axis: Axis },
-    StrippedWarpedStem { axis: Axis },
-    WarpedHyphae { axis: Axis },
-    StrippedWarpedHyphae { axis: Axis },
-    WarpedNylium,
-    WarpedFungus,
-    WarpedWartBlock,
-    WarpedRoots,
-    NetherSprouts,
-    CrimsonStem { axis: Axis },
-    StrippedCrimsonStem { axis: Axis },
-    CrimsonHyphae { axis: Axis },
-    StrippedCrimsonHyphae { axis: Axis },
-    CrimsonNylium,
-    CrimsonFungus,
-    Shroomlight,
-    WeepingVines { age: u8 },
-    WeepingVinesPlant,
-    TwistingVines { age: u8 },
-    TwistingVinesPlant,
-    CrimsonRoots,
-    CrimsonPlanks,
-    WarpedPlanks,
-    CrimsonSlab { r#type: SlabType, waterlogged: bool },
-    WarpedSlab { r#type: SlabType, waterlogged: bool },
-    CrimsonPressurePlate { powered: bool },
-    WarpedPressurePlate { powered: bool },
-    CrimsonFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    WarpedFence { east: bool, north: bool, south: bool, waterlogged: bool, west: bool },
-    CrimsonTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    WarpedTrapdoor { facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool },
-    CrimsonFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    WarpedFenceGate { facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool },
-    CrimsonStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WarpedStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    CrimsonButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    WarpedButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    CrimsonDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    WarpedDoor { facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool },
-    CrimsonSign { rotation: u8, waterlogged: bool },
-    WarpedSign { rotation: u8, waterlogged: bool },
-    CrimsonWallSign { facing: HorizontalDirection, waterlogged: bool },
-    WarpedWallSign { facing: HorizontalDirection, waterlogged: bool },
-    StructureBlock { mode: StructureBlockMode },
-    Jigsaw { orientation: JigsawOrientation },
-    Composter { level: u8 },
-    Target { power: u8 },
-    BeeNest { facing: HorizontalDirection, honey_level: u8 },
-    Beehive { facing: HorizontalDirection, honey_level: u8 },
-    HoneyBlock,
-    HoneycombBlock,
-    NetheriteBlock,
-    AncientDebris,
-    CryingObsidian,
-    RespawnAnchor { charges: u8 },
-    PottedCrimsonFungus,
-    PottedWarpedFungus,
-    PottedCrimsonRoots,
-    PottedWarpedRoots,
-    Lodestone,
-    Blackstone,
-    BlackstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    BlackstoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    BlackstoneSlab { r#type: SlabType, waterlogged: bool },
-    PolishedBlackstone,
-    PolishedBlackstoneBricks,
-    CrackedPolishedBlackstoneBricks,
-    ChiseledPolishedBlackstone,
-    PolishedBlackstoneBrickSlab { r#type: SlabType, waterlogged: bool },
-    PolishedBlackstoneBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedBlackstoneBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    GildedBlackstone,
-    PolishedBlackstoneStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedBlackstoneSlab { r#type: SlabType, waterlogged: bool },
-    PolishedBlackstonePressurePlate { powered: bool },
-    PolishedBlackstoneButton { face: WallMountLocation, facing: HorizontalDirection, powered: bool },
-    PolishedBlackstoneWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    ChiseledNetherBricks,
-    CrackedNetherBricks,
-    QuartzBricks,
-    Candle { candles: u8, lit: bool, waterlogged: bool },
-    WhiteCandle { candles: u8, lit: bool, waterlogged: bool },
-    OrangeCandle { candles: u8, lit: bool, waterlogged: bool },
-    MagentaCandle { candles: u8, lit: bool, waterlogged: bool },
-    LightBlueCandle { candles: u8, lit: bool, waterlogged: bool },
-    YellowCandle { candles: u8, lit: bool, waterlogged: bool },
-    LimeCandle { candles: u8, lit: bool, waterlogged: bool },
-    PinkCandle { candles: u8, lit: bool, waterlogged: bool },
-    GrayCandle { candles: u8, lit: bool, waterlogged: bool },
-    LightGrayCandle { candles: u8, lit: bool, waterlogged: bool },
-    CyanCandle { candles: u8, lit: bool, waterlogged: bool },
-    PurpleCandle { candles: u8, lit: bool, waterlogged: bool },
-    BlueCandle { candles: u8, lit: bool, waterlogged: bool },
-    BrownCandle { candles: u8, lit: bool, waterlogged: bool },
-    GreenCandle { candles: u8, lit: bool, waterlogged: bool },
-    RedCandle { candles: u8, lit: bool, waterlogged: bool },
-    BlackCandle { candles: u8, lit: bool, waterlogged: bool },
-    CandleCake { lit: bool },
-    WhiteCandleCake { lit: bool },
-    OrangeCandleCake { lit: bool },
-    MagentaCandleCake { lit: bool },
-    LightBlueCandleCake { lit: bool },
-    YellowCandleCake { lit: bool },
-    LimeCandleCake { lit: bool },
-    PinkCandleCake { lit: bool },
-    GrayCandleCake { lit: bool },
-    LightGrayCandleCake { lit: bool },
-    CyanCandleCake { lit: bool },
-    PurpleCandleCake { lit: bool },
-    BlueCandleCake { lit: bool },
-    BrownCandleCake { lit: bool },
-    GreenCandleCake { lit: bool },
-    RedCandleCake { lit: bool },
-    BlackCandleCake { lit: bool },
-    AmethystBlock,
-    BuddingAmethyst,
-    AmethystCluster { facing: Direction, waterlogged: bool },
-    LargeAmethystBud { facing: Direction, waterlogged: bool },
-    MediumAmethystBud { facing: Direction, waterlogged: bool },
-    SmallAmethystBud { facing: Direction, waterlogged: bool },
-    Tuff,
-    Calcite,
-    TintedGlass,
-    PowderSnow,
-    SculkSensor { power: u8, sculk_sensor_phase: SculkSensorPhase, waterlogged: bool },
-    OxidizedCopper,
-    WeatheredCopper,
-    ExposedCopper,
-    CopperBlock,
-    CopperOre,
-    DeepslateCopperOre,
-    OxidizedCutCopper,
-    WeatheredCutCopper,
-    ExposedCutCopper,
-    CutCopper,
-    OxidizedCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WeatheredCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    ExposedCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    CutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    OxidizedCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    WeatheredCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    ExposedCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    CutCopperSlab { r#type: SlabType, waterlogged: bool },
-    WaxedCopperBlock,
-    WaxedWeatheredCopper,
-    WaxedExposedCopper,
-    WaxedOxidizedCopper,
-    WaxedOxidizedCutCopper,
-    WaxedWeatheredCutCopper,
-    WaxedExposedCutCopper,
-    WaxedCutCopper,
-    WaxedOxidizedCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WaxedWeatheredCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WaxedExposedCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WaxedCutCopperStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    WaxedOxidizedCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    WaxedWeatheredCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    WaxedExposedCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    WaxedCutCopperSlab { r#type: SlabType, waterlogged: bool },
-    LightningRod { facing: Direction, powered: bool, waterlogged: bool },
-    PointedDripstone { thickness: Thickness, vertical_direction: VerticalDirection, waterlogged: bool },
-    DripstoneBlock,
-    CaveVines { age: u8, berries: bool },
-    CaveVinesPlant { berries: bool },
-    SporeBlossom,
-    Azalea,
-    FloweringAzalea,
-    MossCarpet,
-    MossBlock,
-    BigDripleaf { facing: HorizontalDirection, tilt: Tilt, waterlogged: bool },
-    BigDripleafStem { facing: HorizontalDirection, waterlogged: bool },
-    SmallDripleaf { facing: HorizontalDirection, half: DoubleBlockHalf, waterlogged: bool },
-    HangingRoots { waterlogged: bool },
-    RootedDirt,
-    Deepslate { axis: Axis },
-    CobbledDeepslate,
-    CobbledDeepslateStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    CobbledDeepslateSlab { r#type: SlabType, waterlogged: bool },
-    CobbledDeepslateWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    PolishedDeepslate,
-    PolishedDeepslateStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    PolishedDeepslateSlab { r#type: SlabType, waterlogged: bool },
-    PolishedDeepslateWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    DeepslateTiles,
-    DeepslateTileStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    DeepslateTileSlab { r#type: SlabType, waterlogged: bool },
-    DeepslateTileWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    DeepslateBricks,
-    DeepslateBrickStairs { facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool },
-    DeepslateBrickSlab { r#type: SlabType, waterlogged: bool },
-    DeepslateBrickWall { east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape },
-    ChiseledDeepslate,
-    CrackedDeepslateBricks,
-    CrackedDeepslateTiles,
-    InfestedDeepslate { axis: Axis },
-    SmoothBasalt,
-    RawIronBlock,
-    RawCopperBlock,
-    RawGoldBlock,
-    PottedAzaleaBush,
-    PottedFloweringAzaleaBush,
-    Other { name: Cow<'a, str>, properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>> },
+blocks! {
+    "minecraft:air", Air;
+    "minecraft:stone", Stone;
+    "minecraft:granite", Granite;
+    "minecraft:polished_granite", PolishedGranite;
+    "minecraft:diorite", Diorite;
+    "minecraft:polished_diorite", PolishedDiorite;
+    "minecraft:andesite", Andesite;
+    "minecraft:polished_andesite", PolishedAndesite;
+    "minecraft:grass_block", GrassBlock, snowy => bool;
+    "minecraft:dirt", Dirt;
+    "minecraft:coarse_dirt", CoarseDirt;
+    "minecraft:podzol", Podzol, snowy => bool;
+    "minecraft:cobblestone", Cobblestone;
+    "minecraft:oak_planks", OakPlanks;
+    "minecraft:spruce_planks", SprucePlanks;
+    "minecraft:birch_planks", BirchPlanks;
+    "minecraft:jungle_planks", JunglePlanks;
+    "minecraft:acacia_planks", AcaciaPlanks;
+    "minecraft:dark_oak_planks", DarkOakPlanks;
+    "minecraft:oak_sapling", OakSapling, stage => u8;
+    "minecraft:spruce_sapling", SpruceSapling, stage => u8;
+    "minecraft:birch_sapling", BirchSapling, stage => u8;
+    "minecraft:jungle_sapling", JungleSapling, stage => u8;
+    "minecraft:acacia_sapling", AcaciaSapling, stage => u8;
+    "minecraft:dark_oak_sapling", DarkOakSapling, stage => u8;
+    "minecraft:bedrock", Bedrock;
+    "minecraft:water", Water, level => u8;
+    "minecraft:lava", Lava, level => u8;
+    "minecraft:sand", Sand;
+    "minecraft:red_sand", RedSand;
+    "minecraft:gravel", Gravel;
+    "minecraft:gold_ore", GoldOre;
+    "minecraft:deepslate_gold_ore", DeepslateGoldOre;
+    "minecraft:iron_ore", IronOre;
+    "minecraft:deepslate_iron_ore", DeepslateIronOre;
+    "minecraft:coal_ore", CoalOre;
+    "minecraft:deepslate_coal_ore", DeepslateCoalOre;
+    "minecraft:nether_gold_ore", NetherGoldOre;
+    "minecraft:oak_log", OakLog, axis => Axis;
+    "minecraft:spruce_log", SpruceLog, axis => Axis;
+    "minecraft:birch_log", BirchLog, axis => Axis;
+    "minecraft:jungle_log", JungleLog, axis => Axis;
+    "minecraft:acacia_log", AcaciaLog, axis => Axis;
+    "minecraft:dark_oak_log", DarkOakLog, axis => Axis;
+    "minecraft:stripped_spruce_log", StrippedSpruceLog, axis => Axis;
+    "minecraft:stripped_birch_log", StrippedBirchLog, axis => Axis;
+    "minecraft:stripped_jungle_log", StrippedJungleLog, axis => Axis;
+    "minecraft:stripped_acacia_log", StrippedAcaciaLog, axis => Axis;
+    "minecraft:stripped_dark_oak_log", StrippedDarkOakLog, axis => Axis;
+    "minecraft:stripped_oak_log", StrippedOakLog, axis => Axis;
+    "minecraft:oak_wood", OakWood, axis => Axis;
+    "minecraft:spruce_wood", SpruceWood, axis => Axis;
+    "minecraft:birch_wood", BirchWood, axis => Axis;
+    "minecraft:jungle_wood", JungleWood, axis => Axis;
+    "minecraft:acacia_wood", AcaciaWood, axis => Axis;
+    "minecraft:dark_oak_wood", DarkOakWood, axis => Axis;
+    "minecraft:stripped_oak_wood", StrippedOakWood, axis => Axis;
+    "minecraft:stripped_spruce_wood", StrippedSpruceWood, axis => Axis;
+    "minecraft:stripped_birch_wood", StrippedBirchWood, axis => Axis;
+    "minecraft:stripped_jungle_wood", StrippedJungleWood, axis => Axis;
+    "minecraft:stripped_acacia_wood", StrippedAcaciaWood, axis => Axis;
+    "minecraft:stripped_dark_oak_wood", StrippedDarkOakWood, axis => Axis;
+    "minecraft:oak_leaves", OakLeaves, distance => u8 persistent => bool;
+    "minecraft:spruce_leaves", SpruceLeaves, distance => u8 persistent => bool;
+    "minecraft:birch_leaves", BirchLeaves, distance => u8 persistent => bool;
+    "minecraft:jungle_leaves", JungleLeaves, distance => u8 persistent => bool;
+    "minecraft:acacia_leaves", AcaciaLeaves, distance => u8 persistent => bool;
+    "minecraft:dark_oak_leaves", DarkOakLeaves, distance => u8 persistent => bool;
+    "minecraft:azalea_leaves", AzaleaLeaves, distance => u8 persistent => bool;
+    "minecraft:flowering_azalea_leaves", FloweringAzaleaLeaves, distance => u8 persistent => bool;
+    "minecraft:sponge", Sponge;
+    "minecraft:wet_sponge", WetSponge;
+    "minecraft:glass", Glass;
+    "minecraft:lapis_ore", LapisOre;
+    "minecraft:deepslate_lapis_ore", DeepslateLapisOre;
+    "minecraft:lapis_block", LapisBlock;
+    "minecraft:dispenser", Dispenser, facing => Direction triggered => bool;
+    "minecraft:sandstone", Sandstone;
+    "minecraft:chiseled_sandstone", ChiseledSandstone;
+    "minecraft:cut_sandstone", CutSandstone;
+    "minecraft:note_block", NoteBlock, instrument => Instrument note => u8 powered => bool;
+    "minecraft:white_bed", WhiteBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:orange_bed", OrangeBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:magenta_bed", MagentaBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:light_blue_bed", LightBlueBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:yellow_bed", YellowBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:lime_bed", LimeBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:pink_bed", PinkBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:gray_bed", GrayBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:light_gray_bed", LightGrayBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:cyan_bed", CyanBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:purple_bed", PurpleBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:blue_bed", BlueBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:brown_bed", BrownBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:green_bed", GreenBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:red_bed", RedBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:black_bed", BlackBed, facing => HorizontalDirection occupied => bool part => BedPart;
+    "minecraft:powered_rail", PoweredRail, powered => bool shape => StraightRailShape waterlogged => bool;
+    "minecraft:detector_rail", DetectorRail, powered => bool shape => StraightRailShape waterlogged => bool;
+    "minecraft:sticky_piston", StickyPiston, extended => bool facing => Direction;
+    "minecraft:cobweb", Cobweb;
+    "minecraft:grass", Grass;
+    "minecraft:fern", Fern;
+    "minecraft:dead_bush", DeadBush;
+    "minecraft:seagrass", Seagrass;
+    "minecraft:tall_seagrass", TallSeagrass, half => DoubleBlockHalf;
+    "minecraft:piston", Piston, extended => bool facing => Direction;
+    "minecraft:piston_head", PistonHead, facing => Direction short => bool r#type => PistonType;
+    "minecraft:white_wool", WhiteWool;
+    "minecraft:orange_wool", OrangeWool;
+    "minecraft:magenta_wool", MagentaWool;
+    "minecraft:light_blue_wool", LightBlueWool;
+    "minecraft:yellow_wool", YellowWool;
+    "minecraft:lime_wool", LimeWool;
+    "minecraft:pink_wool", PinkWool;
+    "minecraft:gray_wool", GrayWool;
+    "minecraft:light_gray_wool", LightGrayWool;
+    "minecraft:cyan_wool", CyanWool;
+    "minecraft:purple_wool", PurpleWool;
+    "minecraft:blue_wool", BlueWool;
+    "minecraft:brown_wool", BrownWool;
+    "minecraft:green_wool", GreenWool;
+    "minecraft:red_wool", RedWool;
+    "minecraft:black_wool", BlackWool;
+    "minecraft:moving_piston", MovingPiston, facing => Direction r#type => PistonType;
+    "minecraft:dandelion", Dandelion;
+    "minecraft:poppy", Poppy;
+    "minecraft:blue_orchid", BlueOrchid;
+    "minecraft:allium", Allium;
+    "minecraft:azure_bluet", AzureBluet;
+    "minecraft:red_tulip", RedTulip;
+    "minecraft:orange_tulip", OrangeTulip;
+    "minecraft:white_tulip", WhiteTulip;
+    "minecraft:pink_tulip", PinkTulip;
+    "minecraft:oxeye_daisy", OxeyeDaisy;
+    "minecraft:cornflower", Cornflower;
+    "minecraft:wither_rose", WitherRose;
+    "minecraft:lily_of_the_valley", LilyOfTheValley;
+    "minecraft:brown_mushroom", BrownMushroom;
+    "minecraft:red_mushroom", RedMushroom;
+    "minecraft:gold_block", GoldBlock;
+    "minecraft:iron_block", IronBlock;
+    "minecraft:bricks", Bricks;
+    "minecraft:tnt", Tnt, unstable => bool;
+    "minecraft:bookshelf", Bookshelf;
+    "minecraft:mossy_cobblestone", MossyCobblestone;
+    "minecraft:obsidian", Obsidian;
+    "minecraft:torch", Torch;
+    "minecraft:wall_torch", WallTorch, facing => HorizontalDirection;
+    "minecraft:fire", Fire, age => u8 east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:soul_fire", SoulFire;
+    "minecraft:spawner", Spawner;
+    "minecraft:oak_stairs", OakStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:chest", Chest, facing => HorizontalDirection r#type => ChestType waterlogged => bool;
+    "minecraft:redstone_wire", RedstoneWire, east => WireConnection north => WireConnection power => u8 south => WireConnection west => WireConnection;
+    "minecraft:diamond_ore", DiamondOre;
+    "minecraft:deepslate_diamond_ore", DeepslateDiamondOre;
+    "minecraft:diamond_block", DiamondBlock;
+    "minecraft:crafting_table", CraftingTable;
+    "minecraft:wheat", Wheat, age => u8;
+    "minecraft:farmland", Farmland, moisture => u8;
+    "minecraft:furnace", Furnace, facing => HorizontalDirection lit => bool;
+    "minecraft:oak_sign", OakSign, rotation => u8 waterlogged => bool;
+    "minecraft:spruce_sign", SpruceSign, rotation => u8 waterlogged => bool;
+    "minecraft:birch_sign", BirchSign, rotation => u8 waterlogged => bool;
+    "minecraft:acacia_sign", AcaciaSign, rotation => u8 waterlogged => bool;
+    "minecraft:jungle_sign", JungleSign, rotation => u8 waterlogged => bool;
+    "minecraft:dark_oak_sign", DarkOakSign, rotation => u8 waterlogged => bool;
+    "minecraft:oak_door", OakDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:ladder", Ladder, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:rail", Rail, shape => RailShape waterlogged => bool;
+    "minecraft:cobblestone_stairs", CobblestoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:oak_wall_sign", OakWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:spruce_wall_sign", SpruceWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:birch_wall_sign", BirchWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:acacia_wall_sign", AcaciaWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:jungle_wall_sign", JungleWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:dark_oak_wall_sign", DarkOakWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:lever", Lever, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:stone_pressure_plate", StonePressurePlate, powered => bool;
+    "minecraft:iron_door", IronDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:oak_pressure_plate", OakPressurePlate, powered => bool;
+    "minecraft:spruce_pressure_plate", SprucePressurePlate, powered => bool;
+    "minecraft:birch_pressure_plate", BirchPressurePlate, powered => bool;
+    "minecraft:jungle_pressure_plate", JunglePressurePlate, powered => bool;
+    "minecraft:acacia_pressure_plate", AcaciaPressurePlate, powered => bool;
+    "minecraft:dark_oak_pressure_plate", DarkOakPressurePlate, powered => bool;
+    "minecraft:redstone_ore", RedstoneOre, lit => bool;
+    "minecraft:deepslate_redstone_ore", DeepslateRedstoneOre, lit => bool;
+    "minecraft:redstone_torch", RedstoneTorch, lit => bool;
+    "minecraft:redstone_wall_torch", RedstoneWallTorch, facing => HorizontalDirection lit => bool;
+    "minecraft:stone_button", StoneButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:snow", Snow, layers => u8;
+    "minecraft:ice", Ice;
+    "minecraft:snow_block", SnowBlock;
+    "minecraft:cactus", Cactus, age => u8;
+    "minecraft:clay", Clay;
+    "minecraft:sugar_cane", SugarCane, age => u8;
+    "minecraft:jukebox", Jukebox, has_record => bool;
+    "minecraft:oak_fence", OakFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:pumpkin", Pumpkin;
+    "minecraft:netherrack", Netherrack;
+    "minecraft:soul_sand", SoulSand;
+    "minecraft:soul_soil", SoulSoil;
+    "minecraft:basalt", Basalt, axis => Axis;
+    "minecraft:polished_basalt", PolishedBasalt, axis => Axis;
+    "minecraft:soul_torch", SoulTorch;
+    "minecraft:soul_wall_torch", SoulWallTorch, facing => HorizontalDirection;
+    "minecraft:glowstone", Glowstone;
+    "minecraft:nether_portal", NetherPortal, axis => HorizontalAxis;
+    "minecraft:carved_pumpkin", CarvedPumpkin, facing => HorizontalDirection;
+    "minecraft:jack_o_lantern", JackOLantern, facing => HorizontalDirection;
+    "minecraft:cake", Cake, bites => u8;
+    "minecraft:repeater", Repeater, delay => u8 facing => HorizontalDirection locked => bool powered => bool;
+    "minecraft:white_stained_glass", WhiteStainedGlass;
+    "minecraft:orange_stained_glass", OrangeStainedGlass;
+    "minecraft:magenta_stained_glass", MagentaStainedGlass;
+    "minecraft:light_blue_stained_glass", LightBlueStainedGlass;
+    "minecraft:yellow_stained_glass", YellowStainedGlass;
+    "minecraft:lime_stained_glass", LimeStainedGlass;
+    "minecraft:pink_stained_glass", PinkStainedGlass;
+    "minecraft:gray_stained_glass", GrayStainedGlass;
+    "minecraft:light_gray_stained_glass", LightGrayStainedGlass;
+    "minecraft:cyan_stained_glass", CyanStainedGlass;
+    "minecraft:purple_stained_glass", PurpleStainedGlass;
+    "minecraft:blue_stained_glass", BlueStainedGlass;
+    "minecraft:brown_stained_glass", BrownStainedGlass;
+    "minecraft:green_stained_glass", GreenStainedGlass;
+    "minecraft:red_stained_glass", RedStainedGlass;
+    "minecraft:black_stained_glass", BlackStainedGlass;
+    "minecraft:oak_trapdoor", OakTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:spruce_trapdoor", SpruceTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:birch_trapdoor", BirchTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:jungle_trapdoor", JungleTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:acacia_trapdoor", AcaciaTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:dark_oak_trapdoor", DarkOakTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:stone_bricks", StoneBricks;
+    "minecraft:mossy_stone_bricks", MossyStoneBricks;
+    "minecraft:cracked_stone_bricks", CrackedStoneBricks;
+    "minecraft:chiseled_stone_bricks", ChiseledStoneBricks;
+    "minecraft:infested_stone", InfestedStone;
+    "minecraft:infested_cobblestone", InfestedCobblestone;
+    "minecraft:infested_stone_bricks", InfestedStoneBricks;
+    "minecraft:infested_mossy_stone_bricks", InfestedMossyStoneBricks;
+    "minecraft:infested_cracked_stone_bricks", InfestedCrackedStoneBricks;
+    "minecraft:infested_chiseled_stone_bricks", InfestedChiseledStoneBricks;
+    "minecraft:brown_mushroom_block", BrownMushroomBlock, down => bool east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:red_mushroom_block", RedMushroomBlock, down => bool east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:mushroom_stem", MushroomStem, down => bool east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:iron_bars", IronBars, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:chain", Chain, axis => Axis waterlogged => bool;
+    "minecraft:glass_pane", GlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:melon", Melon;
+    "minecraft:attached_pumpkin_stem", AttachedPumpkinStem, facing => HorizontalDirection;
+    "minecraft:attached_melon_stem", AttachedMelonStem, facing => HorizontalDirection;
+    "minecraft:pumpkin_stem", PumpkinStem, age => u8;
+    "minecraft:melon_stem", MelonStem, age => u8;
+    "minecraft:vine", Vine, east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:glow_lichen", GlowLichen, down => bool east => bool north => bool south => bool up => bool waterlogged => bool west => bool;
+    "minecraft:oak_fence_gate", OakFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:brick_stairs", BrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:stone_brick_stairs", StoneBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:mycelium", Mycelium, snowy => bool;
+    "minecraft:lily_pad", LilyPad;
+    "minecraft:nether_bricks", NetherBricks;
+    "minecraft:nether_brick_fence", NetherBrickFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:nether_brick_stairs", NetherBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:nether_wart", NetherWart, age => u8;
+    "minecraft:enchanting_table", EnchantingTable;
+    "minecraft:brewing_stand", BrewingStand, has_bottle_0 => bool has_bottle_1 => bool has_bottle_2 => bool;
+    "minecraft:cauldron", Cauldron;
+    "minecraft:water_cauldron", WaterCauldron, level => u8;
+    "minecraft:lava_cauldron", LavaCauldron;
+    "minecraft:powder_snow_cauldron", PowderSnowCauldron, level => u8;
+    "minecraft:end_portal", EndPortal;
+    "minecraft:end_portal_frame", EndPortalFrame, eye => bool facing => HorizontalDirection;
+    "minecraft:end_stone", EndStone;
+    "minecraft:dragon_egg", DragonEgg;
+    "minecraft:redstone_lamp", RedstoneLamp, lit => bool;
+    "minecraft:cocoa", Cocoa, age => u8 facing => HorizontalDirection;
+    "minecraft:sandstone_stairs", SandstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:emerald_ore", EmeraldOre;
+    "minecraft:deepslate_emerald_ore", DeepslateEmeraldOre;
+    "minecraft:ender_chest", EnderChest, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:tripwire_hook", TripwireHook, attached => bool facing => HorizontalDirection powered => bool;
+    "minecraft:tripwire", Tripwire, attached => bool disarmed => bool east => bool north => bool powered => bool south => bool west => bool;
+    "minecraft:emerald_block", EmeraldBlock;
+    "minecraft:spruce_stairs", SpruceStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:birch_stairs", BirchStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:jungle_stairs", JungleStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:command_block", CommandBlock, conditional => bool facing => Direction;
+    "minecraft:beacon", Beacon;
+    "minecraft:cobblestone_wall", CobblestoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:mossy_cobblestone_wall", MossyCobblestoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:flower_pot", FlowerPot;
+    "minecraft:potted_oak_sapling", PottedOakSapling;
+    "minecraft:potted_spruce_sapling", PottedSpruceSapling;
+    "minecraft:potted_birch_sapling", PottedBirchSapling;
+    "minecraft:potted_jungle_sapling", PottedJungleSapling;
+    "minecraft:potted_acacia_sapling", PottedAcaciaSapling;
+    "minecraft:potted_dark_oak_sapling", PottedDarkOakSapling;
+    "minecraft:potted_fern", PottedFern;
+    "minecraft:potted_dandelion", PottedDandelion;
+    "minecraft:potted_poppy", PottedPoppy;
+    "minecraft:potted_blue_orchid", PottedBlueOrchid;
+    "minecraft:potted_allium", PottedAllium;
+    "minecraft:potted_azure_bluet", PottedAzureBluet;
+    "minecraft:potted_red_tulip", PottedRedTulip;
+    "minecraft:potted_orange_tulip", PottedOrangeTulip;
+    "minecraft:potted_white_tulip", PottedWhiteTulip;
+    "minecraft:potted_pink_tulip", PottedPinkTulip;
+    "minecraft:potted_oxeye_daisy", PottedOxeyeDaisy;
+    "minecraft:potted_cornflower", PottedCornflower;
+    "minecraft:potted_lily_of_the_valley", PottedLilyOfTheValley;
+    "minecraft:potted_wither_rose", PottedWitherRose;
+    "minecraft:potted_red_mushroom", PottedRedMushroom;
+    "minecraft:potted_brown_mushroom", PottedBrownMushroom;
+    "minecraft:potted_dead_bush", PottedDeadBush;
+    "minecraft:potted_cactus", PottedCactus;
+    "minecraft:carrots", Carrots, age => u8;
+    "minecraft:potatoes", Potatoes, age => u8;
+    "minecraft:oak_button", OakButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:spruce_button", SpruceButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:birch_button", BirchButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:jungle_button", JungleButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:acacia_button", AcaciaButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:dark_oak_button", DarkOakButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:skeleton_skull", SkeletonSkull, rotation => u8;
+    "minecraft:skeleton_wall_skull", SkeletonWallSkull, facing => HorizontalDirection;
+    "minecraft:wither_skeleton_skull", WitherSkeletonSkull, rotation => u8;
+    "minecraft:wither_skeleton_wall_skull", WitherSkeletonWallSkull, facing => HorizontalDirection;
+    "minecraft:zombie_head", ZombieHead, rotation => u8;
+    "minecraft:zombie_wall_head", ZombieWallHead, facing => HorizontalDirection;
+    "minecraft:player_head", PlayerHead, rotation => u8;
+    "minecraft:player_wall_head", PlayerWallHead, facing => HorizontalDirection;
+    "minecraft:creeper_head", CreeperHead, rotation => u8;
+    "minecraft:creeper_wall_head", CreeperWallHead, facing => HorizontalDirection;
+    "minecraft:dragon_head", DragonHead, rotation => u8;
+    "minecraft:dragon_wall_head", DragonWallHead, facing => HorizontalDirection;
+    "minecraft:anvil", Anvil, facing => HorizontalDirection;
+    "minecraft:chipped_anvil", ChippedAnvil, facing => HorizontalDirection;
+    "minecraft:damaged_anvil", DamagedAnvil, facing => HorizontalDirection;
+    "minecraft:trapped_chest", TrappedChest, facing => HorizontalDirection r#type => ChestType waterlogged => bool;
+    "minecraft:light_weighted_pressure_plate", LightWeightedPressurePlate, power => u8;
+    "minecraft:heavy_weighted_pressure_plate", HeavyWeightedPressurePlate, power => u8;
+    "minecraft:comparator", Comparator, facing => HorizontalDirection mode => ComparatorMode powered => bool;
+    "minecraft:daylight_detector", DaylightDetector, inverted => bool power => u8;
+    "minecraft:redstone_block", RedstoneBlock;
+    "minecraft:nether_quartz_ore", NetherQuartzOre;
+    "minecraft:hopper", Hopper, enabled => bool facing => HopperDirection;
+    "minecraft:quartz_block", QuartzBlock;
+    "minecraft:chiseled_quartz_block", ChiseledQuartzBlock;
+    "minecraft:quartz_pillar", QuartzPillar, axis => Axis;
+    "minecraft:quartz_stairs", QuartzStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:activator_rail", ActivatorRail, powered => bool shape => StraightRailShape waterlogged => bool;
+    "minecraft:dropper", Dropper, facing => Direction triggered => bool;
+    "minecraft:white_terracotta", WhiteTerracotta;
+    "minecraft:orange_terracotta", OrangeTerracotta;
+    "minecraft:magenta_terracotta", MagentaTerracotta;
+    "minecraft:light_blue_terracotta", LightBlueTerracotta;
+    "minecraft:yellow_terracotta", YellowTerracotta;
+    "minecraft:lime_terracotta", LimeTerracotta;
+    "minecraft:pink_terracotta", PinkTerracotta;
+    "minecraft:gray_terracotta", GrayTerracotta;
+    "minecraft:light_gray_terracotta", LightGrayTerracotta;
+    "minecraft:cyan_terracotta", CyanTerracotta;
+    "minecraft:purple_terracotta", PurpleTerracotta;
+    "minecraft:blue_terracotta", BlueTerracotta;
+    "minecraft:brown_terracotta", BrownTerracotta;
+    "minecraft:green_terracotta", GreenTerracotta;
+    "minecraft:red_terracotta", RedTerracotta;
+    "minecraft:black_terracotta", BlackTerracotta;
+    "minecraft:white_stained_glass_pane", WhiteStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:orange_stained_glass_pane", OrangeStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:magenta_stained_glass_pane", MagentaStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:light_blue_stained_glass_pane", LightBlueStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:yellow_stained_glass_pane", YellowStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:lime_stained_glass_pane", LimeStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:pink_stained_glass_pane", PinkStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:gray_stained_glass_pane", GrayStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:light_gray_stained_glass_pane", LightGrayStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:cyan_stained_glass_pane", CyanStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:purple_stained_glass_pane", PurpleStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:blue_stained_glass_pane", BlueStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:brown_stained_glass_pane", BrownStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:green_stained_glass_pane", GreenStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:red_stained_glass_pane", RedStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:black_stained_glass_pane", BlackStainedGlassPane, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:acacia_stairs", AcaciaStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:dark_oak_stairs", DarkOakStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:slime_block", SlimeBlock;
+    "minecraft:barrier", Barrier;
+    "minecraft:light", Light, level => u8 waterlogged => bool;
+    "minecraft:iron_trapdoor", IronTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:prismarine", Prismarine;
+    "minecraft:prismarine_bricks", PrismarineBricks;
+    "minecraft:dark_prismarine", DarkPrismarine;
+    "minecraft:prismarine_stairs", PrismarineStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:prismarine_brick_stairs", PrismarineBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:dark_prismarine_stairs", DarkPrismarineStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:prismarine_slab", PrismarineSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:prismarine_brick_slab", PrismarineBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:dark_prismarine_slab", DarkPrismarineSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:sea_lantern", SeaLantern;
+    "minecraft:hay_block", HayBlock, axis => Axis;
+    "minecraft:white_carpet", WhiteCarpet;
+    "minecraft:orange_carpet", OrangeCarpet;
+    "minecraft:magenta_carpet", MagentaCarpet;
+    "minecraft:light_blue_carpet", LightBlueCarpet;
+    "minecraft:yellow_carpet", YellowCarpet;
+    "minecraft:lime_carpet", LimeCarpet;
+    "minecraft:pink_carpet", PinkCarpet;
+    "minecraft:gray_carpet", GrayCarpet;
+    "minecraft:light_gray_carpet", LightGrayCarpet;
+    "minecraft:cyan_carpet", CyanCarpet;
+    "minecraft:purple_carpet", PurpleCarpet;
+    "minecraft:blue_carpet", BlueCarpet;
+    "minecraft:brown_carpet", BrownCarpet;
+    "minecraft:green_carpet", GreenCarpet;
+    "minecraft:red_carpet", RedCarpet;
+    "minecraft:black_carpet", BlackCarpet;
+    "minecraft:terracotta", Terracotta;
+    "minecraft:coal_block", CoalBlock;
+    "minecraft:packed_ice", PackedIce;
+    "minecraft:sunflower", Sunflower, half => DoubleBlockHalf;
+    "minecraft:lilac", Lilac, half => DoubleBlockHalf;
+    "minecraft:rose_bush", RoseBush, half => DoubleBlockHalf;
+    "minecraft:peony", Peony, half => DoubleBlockHalf;
+    "minecraft:tall_grass", TallGrass, half => DoubleBlockHalf;
+    "minecraft:large_fern", LargeFern, half => DoubleBlockHalf;
+    "minecraft:white_banner", WhiteBanner, rotation => u8;
+    "minecraft:orange_banner", OrangeBanner, rotation => u8;
+    "minecraft:magenta_banner", MagentaBanner, rotation => u8;
+    "minecraft:light_blue_banner", LightBlueBanner, rotation => u8;
+    "minecraft:yellow_banner", YellowBanner, rotation => u8;
+    "minecraft:lime_banner", LimeBanner, rotation => u8;
+    "minecraft:pink_banner", PinkBanner, rotation => u8;
+    "minecraft:gray_banner", GrayBanner, rotation => u8;
+    "minecraft:light_gray_banner", LightGrayBanner, rotation => u8;
+    "minecraft:cyan_banner", CyanBanner, rotation => u8;
+    "minecraft:purple_banner", PurpleBanner, rotation => u8;
+    "minecraft:blue_banner", BlueBanner, rotation => u8;
+    "minecraft:brown_banner", BrownBanner, rotation => u8;
+    "minecraft:green_banner", GreenBanner, rotation => u8;
+    "minecraft:red_banner", RedBanner, rotation => u8;
+    "minecraft:black_banner", BlackBanner, rotation => u8;
+    "minecraft:white_wall_banner", WhiteWallBanner, facing => HorizontalDirection;
+    "minecraft:orange_wall_banner", OrangeWallBanner, facing => HorizontalDirection;
+    "minecraft:magenta_wall_banner", MagentaWallBanner, facing => HorizontalDirection;
+    "minecraft:light_blue_wall_banner", LightBlueWallBanner, facing => HorizontalDirection;
+    "minecraft:yellow_wall_banner", YellowWallBanner, facing => HorizontalDirection;
+    "minecraft:lime_wall_banner", LimeWallBanner, facing => HorizontalDirection;
+    "minecraft:pink_wall_banner", PinkWallBanner, facing => HorizontalDirection;
+    "minecraft:gray_wall_banner", GrayWallBanner, facing => HorizontalDirection;
+    "minecraft:light_gray_wall_banner", LightGrayWallBanner, facing => HorizontalDirection;
+    "minecraft:cyan_wall_banner", CyanWallBanner, facing => HorizontalDirection;
+    "minecraft:purple_wall_banner", PurpleWallBanner, facing => HorizontalDirection;
+    "minecraft:blue_wall_banner", BlueWallBanner, facing => HorizontalDirection;
+    "minecraft:brown_wall_banner", BrownWallBanner, facing => HorizontalDirection;
+    "minecraft:green_wall_banner", GreenWallBanner, facing => HorizontalDirection;
+    "minecraft:red_wall_banner", RedWallBanner, facing => HorizontalDirection;
+    "minecraft:black_wall_banner", BlackWallBanner, facing => HorizontalDirection;
+    "minecraft:red_sandstone", RedSandstone;
+    "minecraft:chiseled_red_sandstone", ChiseledRedSandstone;
+    "minecraft:cut_red_sandstone", CutRedSandstone;
+    "minecraft:red_sandstone_stairs", RedSandstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:oak_slab", OakSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:spruce_slab", SpruceSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:birch_slab", BirchSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:jungle_slab", JungleSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:acacia_slab", AcaciaSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:dark_oak_slab", DarkOakSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:stone_slab", StoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:smooth_stone_slab", SmoothStoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:sandstone_slab", SandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:cut_sandstone_slab", CutSandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:petrified_oak_slab", PetrifiedOakSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:cobblestone_slab", CobblestoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:brick_slab", BrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:stone_brick_slab", StoneBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:nether_brick_slab", NetherBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:quartz_slab", QuartzSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:red_sandstone_slab", RedSandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:cut_red_sandstone_slab", CutRedSandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:purpur_slab", PurpurSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:smooth_stone", SmoothStone;
+    "minecraft:smooth_sandstone", SmoothSandstone;
+    "minecraft:smooth_quartz", SmoothQuartz;
+    "minecraft:smooth_red_sandstone", SmoothRedSandstone;
+    "minecraft:spruce_fence_gate", SpruceFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:birch_fence_gate", BirchFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:jungle_fence_gate", JungleFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:acacia_fence_gate", AcaciaFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:dark_oak_fence_gate", DarkOakFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:spruce_fence", SpruceFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:birch_fence", BirchFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:jungle_fence", JungleFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:acacia_fence", AcaciaFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:dark_oak_fence", DarkOakFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:spruce_door", SpruceDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:birch_door", BirchDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:jungle_door", JungleDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:acacia_door", AcaciaDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:dark_oak_door", DarkOakDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:end_rod", EndRod, facing => Direction;
+    "minecraft:chorus_plant", ChorusPlant, down => bool east => bool north => bool south => bool up => bool west => bool;
+    "minecraft:chorus_flower", ChorusFlower, age => u8;
+    "minecraft:purpur_block", PurpurBlock;
+    "minecraft:purpur_pillar", PurpurPillar, axis => Axis;
+    "minecraft:purpur_stairs", PurpurStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:end_stone_bricks", EndStoneBricks;
+    "minecraft:beetroots", Beetroots, age => u8;
+    "minecraft:dirt_path", DirtPath;
+    "minecraft:end_gateway", EndGateway;
+    "minecraft:repeating_command_block", RepeatingCommandBlock, conditional => bool facing => Direction;
+    "minecraft:chain_command_block", ChainCommandBlock, conditional => bool facing => Direction;
+    "minecraft:frosted_ice", FrostedIce, age => u8;
+    "minecraft:magma_block", MagmaBlock;
+    "minecraft:nether_wart_block", NetherWartBlock;
+    "minecraft:red_nether_bricks", RedNetherBricks;
+    "minecraft:bone_block", BoneBlock, axis => Axis;
+    "minecraft:structure_void", StructureVoid;
+    "minecraft:observer", Observer, facing => Direction powered => bool;
+    "minecraft:shulker_box", ShulkerBox, facing => Direction;
+    "minecraft:white_shulker_box", WhiteShulkerBox, facing => Direction;
+    "minecraft:orange_shulker_box", OrangeShulkerBox, facing => Direction;
+    "minecraft:magenta_shulker_box", MagentaShulkerBox, facing => Direction;
+    "minecraft:light_blue_shulker_box", LightBlueShulkerBox, facing => Direction;
+    "minecraft:yellow_shulker_box", YellowShulkerBox, facing => Direction;
+    "minecraft:lime_shulker_box", LimeShulkerBox, facing => Direction;
+    "minecraft:pink_shulker_box", PinkShulkerBox, facing => Direction;
+    "minecraft:gray_shulker_box", GrayShulkerBox, facing => Direction;
+    "minecraft:light_gray_shulker_box", LightGrayShulkerBox, facing => Direction;
+    "minecraft:cyan_shulker_box", CyanShulkerBox, facing => Direction;
+    "minecraft:purple_shulker_box", PurpleShulkerBox, facing => Direction;
+    "minecraft:blue_shulker_box", BlueShulkerBox, facing => Direction;
+    "minecraft:brown_shulker_box", BrownShulkerBox, facing => Direction;
+    "minecraft:green_shulker_box", GreenShulkerBox, facing => Direction;
+    "minecraft:red_shulker_box", RedShulkerBox, facing => Direction;
+    "minecraft:black_shulker_box", BlackShulkerBox, facing => Direction;
+    "minecraft:white_glazed_terracotta", WhiteGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:orange_glazed_terracotta", OrangeGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:magenta_glazed_terracotta", MagentaGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:light_blue_glazed_terracotta", LightBlueGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:yellow_glazed_terracotta", YellowGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:lime_glazed_terracotta", LimeGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:pink_glazed_terracotta", PinkGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:gray_glazed_terracotta", GrayGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:light_gray_glazed_terracotta", LightGrayGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:cyan_glazed_terracotta", CyanGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:purple_glazed_terracotta", PurpleGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:blue_glazed_terracotta", BlueGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:brown_glazed_terracotta", BrownGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:green_glazed_terracotta", GreenGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:red_glazed_terracotta", RedGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:black_glazed_terracotta", BlackGlazedTerracotta, facing => HorizontalDirection;
+    "minecraft:white_concrete", WhiteConcrete;
+    "minecraft:orange_concrete", OrangeConcrete;
+    "minecraft:magenta_concrete", MagentaConcrete;
+    "minecraft:light_blue_concrete", LightBlueConcrete;
+    "minecraft:yellow_concrete", YellowConcrete;
+    "minecraft:lime_concrete", LimeConcrete;
+    "minecraft:pink_concrete", PinkConcrete;
+    "minecraft:gray_concrete", GrayConcrete;
+    "minecraft:light_gray_concrete", LightGrayConcrete;
+    "minecraft:cyan_concrete", CyanConcrete;
+    "minecraft:purple_concrete", PurpleConcrete;
+    "minecraft:blue_concrete", BlueConcrete;
+    "minecraft:brown_concrete", BrownConcrete;
+    "minecraft:green_concrete", GreenConcrete;
+    "minecraft:red_concrete", RedConcrete;
+    "minecraft:black_concrete", BlackConcrete;
+    "minecraft:white_concrete_powder", WhiteConcretePowder;
+    "minecraft:orange_concrete_powder", OrangeConcretePowder;
+    "minecraft:magenta_concrete_powder", MagentaConcretePowder;
+    "minecraft:light_blue_concrete_powder", LightBlueConcretePowder;
+    "minecraft:yellow_concrete_powder", YellowConcretePowder;
+    "minecraft:lime_concrete_powder", LimeConcretePowder;
+    "minecraft:pink_concrete_powder", PinkConcretePowder;
+    "minecraft:gray_concrete_powder", GrayConcretePowder;
+    "minecraft:light_gray_concrete_powder", LightGrayConcretePowder;
+    "minecraft:cyan_concrete_powder", CyanConcretePowder;
+    "minecraft:purple_concrete_powder", PurpleConcretePowder;
+    "minecraft:blue_concrete_powder", BlueConcretePowder;
+    "minecraft:brown_concrete_powder", BrownConcretePowder;
+    "minecraft:green_concrete_powder", GreenConcretePowder;
+    "minecraft:red_concrete_powder", RedConcretePowder;
+    "minecraft:black_concrete_powder", BlackConcretePowder;
+    "minecraft:kelp", Kelp, age => u8;
+    "minecraft:kelp_plant", KelpPlant;
+    "minecraft:dried_kelp_block", DriedKelpBlock;
+    "minecraft:turtle_egg", TurtleEgg, eggs => u8 hatch => u8;
+    "minecraft:dead_tube_coral_block", DeadTubeCoralBlock;
+    "minecraft:dead_brain_coral_block", DeadBrainCoralBlock;
+    "minecraft:dead_bubble_coral_block", DeadBubbleCoralBlock;
+    "minecraft:dead_fire_coral_block", DeadFireCoralBlock;
+    "minecraft:dead_horn_coral_block", DeadHornCoralBlock;
+    "minecraft:tube_coral_block", TubeCoralBlock;
+    "minecraft:brain_coral_block", BrainCoralBlock;
+    "minecraft:bubble_coral_block", BubbleCoralBlock;
+    "minecraft:fire_coral_block", FireCoralBlock;
+    "minecraft:horn_coral_block", HornCoralBlock;
+    "minecraft:dead_tube_coral", DeadTubeCoral, waterlogged => bool;
+    "minecraft:dead_brain_coral", DeadBrainCoral, waterlogged => bool;
+    "minecraft:dead_bubble_coral", DeadBubbleCoral, waterlogged => bool;
+    "minecraft:dead_fire_coral", DeadFireCoral, waterlogged => bool;
+    "minecraft:dead_horn_coral", DeadHornCoral, waterlogged => bool;
+    "minecraft:tube_coral", TubeCoral, waterlogged => bool;
+    "minecraft:brain_coral", BrainCoral, waterlogged => bool;
+    "minecraft:bubble_coral", BubbleCoral, waterlogged => bool;
+    "minecraft:fire_coral", FireCoral, waterlogged => bool;
+    "minecraft:horn_coral", HornCoral, waterlogged => bool;
+    "minecraft:dead_tube_coral_fan", DeadTubeCoralFan, waterlogged => bool;
+    "minecraft:dead_brain_coral_fan", DeadBrainCoralFan, waterlogged => bool;
+    "minecraft:dead_bubble_coral_fan", DeadBubbleCoralFan, waterlogged => bool;
+    "minecraft:dead_fire_coral_fan", DeadFireCoralFan, waterlogged => bool;
+    "minecraft:dead_horn_coral_fan", DeadHornCoralFan, waterlogged => bool;
+    "minecraft:tube_coral_fan", TubeCoralFan, waterlogged => bool;
+    "minecraft:brain_coral_fan", BrainCoralFan, waterlogged => bool;
+    "minecraft:bubble_coral_fan", BubbleCoralFan, waterlogged => bool;
+    "minecraft:fire_coral_fan", FireCoralFan, waterlogged => bool;
+    "minecraft:horn_coral_fan", HornCoralFan, waterlogged => bool;
+    "minecraft:dead_tube_coral_wall_fan", DeadTubeCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:dead_brain_coral_wall_fan", DeadBrainCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:dead_bubble_coral_wall_fan", DeadBubbleCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:dead_fire_coral_wall_fan", DeadFireCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:dead_horn_coral_wall_fan", DeadHornCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:tube_coral_wall_fan", TubeCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:brain_coral_wall_fan", BrainCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:bubble_coral_wall_fan", BubbleCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:fire_coral_wall_fan", FireCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:horn_coral_wall_fan", HornCoralWallFan, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:sea_pickle", SeaPickle, pickles => u8 waterlogged => bool;
+    "minecraft:blue_ice", BlueIce;
+    "minecraft:conduit", Conduit, waterlogged => bool;
+    "minecraft:bamboo_sapling", BambooSapling;
+    "minecraft:bamboo", Bamboo, age => u8 leaves => BambooLeaves stage => u8;
+    "minecraft:potted_bamboo", PottedBamboo;
+    "minecraft:void_air", VoidAir;
+    "minecraft:cave_air", CaveAir;
+    "minecraft:bubble_column", BubbleColumn, drag => bool;
+    "minecraft:polished_granite_stairs", PolishedGraniteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:smooth_red_sandstone_stairs", SmoothRedSandstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:mossy_stone_brick_stairs", MossyStoneBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_diorite_stairs", PolishedDioriteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:mossy_cobblestone_stairs", MossyCobblestoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:end_stone_brick_stairs", EndStoneBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:stone_stairs", StoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:smooth_sandstone_stairs", SmoothSandstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:smooth_quartz_stairs", SmoothQuartzStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:granite_stairs", GraniteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:andesite_stairs", AndesiteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:red_nether_brick_stairs", RedNetherBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_andesite_stairs", PolishedAndesiteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:diorite_stairs", DioriteStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_granite_slab", PolishedGraniteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:smooth_red_sandstone_slab", SmoothRedSandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:mossy_stone_brick_slab", MossyStoneBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_diorite_slab", PolishedDioriteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:mossy_cobblestone_slab", MossyCobblestoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:end_stone_brick_slab", EndStoneBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:smooth_sandstone_slab", SmoothSandstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:smooth_quartz_slab", SmoothQuartzSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:granite_slab", GraniteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:andesite_slab", AndesiteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:red_nether_brick_slab", RedNetherBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_andesite_slab", PolishedAndesiteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:diorite_slab", DioriteSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:brick_wall", BrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:prismarine_wall", PrismarineWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:red_sandstone_wall", RedSandstoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:mossy_stone_brick_wall", MossyStoneBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:granite_wall", GraniteWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:stone_brick_wall", StoneBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:nether_brick_wall", NetherBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:andesite_wall", AndesiteWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:red_nether_brick_wall", RedNetherBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:sandstone_wall", SandstoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:end_stone_brick_wall", EndStoneBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:diorite_wall", DioriteWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:scaffolding", Scaffolding, bottom => bool distance => u8 waterlogged => bool;
+    "minecraft:loom", Loom, facing => HorizontalDirection;
+    "minecraft:barrel", Barrel, facing => Direction open => bool;
+    "minecraft:smoker", Smoker, facing => HorizontalDirection lit => bool;
+    "minecraft:blast_furnace", BlastFurnace, facing => HorizontalDirection lit => bool;
+    "minecraft:cartography_table", CartographyTable;
+    "minecraft:fletching_table", FletchingTable;
+    "minecraft:grindstone", Grindstone, face => WallMountLocation facing => HorizontalDirection;
+    "minecraft:lectern", Lectern, facing => HorizontalDirection has_book => bool powered => bool;
+    "minecraft:smithing_table", SmithingTable;
+    "minecraft:stonecutter", Stonecutter, facing => HorizontalDirection;
+    "minecraft:bell", Bell, attachment => Attachment facing => HorizontalDirection powered => bool;
+    "minecraft:lantern", Lantern, hanging => bool waterlogged => bool;
+    "minecraft:soul_lantern", SoulLantern, hanging => bool waterlogged => bool;
+    "minecraft:campfire", Campfire, facing => HorizontalDirection lit => bool signal_fire => bool waterlogged => bool;
+    "minecraft:soul_campfire", SoulCampfire, facing => HorizontalDirection lit => bool signal_fire => bool waterlogged => bool;
+    "minecraft:sweet_berry_bush", SweetBerryBush, age => u8;
+    "minecraft:warped_stem", WarpedStem, axis => Axis;
+    "minecraft:stripped_warped_stem", StrippedWarpedStem, axis => Axis;
+    "minecraft:warped_hyphae", WarpedHyphae, axis => Axis;
+    "minecraft:stripped_warped_hyphae", StrippedWarpedHyphae, axis => Axis;
+    "minecraft:warped_nylium", WarpedNylium;
+    "minecraft:warped_fungus", WarpedFungus;
+    "minecraft:warped_wart_block", WarpedWartBlock;
+    "minecraft:warped_roots", WarpedRoots;
+    "minecraft:nether_sprouts", NetherSprouts;
+    "minecraft:crimson_stem", CrimsonStem, axis => Axis;
+    "minecraft:stripped_crimson_stem", StrippedCrimsonStem, axis => Axis;
+    "minecraft:crimson_hyphae", CrimsonHyphae, axis => Axis;
+    "minecraft:stripped_crimson_hyphae", StrippedCrimsonHyphae, axis => Axis;
+    "minecraft:crimson_nylium", CrimsonNylium;
+    "minecraft:crimson_fungus", CrimsonFungus;
+    "minecraft:shroomlight", Shroomlight;
+    "minecraft:weeping_vines", WeepingVines, age => u8;
+    "minecraft:weeping_vines_plant", WeepingVinesPlant;
+    "minecraft:twisting_vines", TwistingVines, age => u8;
+    "minecraft:twisting_vines_plant", TwistingVinesPlant;
+    "minecraft:crimson_roots", CrimsonRoots;
+    "minecraft:crimson_planks", CrimsonPlanks;
+    "minecraft:warped_planks", WarpedPlanks;
+    "minecraft:crimson_slab", CrimsonSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:warped_slab", WarpedSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:crimson_pressure_plate", CrimsonPressurePlate, powered => bool;
+    "minecraft:warped_pressure_plate", WarpedPressurePlate, powered => bool;
+    "minecraft:crimson_fence", CrimsonFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:warped_fence", WarpedFence, east => bool north => bool south => bool waterlogged => bool west => bool;
+    "minecraft:crimson_trapdoor", CrimsonTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:warped_trapdoor", WarpedTrapdoor, facing => HorizontalDirection half => BlockHalf open => bool powered => bool waterlogged => bool;
+    "minecraft:crimson_fence_gate", CrimsonFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:warped_fence_gate", WarpedFenceGate, facing => HorizontalDirection in_wall => bool open => bool powered => bool;
+    "minecraft:crimson_stairs", CrimsonStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:warped_stairs", WarpedStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:crimson_button", CrimsonButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:warped_button", WarpedButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:crimson_door", CrimsonDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:warped_door", WarpedDoor, facing => HorizontalDirection half => DoubleBlockHalf hinge => DoorHinge open => bool powered => bool;
+    "minecraft:crimson_sign", CrimsonSign, rotation => u8 waterlogged => bool;
+    "minecraft:warped_sign", WarpedSign, rotation => u8 waterlogged => bool;
+    "minecraft:crimson_wall_sign", CrimsonWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:warped_wall_sign", WarpedWallSign, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:structure_block", StructureBlock, mode => StructureBlockMode;
+    "minecraft:jigsaw", Jigsaw, orientation => JigsawOrientation;
+    "minecraft:composter", Composter, level => u8;
+    "minecraft:target", Target, power => u8;
+    "minecraft:bee_nest", BeeNest, facing => HorizontalDirection honey_level => u8;
+    "minecraft:beehive", Beehive, facing => HorizontalDirection honey_level => u8;
+    "minecraft:honey_block", HoneyBlock;
+    "minecraft:honeycomb_block", HoneycombBlock;
+    "minecraft:netherite_block", NetheriteBlock;
+    "minecraft:ancient_debris", AncientDebris;
+    "minecraft:crying_obsidian", CryingObsidian;
+    "minecraft:respawn_anchor", RespawnAnchor, charges => u8;
+    "minecraft:potted_crimson_fungus", PottedCrimsonFungus;
+    "minecraft:potted_warped_fungus", PottedWarpedFungus;
+    "minecraft:potted_crimson_roots", PottedCrimsonRoots;
+    "minecraft:potted_warped_roots", PottedWarpedRoots;
+    "minecraft:lodestone", Lodestone;
+    "minecraft:blackstone", Blackstone;
+    "minecraft:blackstone_stairs", BlackstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:blackstone_wall", BlackstoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:blackstone_slab", BlackstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_blackstone", PolishedBlackstone;
+    "minecraft:polished_blackstone_bricks", PolishedBlackstoneBricks;
+    "minecraft:cracked_polished_blackstone_bricks", CrackedPolishedBlackstoneBricks;
+    "minecraft:chiseled_polished_blackstone", ChiseledPolishedBlackstone;
+    "minecraft:polished_blackstone_brick_slab", PolishedBlackstoneBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_blackstone_brick_stairs", PolishedBlackstoneBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_blackstone_brick_wall", PolishedBlackstoneBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:gilded_blackstone", GildedBlackstone;
+    "minecraft:polished_blackstone_stairs", PolishedBlackstoneStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_blackstone_slab", PolishedBlackstoneSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_blackstone_pressure_plate", PolishedBlackstonePressurePlate, powered => bool;
+    "minecraft:polished_blackstone_button", PolishedBlackstoneButton, face => WallMountLocation facing => HorizontalDirection powered => bool;
+    "minecraft:polished_blackstone_wall", PolishedBlackstoneWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:chiseled_nether_bricks", ChiseledNetherBricks;
+    "minecraft:cracked_nether_bricks", CrackedNetherBricks;
+    "minecraft:quartz_bricks", QuartzBricks;
+    "minecraft:candle", Candle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:white_candle", WhiteCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:orange_candle", OrangeCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:magenta_candle", MagentaCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:light_blue_candle", LightBlueCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:yellow_candle", YellowCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:lime_candle", LimeCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:pink_candle", PinkCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:gray_candle", GrayCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:light_gray_candle", LightGrayCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:cyan_candle", CyanCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:purple_candle", PurpleCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:blue_candle", BlueCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:brown_candle", BrownCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:green_candle", GreenCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:red_candle", RedCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:black_candle", BlackCandle, candles => u8 lit => bool waterlogged => bool;
+    "minecraft:candle_cake", CandleCake, lit => bool;
+    "minecraft:white_candle_cake", WhiteCandleCake, lit => bool;
+    "minecraft:orange_candle_cake", OrangeCandleCake, lit => bool;
+    "minecraft:magenta_candle_cake", MagentaCandleCake, lit => bool;
+    "minecraft:light_blue_candle_cake", LightBlueCandleCake, lit => bool;
+    "minecraft:yellow_candle_cake", YellowCandleCake, lit => bool;
+    "minecraft:lime_candle_cake", LimeCandleCake, lit => bool;
+    "minecraft:pink_candle_cake", PinkCandleCake, lit => bool;
+    "minecraft:gray_candle_cake", GrayCandleCake, lit => bool;
+    "minecraft:light_gray_candle_cake", LightGrayCandleCake, lit => bool;
+    "minecraft:cyan_candle_cake", CyanCandleCake, lit => bool;
+    "minecraft:purple_candle_cake", PurpleCandleCake, lit => bool;
+    "minecraft:blue_candle_cake", BlueCandleCake, lit => bool;
+    "minecraft:brown_candle_cake", BrownCandleCake, lit => bool;
+    "minecraft:green_candle_cake", GreenCandleCake, lit => bool;
+    "minecraft:red_candle_cake", RedCandleCake, lit => bool;
+    "minecraft:black_candle_cake", BlackCandleCake, lit => bool;
+    "minecraft:amethyst_block", AmethystBlock;
+    "minecraft:budding_amethyst", BuddingAmethyst;
+    "minecraft:amethyst_cluster", AmethystCluster, facing => Direction waterlogged => bool;
+    "minecraft:large_amethyst_bud", LargeAmethystBud, facing => Direction waterlogged => bool;
+    "minecraft:medium_amethyst_bud", MediumAmethystBud, facing => Direction waterlogged => bool;
+    "minecraft:small_amethyst_bud", SmallAmethystBud, facing => Direction waterlogged => bool;
+    "minecraft:tuff", Tuff;
+    "minecraft:calcite", Calcite;
+    "minecraft:tinted_glass", TintedGlass;
+    "minecraft:powder_snow", PowderSnow;
+    "minecraft:sculk_sensor", SculkSensor, power => u8 sculk_sensor_phase => SculkSensorPhase waterlogged => bool;
+    "minecraft:oxidized_copper", OxidizedCopper;
+    "minecraft:weathered_copper", WeatheredCopper;
+    "minecraft:exposed_copper", ExposedCopper;
+    "minecraft:copper_block", CopperBlock;
+    "minecraft:copper_ore", CopperOre;
+    "minecraft:deepslate_copper_ore", DeepslateCopperOre;
+    "minecraft:oxidized_cut_copper", OxidizedCutCopper;
+    "minecraft:weathered_cut_copper", WeatheredCutCopper;
+    "minecraft:exposed_cut_copper", ExposedCutCopper;
+    "minecraft:cut_copper", CutCopper;
+    "minecraft:oxidized_cut_copper_stairs", OxidizedCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:weathered_cut_copper_stairs", WeatheredCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:exposed_cut_copper_stairs", ExposedCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:cut_copper_stairs", CutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:oxidized_cut_copper_slab", OxidizedCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:weathered_cut_copper_slab", WeatheredCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:exposed_cut_copper_slab", ExposedCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:cut_copper_slab", CutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:waxed_copper_block", WaxedCopperBlock;
+    "minecraft:waxed_weathered_copper", WaxedWeatheredCopper;
+    "minecraft:waxed_exposed_copper", WaxedExposedCopper;
+    "minecraft:waxed_oxidized_copper", WaxedOxidizedCopper;
+    "minecraft:waxed_oxidized_cut_copper", WaxedOxidizedCutCopper;
+    "minecraft:waxed_weathered_cut_copper", WaxedWeatheredCutCopper;
+    "minecraft:waxed_exposed_cut_copper", WaxedExposedCutCopper;
+    "minecraft:waxed_cut_copper", WaxedCutCopper;
+    "minecraft:waxed_oxidized_cut_copper_stairs", WaxedOxidizedCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:waxed_weathered_cut_copper_stairs", WaxedWeatheredCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:waxed_exposed_cut_copper_stairs", WaxedExposedCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:waxed_cut_copper_stairs", WaxedCutCopperStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:waxed_oxidized_cut_copper_slab", WaxedOxidizedCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:waxed_weathered_cut_copper_slab", WaxedWeatheredCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:waxed_exposed_cut_copper_slab", WaxedExposedCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:waxed_cut_copper_slab", WaxedCutCopperSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:lightning_rod", LightningRod, facing => Direction powered => bool waterlogged => bool;
+    "minecraft:pointed_dripstone", PointedDripstone, thickness => Thickness vertical_direction => VerticalDirection waterlogged => bool;
+    "minecraft:dripstone_block", DripstoneBlock;
+    "minecraft:cave_vines", CaveVines, age => u8 berries => bool;
+    "minecraft:cave_vines_plant", CaveVinesPlant, berries => bool;
+    "minecraft:spore_blossom", SporeBlossom;
+    "minecraft:azalea", Azalea;
+    "minecraft:flowering_azalea", FloweringAzalea;
+    "minecraft:moss_carpet", MossCarpet;
+    "minecraft:moss_block", MossBlock;
+    "minecraft:big_dripleaf", BigDripleaf, facing => HorizontalDirection tilt => Tilt waterlogged => bool;
+    "minecraft:big_dripleaf_stem", BigDripleafStem, facing => HorizontalDirection waterlogged => bool;
+    "minecraft:small_dripleaf", SmallDripleaf, facing => HorizontalDirection half => DoubleBlockHalf waterlogged => bool;
+    "minecraft:hanging_roots", HangingRoots, waterlogged => bool;
+    "minecraft:rooted_dirt", RootedDirt;
+    "minecraft:deepslate", Deepslate, axis => Axis;
+    "minecraft:cobbled_deepslate", CobbledDeepslate;
+    "minecraft:cobbled_deepslate_stairs", CobbledDeepslateStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:cobbled_deepslate_slab", CobbledDeepslateSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:cobbled_deepslate_wall", CobbledDeepslateWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:polished_deepslate", PolishedDeepslate;
+    "minecraft:polished_deepslate_stairs", PolishedDeepslateStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:polished_deepslate_slab", PolishedDeepslateSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:polished_deepslate_wall", PolishedDeepslateWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:deepslate_tiles", DeepslateTiles;
+    "minecraft:deepslate_tile_stairs", DeepslateTileStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:deepslate_tile_slab", DeepslateTileSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:deepslate_tile_wall", DeepslateTileWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:deepslate_bricks", DeepslateBricks;
+    "minecraft:deepslate_brick_stairs", DeepslateBrickStairs, facing => HorizontalDirection half => BlockHalf shape => StairShape waterlogged => bool;
+    "minecraft:deepslate_brick_slab", DeepslateBrickSlab, r#type => SlabType waterlogged => bool;
+    "minecraft:deepslate_brick_wall", DeepslateBrickWall, east => WallShape north => WallShape south => WallShape up => bool waterlogged => bool west => WallShape;
+    "minecraft:chiseled_deepslate", ChiseledDeepslate;
+    "minecraft:cracked_deepslate_bricks", CrackedDeepslateBricks;
+    "minecraft:cracked_deepslate_tiles", CrackedDeepslateTiles;
+    "minecraft:infested_deepslate", InfestedDeepslate, axis => Axis;
+    "minecraft:smooth_basalt", SmoothBasalt;
+    "minecraft:raw_iron_block", RawIronBlock;
+    "minecraft:raw_copper_block", RawCopperBlock;
+    "minecraft:raw_gold_block", RawGoldBlock;
+    "minecraft:potted_azalea_bush", PottedAzaleaBush;
+    "minecraft:potted_flowering_azalea_bush", PottedFloweringAzaleaBush;
 }

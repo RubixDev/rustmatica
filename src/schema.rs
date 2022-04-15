@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap};
 use fastnbt::{Value, LongArray};
 use serde::{Serialize, Deserialize};
 
-use crate::util::Vec3;
+use crate::{util::Vec3, BlockState};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -24,13 +24,6 @@ pub struct Region<'a> {
     pub pending_fluid_ticks: Vec<Value>,
     pub pending_block_ticks: Vec<Value>,
     pub block_states: LongArray,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
-#[serde(rename_all = "PascalCase")]
-pub struct BlockState<'a> {
-    pub name: Cow<'a, str>,
-    pub properties: Option<HashMap<Cow<'a, str>, Cow<'a, str>>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
