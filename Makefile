@@ -8,4 +8,4 @@ update:
 
 test:
 	cargo test
-	wasm-pack test --node --profile wasm-test
+	wasm-pack test --node
