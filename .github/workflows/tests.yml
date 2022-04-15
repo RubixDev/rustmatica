@@ -1,6 +1,6 @@
 on: [push, workflow_dispatch]
 
-name: run_tests
+name: tests
 
 jobs:
   linux:
