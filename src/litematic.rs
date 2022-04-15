@@ -75,18 +75,25 @@ impl <'l> Litematic<'l> {
         };
     }
 
+    pub fn from_uncompressed_bytes(bytes: &[u8]) -> Result<Self> {
+        Ok(Self::from_raw(Cow::Owned(from_bytes(bytes)?)))
+    }
+
+    pub fn to_uncompressed_bytes(&self) -> Result<Vec<u8>> {
+        Ok(to_bytes(&self.to_raw())?)
+    }
+
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut gz = GzDecoder::new(bytes);
         let mut extracted = vec![];
         gz.read_to_end(&mut extracted)?;
-        let raw: schema::Litematic = from_bytes(&extracted)?;
-        return Ok(Self::from_raw(Cow::Owned(raw)));
+        Self::from_uncompressed_bytes(&extracted)
     }
 
     pub fn to_bytes(&self) -> Result<Vec<u8>> {
         let mut buf = vec![];
         let mut gz = GzEncoder::new(&mut buf, Compression::default());
-        gz.write_all(&to_bytes(&self.to_raw())?)?;
+        gz.write_all(&self.to_uncompressed_bytes()?)?;
         gz.finish()?;
         return Ok(buf);
     }
