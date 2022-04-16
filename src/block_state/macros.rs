@@ -23,6 +23,10 @@ macro_rules! block {
 
 macro_rules! blocks {
     ($($str:expr, $name:ident $(-$($prop:ident : $type:ty),+)?);+ $(;)?) => {
+        use core::marker::PhantomData;
+        use std::{borrow::Cow, collections::HashMap, str::FromStr};
+        use serde::{Deserialize, de::Visitor};
+
         #[derive(Debug, Clone)]
         pub enum BlockState<'a> {
             $(
