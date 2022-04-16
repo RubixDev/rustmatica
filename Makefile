@@ -7,5 +7,7 @@ update:
 	python make_lists.py
 
 test:
-	cargo test
-	wasm-pack test --node
+	cargo test --all-features
+	cargo test --no-default-features
+	wasm-pack test --node --all-features
+	wasm-pack test --node --no-default-features
