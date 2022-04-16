@@ -22,7 +22,7 @@ macro_rules! block {
 }
 
 macro_rules! blocks {
-    ($($str:expr, $name:ident $(,$($prop:ident => $type:ty)+)?;)+) => {
+    ($($str:expr, $name:ident $(-$($prop:ident : $type:ty),+)?);+ $(;)?) => {
         #[derive(Debug, Clone)]
         pub enum BlockState<'a> {
             $(

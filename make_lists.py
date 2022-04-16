@@ -43,8 +43,8 @@ blocks! {{
             ''
             if not props
             else (
-                ', ' + ' '.join([
-                    f'{prop if prop != "type" else "r#type"} => {_type}'
+                ' - ' + ', '.join([
+                    f'{prop if prop != "type" else "r#type"}: {_type}'
                     for prop, _type in props
                 ])
             )
