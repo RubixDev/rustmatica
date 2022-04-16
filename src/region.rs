@@ -19,7 +19,7 @@ impl <'l> Region<'l> {
             name,
             position,
             size,
-            palette: vec![BlockState::Air],
+            palette: vec![block!()],
             blocks: vec![0; size.volume()],
         };
     }

@@ -1,26 +1,3 @@
-#[macro_export]
-macro_rules! block {
-    () => { BlockState::Air };
-    ($block:ident) => { BlockState::$block };
-    ($block:ident $props:tt) => { BlockState::$block $props };
-    ($name:expr) => {
-        BlockState::Other {
-            name: std::borrow::Cow::Borrowed($name),
-            properties: None,
-        }
-    };
-    ($name:expr; $($key:expr => $val:expr),+ $(,)?) => {
-        BlockState::Other {
-            name: std::borrow::Cow::Borrowed($name),
-            properties: Some(std::collections::HashMap::from([
-                $(
-                    (std::borrow::Cow::Borrowed($key), std::borrow::Cow::Borrowed($val))
-                ),+
-            ]))
-        }
-    };
-}
-
 macro_rules! blocks {
     ($($str:expr, $name:ident $(-$($prop:ident : $type:ty),+)?);+ $(;)?) => {
         use core::marker::PhantomData;

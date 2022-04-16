@@ -3,22 +3,13 @@ on: [push, workflow_dispatch]
 name: tests
 
 jobs:
-  linux:
-    name: rustmatica_linux
+  all:
+    name: rustmatica
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: Run
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-  wasm:
-    name: rustmatica_wasm
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        command: [cargo test, wasm-pack test --node]
+        features: [all, no-default]
     steps:
       - uses: actions/checkout@v3
       - name: Install Toolchain
@@ -29,4 +20,4 @@ jobs:
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
       - name: Run
-        run: wasm-pack test --node
+        run: ${{ matrix.command }} --${{ matrix.features }}-features
