@@ -13,7 +13,7 @@ lists = ["dep:strum"]
 default = ["lists"]
 
 [dependencies]
-fastnbt = "2.0.1"
+fastnbt = "2.0.2"
 flate2 = "1.0.23"
 serde = "1.0.136"
 strum = { version = "0.24.0", features = ["derive"], optional = true }
