@@ -31,11 +31,8 @@ n = '\n'
 indent = '    '
 
 
-list_rs = r"""use core::marker::PhantomData;
-use std::{borrow::Cow, collections::HashMap, str::FromStr};
-use serde::{Deserialize, de::Visitor};
-use super::types::*;
-""" + f"""
+list_rs = f"""use super::types::*;
+
 blocks! {{
     {(n+indent).join([
         f'"minecraft:{name}", {pascal(name)}'
@@ -53,17 +50,16 @@ blocks! {{
     ])}
 }}
 """
-types_rs = n.join([
-    r'#[derive(Debug, strum::Display, strum::EnumString, Clone, PartialEq, Eq)]' + n
-    + r'#[strum(serialize_all = "snake_case")]' + n
-    + 'pub enum ' + name + ' {'
-    + (
-        ' ' + ', '.join([pascal(variant) for variant in variants]) + ' '
-        if len(variants) <= 8
-        else n+indent + (n+indent).join([pascal(variant)+',' for variant in variants]) + n
-    ) + '}'
-    for name, variants in enums.items()
-]) + '\n'
+types_rs = f"""\
+enums! {{
+    {(n+indent).join([
+        name + ' => ' + ', '.join([
+            pascal(variant) for variant in variants
+        ]) + ';'
+        for name, variants in enums.items()
+    ])}
+}}
+"""
 
 with open('src/block_state/list.rs', 'w') as file:
     file.write(list_rs)

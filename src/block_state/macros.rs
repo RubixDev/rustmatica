@@ -135,3 +135,15 @@ macro_rules! props {
         ),+]))
     };
 }
+
+macro_rules! enums {
+    ($($name:ident => $($variant:ident),+);+ $(;)?) => {
+        use strum::{Display, EnumString};
+
+        $(
+            #[derive(Debug, Display, EnumString, Clone, PartialEq, Eq)]
+            #[strum(serialize_all = "snake_case")]
+            pub enum $name { $($variant),+ }
+        )+
+    };
+}

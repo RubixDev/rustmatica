@@ -1,5 +1,3 @@
-#[cfg(feature = "lists")]
-pub mod types;
 #[macro_use]
 #[cfg(feature = "lists")]
 mod macros;
@@ -7,6 +5,8 @@ mod macros;
 mod list;
 #[cfg(feature = "lists")]
 mod traits;
+#[cfg(feature = "lists")]
+pub mod types;
 
 #[cfg(feature = "lists")]
 pub use list::*;
