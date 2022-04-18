@@ -2,9 +2,9 @@ use std::borrow::Cow;
 
 use fastnbt::LongArray;
 
-use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity};
+use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity, Litematic};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Region<'l> {
     pub name: Cow<'l, str>,
     pub position: Vec3,
@@ -138,6 +138,12 @@ impl <'l> Region<'l> {
             index: 0,
             size: self.size.abs(),
         }
+    }
+
+    pub fn as_litematic(self, description: Cow<'l, str>, author: Cow<'l, str>) -> Litematic<'l> {
+        let mut l = Litematic::new(self.name.clone(), description, author);
+        l.regions.push(self);
+        l
     }
 }
 
