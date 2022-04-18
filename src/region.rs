@@ -2,13 +2,14 @@ use std::borrow::Cow;
 
 use fastnbt::LongArray;
 
-use crate::{schema, util::{Vec3, UVec3}, BlockState};
+use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity};
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct Region<'l> {
     pub name: Cow<'l, str>,
     pub position: Vec3,
     pub size: Vec3,
+    pub tile_entities: Vec<TileEntity<'l>>,
     palette: Vec<BlockState<'l>>,
     blocks: Vec<usize>,
 }
@@ -19,6 +20,7 @@ impl <'l> Region<'l> {
             name,
             position,
             size,
+            tile_entities: vec![],
             palette: vec![block!()],
             blocks: vec![0; size.volume()],
         };
@@ -27,6 +29,7 @@ impl <'l> Region<'l> {
     pub fn from_raw(raw: Cow<'l, schema::Region>, name: Cow<'l, str>) -> Self {
         let mut new = Self::new(name, raw.position, raw.size);
         new.palette = raw.block_state_palette.to_owned();
+        new.tile_entities = raw.tile_entities.to_owned();
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
@@ -45,7 +48,7 @@ impl <'l> Region<'l> {
             position: self.position,
             size: self.size,
             block_state_palette: self.palette.to_owned(),
-            tile_entities: vec![],
+            tile_entities: self.tile_entities.to_owned(),
             entities: vec![],
             pending_fluid_ticks: vec![],
             pending_block_ticks: vec![],
@@ -92,6 +95,24 @@ impl <'l> Region<'l> {
         };
         let pos = self.pos_to_index(pos);
         self.blocks[pos] = id;
+    }
+
+    pub fn get_tile_entity(&'l self, pos: UVec3) -> Option<&'l TileEntity> {
+        self.tile_entities.iter().find(|e| e.pos == pos)
+    }
+
+    pub fn set_tile_entity(&mut self, tile_entity: TileEntity<'l>) {
+        if let Some(index) = self.tile_entities.iter().position(|e| e.pos == tile_entity.pos) {
+            self.tile_entities[index] = tile_entity;
+        } else {
+            self.tile_entities.push(tile_entity);
+        }
+    }
+
+    pub fn remove_tile_entity(&mut self, pos: UVec3) {
+        if let Some(index) = self.tile_entities.iter().position(|e| e.pos == pos) {
+            self.tile_entities.remove(index);
+        }
     }
 
     pub fn min_global_x(&self) -> i32 { self.position.x.min(self.position.x + self.size.x + 1) }

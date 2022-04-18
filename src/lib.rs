@@ -5,10 +5,13 @@ pub mod error;
 mod schema;
 mod litematic;
 mod region;
+#[macro_use]
+mod tile_entities;
 
 pub use litematic::*;
 pub use region::*;
 pub use block_state::BlockState;
+pub use tile_entities::TileEntity;
 
 #[cfg(test)]
 mod tests;
