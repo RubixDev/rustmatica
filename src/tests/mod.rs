@@ -4,9 +4,9 @@ use wasm_bindgen_test::wasm_bindgen_test;
 use crate::{Litematic, util::UVec3};
 
 #[cfg(feature = "lists")]
-mod with_lists;
+mod all_features;
 #[cfg(not(feature = "lists"))]
-mod without_lists;
+mod no_features;
 
 #[test]
 #[wasm_bindgen_test]
