@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct Vec3 {
     pub x: i32,
     pub y: i32,
@@ -24,7 +24,7 @@ impl Vec3 {
     } }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct UVec3 {
     pub x: usize,
     pub y: usize,
@@ -39,3 +39,15 @@ impl UVec3 {
         self.x * self.y * self.z
     }
 }
+
+macro_rules! vec_debug {
+    ($type:ty) => {
+        impl std::fmt::Debug for $type {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f, "({}, {}, {})", self.x, self.y, self.z)
+            }
+        }
+    };
+}
+vec_debug!(Vec3);
+vec_debug!(UVec3);
