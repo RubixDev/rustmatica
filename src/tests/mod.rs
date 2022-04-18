@@ -40,3 +40,14 @@ fn tile_entities() {
         axolotl_2.regions[0].get_tile_entity(UVec3::new(1, 1, 0))
     );
 }
+
+#[test]
+#[wasm_bindgen_test]
+fn iterator() {
+    let donut = Litematic::from_bytes(include_bytes!("../../test_files/donut.litematic")).unwrap();
+    let region = &donut.regions[0];
+    for (pos, block) in region.blocks() {
+        assert_eq!(block, region.get_block(pos));
+    }
+    assert_eq!(region.blocks().filter(|(_, b)| b == &&block!("minecraft:diamond_block")).count(), 3);
+}

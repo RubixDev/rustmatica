@@ -78,8 +78,8 @@ impl <'l> Region<'l> {
     fn pos_to_index(&self, pos: UVec3) -> usize {
         let size = self.size.abs();
         return pos.x
-             + pos.y * size.y
-             + pos.z * size.y * size.x;
+             + pos.y * size.z * size.x
+             + pos.z * size.z;
     }
 
     pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState {
@@ -131,5 +131,33 @@ impl <'l> Region<'l> {
 
     pub fn total_blocks(&self) -> usize { self.blocks.iter().filter(|b| b != &&0).count() }
 
-    // TODO: blocks() -> Iterator over all blocks (maybe with position)
+    pub fn blocks(&'l self) -> Blocks<'l> {
+        Blocks {
+            palette: &self.palette,
+            blocks: &self.blocks,
+            index: 0,
+            size: self.size.abs(),
+        }
+    }
+}
+
+pub struct Blocks<'b> {
+    palette: &'b Vec<BlockState<'b>>,
+    blocks: &'b Vec<usize>,
+    index: usize,
+    size: UVec3,
+}
+
+impl <'b> Iterator for Blocks<'b> {
+    type Item = (UVec3, &'b BlockState<'b>);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index >= self.size.volume() { return None; }
+        let block = self.palette.get(*self.blocks.get(self.index)?)?;
+        let x = self.index % self.size.x;
+        let y = self.index / self.size.z / self.size.y % self.size.y;
+        let z = self.index / self.size.z % self.size.z;
+        self.index += 1;
+        Some((UVec3::new(x, y, z), block))
+    }
 }

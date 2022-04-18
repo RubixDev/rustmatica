@@ -19,17 +19,17 @@ use std::{borrow::Cow, collections::HashMap};
 #[cfg(feature = "lists")]
 #[macro_export]
 macro_rules! block {
-    () => { BlockState::Air };
-    ($block:ident) => { BlockState::$block };
-    ($block:ident $props:tt) => { BlockState::$block $props };
+    () => { $crate::BlockState::Air };
+    ($block:ident) => { $crate::BlockState::$block };
+    ($block:ident $props:tt) => { $crate::BlockState::$block $props };
     ($name:expr) => {
-        BlockState::Other {
+        $crate::BlockState::Other {
             name: std::borrow::Cow::Borrowed($name),
             properties: None,
         }
     };
     ($name:expr; $($key:expr => $val:expr),+ $(,)?) => {
-        BlockState::Other {
+        $crate::BlockState::Other {
             name: std::borrow::Cow::Borrowed($name),
             properties: Some(std::collections::HashMap::from([
                 $(
@@ -45,13 +45,13 @@ macro_rules! block {
 macro_rules! block {
     () => { block!("minecraft:air") };
     ($name:expr) => {
-        BlockState {
+        $crate::BlockState {
             name: std::borrow::Cow::Borrowed($name),
             properties: None,
         }
     };
     ($name:expr; $($key:expr => $val:expr),+ $(,)?) => {
-        BlockState {
+        $crate::BlockState {
             name: std::borrow::Cow::Borrowed($name),
             properties: Some(std::collections::HashMap::from([
                 $(
