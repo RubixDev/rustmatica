@@ -51,3 +51,23 @@ fn iterator() {
     }
     assert_eq!(region.blocks().filter(|(_, b)| b == &&block!("minecraft:diamond_block")).count(), 3);
 }
+
+#[test]
+#[cfg(not(target_family = "wasm"))]
+fn time() {
+    use std::time::SystemTime;
+
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as i64;
+    println!("{}", now);
+    let donut = Litematic::from_bytes(include_bytes!("../../test_files/donut.litematic")).unwrap();
+    assert!(1000 > (donut.to_raw().metadata.time_modified - now).abs());
+}
+
+#[wasm_bindgen_test]
+#[cfg(target_family = "wasm")]
+fn time() {
+    let now = js_sys::Date::now() as i64;
+    println!("{}", now);
+    let donut = Litematic::from_bytes(include_bytes!("../../test_files/donut.litematic")).unwrap();
+    assert!(1000 > (donut.to_raw().metadata.time_modified - now).abs());
+}

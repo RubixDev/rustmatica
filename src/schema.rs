@@ -31,8 +31,8 @@ pub struct Region<'a> {
 pub struct Metadata<'a> {
     pub total_blocks: u64,
     pub name: Cow<'a, str>,
-    pub time_modified: u64,
-    pub time_created: u64,
+    pub time_modified: i64,
+    pub time_created: i64,
     pub region_count: u32,
     pub enclosing_size: Vec3,
     pub total_volume: u32,

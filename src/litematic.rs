@@ -1,9 +1,11 @@
-use std::{time::SystemTime, io::{Read, Write}, borrow::Cow, collections::HashMap, fs::File};
+use std::{io::{Read, Write}, borrow::Cow, collections::HashMap, fs::File};
 
+#[cfg(feature = "datetime")]
+use chrono::{DateTime, Utc, TimeZone};
 use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 
-use crate::{schema, util::Vec3, error::Result};
+use crate::{schema, util::{Vec3, current_time}, error::Result};
 
 use super::Region;
 
@@ -15,14 +17,20 @@ pub struct Litematic<'l> {
     pub author: Cow<'l, str>,
     pub version: u32,
     pub minecraft_data_version: u32,
-    // TODO: DateTime type with chrono
-    pub time_created: u64,
-    pub time_modified: u64,
+
+    #[cfg(feature = "datetime")]
+    pub time_created: DateTime<Utc>,
+    #[cfg(not(feature = "datetime"))]
+    pub time_created: i64,
+    #[cfg(feature = "datetime")]
+    pub time_modified: DateTime<Utc>,
+    #[cfg(not(feature = "datetime"))]
+    pub time_modified: i64,
 }
 
 impl <'l> Litematic<'l> {
     pub fn new(name: Cow<'l, str>, description: Cow<'l, str>, author: Cow<'l, str>) -> Self {
-        let unix_now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+        let now = current_time();
         return Self {
             regions: vec![],
             name,
@@ -30,8 +38,8 @@ impl <'l> Litematic<'l> {
             author,
             version: 6,
             minecraft_data_version: 2975,
-            time_created: unix_now,
-            time_modified: unix_now,
+            time_created: now,
+            time_modified: now,
         };
     }
 
@@ -45,7 +53,14 @@ impl <'l> Litematic<'l> {
             author: raw.metadata.author.to_owned(),
             version: raw.version,
             minecraft_data_version: raw.minecraft_data_version,
+
+            #[cfg(feature = "datetime")]
+            time_created: Utc.timestamp_millis(raw.metadata.time_created),
+            #[cfg(not(feature = "datetime"))]
             time_created: raw.metadata.time_created,
+            #[cfg(feature = "datetime")]
+            time_modified: Utc.timestamp_millis(raw.metadata.time_modified),
+            #[cfg(not(feature = "datetime"))]
             time_modified: raw.metadata.time_modified,
         };
     }
@@ -65,12 +80,19 @@ impl <'l> Litematic<'l> {
                 name: self.name.to_owned(),
                 description: self.description.to_owned(),
                 author: self.author.to_owned(),
-                time_created: self.time_created,
-                time_modified: self.time_modified,
                 region_count: self.regions.len() as u32,
                 total_blocks: self.total_blocks(),
                 total_volume: self.total_volume(),
-                enclosing_size: self.enclosing_size()
+                enclosing_size: self.enclosing_size(),
+
+                #[cfg(feature = "datetime")]
+                time_created: self.time_created.timestamp_millis(),
+                #[cfg(not(feature = "datetime"))]
+                time_created: self.time_created,
+                #[cfg(feature = "datetime")]
+                time_modified: current_time().timestamp_millis(),
+                #[cfg(not(feature = "datetime"))]
+                time_modified: current_time(),
             }
         };
     }

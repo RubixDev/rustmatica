@@ -7,7 +7,9 @@ update:
 	python make_lists.py
 
 test:
-	cargo test --profile no-opt --all-features
-	cargo test --profile no-opt --no-default-features
+	cargo test --profile no-opt --all-features -- --nocapture
+	cargo test --profile no-opt --no-default-features -- --nocapture
+	git restore test_files/donut.litematic
+	git restore test_files/donut_modified.litematic
 	wasm-pack test --node --all-features
 	wasm-pack test --node --no-default-features
