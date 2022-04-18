@@ -8,6 +8,10 @@ edition = "2021"
 [profile.dev]
 opt-level = 1
 
+[profile.no-opt]
+inherits = "dev"
+opt-level = 0
+
 [features]
 lists = ["dep:strum"]
 default = ["lists"]
