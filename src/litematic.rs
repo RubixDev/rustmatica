@@ -146,10 +146,10 @@ impl <'l> Litematic<'l> {
         for region in self.regions.iter() {
             bounds[0] = bounds[0].min(region.min_global_x());
             bounds[1] = bounds[1].max(region.max_global_x());
-            bounds[2] = bounds[0].min(region.min_global_y());
-            bounds[3] = bounds[1].max(region.max_global_y());
-            bounds[4] = bounds[0].min(region.min_global_z());
-            bounds[5] = bounds[1].max(region.max_global_z());
+            bounds[2] = bounds[2].min(region.min_global_y());
+            bounds[3] = bounds[3].max(region.max_global_y());
+            bounds[4] = bounds[4].min(region.min_global_z());
+            bounds[5] = bounds[5].max(region.max_global_z());
         }
         return UVec3 {
             x: bounds[1] - bounds[0] + 1,
