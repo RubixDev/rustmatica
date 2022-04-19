@@ -1,5 +1,5 @@
 macro_rules! blocks {
-    ($($str:expr, $name:ident $(-$($prop:ident : $type:ty),+)?);+ $(;)?) => {
+    ($($str:expr, $name:ident $(-$($prop:ident : $type:ty $(as $prop_str:expr)?),+)?);+ $(;)?) => {
         use core::marker::PhantomData;
         use std::{borrow::Cow, collections::HashMap, str::FromStr};
         use serde::{Deserialize, de::Visitor};
@@ -80,7 +80,7 @@ macro_rules! blocks {
                         let name = name.ok_or_else(|| serde::de::Error::missing_field("name"))?;
                         Ok(match name.as_ref() {
                             $(
-                                $str => make!($name $(, name, properties; $($prop),+)?)
+                                $str => make!($name $(, name, properties; $($prop $($prop_str)?),+)?)
                             ),+,
                             _ => Self::Value::Other { name, properties },
                         })
@@ -98,7 +98,7 @@ macro_rules! blocks {
             pub fn as_other(&self) -> Self {
                 match self {
                     $(
-                        Self::$name $({ $($prop),+ })? => Self::Other { name: Cow::Borrowed($str), properties: props!($($($prop),+)?) },
+                        Self::$name $({ $($prop),+ })? => Self::Other { name: Cow::Borrowed($str), properties: props!($($($prop $($prop_str)?),+)?) },
                     )+
                     Self::Other { name, properties } => Self::Other { name: name.to_owned(), properties: properties.to_owned() },
                 }
@@ -109,11 +109,11 @@ macro_rules! blocks {
 
 macro_rules! make {
     ($block:ident) => { Self::Value::$block };
-    ($block:ident, $name:ident, $props:ident; $($prop:ident),+) => {
+    ($block:ident, $name:ident, $props:ident; $($prop:ident $($prop_str:expr)?),+) => {
         match $props.as_ref() {
             Some(props) => Self::Value::$block {
                 $(
-                    $prop: match props.get(stringify!($prop)) {
+                    $prop: match props.get(prop_str!($prop $($prop_str)?)) {
                         Some(val) => match <_>::from_str(val).ok() {
                             Some(val) => val,
                             None => return Ok(Self::Value::Other { name: $name, properties: $props }),
@@ -127,11 +127,16 @@ macro_rules! make {
     };
 }
 
+macro_rules! prop_str {
+    ($prop:ident $prop_str:expr) => { $prop_str };
+    ($prop:ident) => { stringify!($prop) };
+}
+
 macro_rules! props {
     () => { None };
-    ($($prop:ident),+) => {
+    ($($prop:ident $($prop_str:expr)?),+) => {
         Some(HashMap::from([$(
-            (Cow::Borrowed(stringify!($prop)), Cow::Owned($prop.to_string()))
+            (Cow::Borrowed(prop_str!($prop $($prop_str)?)), Cow::Owned($prop.to_string()))
         ),+]))
     };
 }
