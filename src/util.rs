@@ -24,7 +24,7 @@ impl Vec3 {
     } }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct UVec3 {
     pub x: usize,
     pub y: usize,

@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc, TimeZone};
 use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 
-use crate::{schema, util::{Vec3, current_time}, error::Result};
+use crate::{schema, util::{UVec3, current_time}, error::Result};
 
 use super::Region;
 
@@ -141,7 +141,7 @@ impl <'l> Litematic<'l> {
         self.regions.iter().map(|r| r.size.volume() as u32).sum()
     }
 
-    pub fn enclosing_size(&self) -> Vec3 {
+    pub fn enclosing_size(&self) -> UVec3 {
         let mut bounds = [0; 6];
         for region in self.regions.iter() {
             bounds[0] = bounds[0].min(region.min_global_x());
@@ -151,7 +151,7 @@ impl <'l> Litematic<'l> {
             bounds[4] = bounds[0].min(region.min_global_z());
             bounds[5] = bounds[1].max(region.max_global_z());
         }
-        return Vec3 {
+        return UVec3 {
             x: bounds[1] - bounds[0] + 1,
             y: bounds[3] - bounds[2] + 1,
             z: bounds[5] - bounds[4] + 1,

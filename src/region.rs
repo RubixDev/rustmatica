@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, ops::RangeInclusive};
 
 use fastnbt::LongArray;
 
@@ -7,7 +7,7 @@ use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity, Litematic};
 #[derive(Debug, Clone, PartialEq)]
 pub struct Region<'l> {
     pub name: Cow<'l, str>,
-    pub position: Vec3,
+    pub position: UVec3,
     pub size: Vec3,
     pub tile_entities: Vec<TileEntity<'l>>,
     palette: Vec<BlockState<'l>>,
@@ -15,7 +15,7 @@ pub struct Region<'l> {
 }
 
 impl <'l> Region<'l> {
-    pub fn new(name: Cow<'l, str>, position: Vec3, size: Vec3) -> Self {
+    pub fn new(name: Cow<'l, str>, position: UVec3, size: Vec3) -> Self {
         return Self {
             name,
             position,
@@ -115,19 +115,23 @@ impl <'l> Region<'l> {
         }
     }
 
-    pub fn min_global_x(&self) -> i32 { self.position.x.min(self.position.x + self.size.x + 1) }
-    pub fn max_global_x(&self) -> i32 { self.position.x.max(self.position.x + self.size.x - 1) }
-    pub fn min_global_y(&self) -> i32 { self.position.y.min(self.position.y + self.size.y + 1) }
-    pub fn max_global_y(&self) -> i32 { self.position.y.max(self.position.y + self.size.y - 1) }
-    pub fn min_global_z(&self) -> i32 { self.position.z.min(self.position.z + self.size.z + 1) }
-    pub fn max_global_z(&self) -> i32 { self.position.z.max(self.position.z + self.size.z - 1) }
+    pub fn min_global_x(&self) -> usize { (self.position.x as i32).min(self.position.x as i32 + self.size.x + 1) as usize }
+    pub fn max_global_x(&self) -> usize { (self.position.x as i32).max(self.position.x as i32 + self.size.x - 1) as usize }
+    pub fn min_global_y(&self) -> usize { (self.position.y as i32).min(self.position.y as i32 + self.size.y + 1) as usize }
+    pub fn max_global_y(&self) -> usize { (self.position.y as i32).max(self.position.y as i32 + self.size.y - 1) as usize }
+    pub fn min_global_z(&self) -> usize { (self.position.z as i32).min(self.position.z as i32 + self.size.z + 1) as usize }
+    pub fn max_global_z(&self) -> usize { (self.position.z as i32).max(self.position.z as i32 + self.size.z - 1) as usize }
 
-    pub fn min_x(&self) -> i32 { 0.min(self.size.x + 1) }
-    pub fn max_x(&self) -> i32 { 0.max(self.size.x - 1) }
-    pub fn min_y(&self) -> i32 { 0.min(self.size.y + 1) }
-    pub fn max_y(&self) -> i32 { 0.max(self.size.y - 1) }
-    pub fn min_z(&self) -> i32 { 0.min(self.size.z + 1) }
-    pub fn max_z(&self) -> i32 { 0.max(self.size.z - 1) }
+    pub fn min_x(&self) -> usize { 0                            }
+    pub fn max_x(&self) -> usize { 0.max(self.size.abs().x - 1) }
+    pub fn min_y(&self) -> usize { 0                            }
+    pub fn max_y(&self) -> usize { 0.max(self.size.abs().y - 1) }
+    pub fn min_z(&self) -> usize { 0                            }
+    pub fn max_z(&self) -> usize { 0.max(self.size.abs().z - 1) }
+
+    pub fn x_range(&self) -> RangeInclusive<usize> { self.min_x()..=self.max_x() }
+    pub fn y_range(&self) -> RangeInclusive<usize> { self.min_y()..=self.max_y() }
+    pub fn z_range(&self) -> RangeInclusive<usize> { self.min_z()..=self.max_z() }
 
     pub fn total_blocks(&self) -> usize { self.blocks.iter().filter(|b| b != &&0).count() }
 

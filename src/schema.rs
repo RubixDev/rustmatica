@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap};
 use fastnbt::{Value, LongArray};
 use serde::{Serialize, Deserialize};
 
-use crate::{util::Vec3, BlockState, TileEntity};
+use crate::{util::{Vec3, UVec3}, BlockState, TileEntity};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -16,7 +16,7 @@ pub struct Litematic<'a> {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Region<'a> {
-    pub position: Vec3,
+    pub position: UVec3,
     pub size: Vec3,
     pub block_state_palette: Vec<BlockState<'a>>,
     pub tile_entities: Vec<TileEntity<'a>>,
@@ -34,7 +34,7 @@ pub struct Metadata<'a> {
     pub time_modified: i64,
     pub time_created: i64,
     pub region_count: u32,
-    pub enclosing_size: Vec3,
+    pub enclosing_size: UVec3,
     pub total_volume: u32,
     pub description: Cow<'a, str>,
     pub author: Cow<'a, str>,
