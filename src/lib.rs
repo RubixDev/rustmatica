@@ -1,3 +1,7 @@
+#[cfg(feature = "chrono")]
+pub extern crate chrono;
+pub extern crate fastnbt;
+
 #[macro_use]
 pub mod block_state;
 pub mod util;
