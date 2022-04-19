@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: [cargo test --profile no-opt tests::, wasm-pack test --node]
+        command: ['cargo test --profile no-opt tests::', wasm-pack test --node]
         features: [all, no-default]
     steps:
       - uses: actions/checkout@v3
