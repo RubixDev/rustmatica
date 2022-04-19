@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Serialize, Deserialize, ser::SerializeStruct};
 
 #[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct Vec3 {
@@ -24,7 +24,7 @@ impl Vec3 {
     } }
 }
 
-#[derive(Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
+#[derive(Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct UVec3 {
     pub x: usize,
     pub y: usize,
@@ -37,6 +37,18 @@ impl UVec3 {
 
     pub fn volume(&self) -> usize {
         self.x * self.y * self.z
+    }
+}
+
+// Manually implement Serialize for UVec3 so the values are saved as Int (u32) not Long (u64)
+impl Serialize for UVec3 {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: serde::Serializer {
+        let mut ser = serializer.serialize_struct("UVec3", 3)?;
+        ser.serialize_field("x", &(self.x as u32))?;
+        ser.serialize_field("y", &(self.y as u32))?;
+        ser.serialize_field("z", &(self.z as u32))?;
+        ser.end()
     }
 }
 
