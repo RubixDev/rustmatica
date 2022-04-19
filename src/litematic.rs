@@ -1,6 +1,6 @@
 use std::{io::{Read, Write}, borrow::Cow, collections::HashMap, fs::File};
 
-#[cfg(feature = "datetime")]
+#[cfg(feature = "chrono")]
 use chrono::{DateTime, Utc, TimeZone};
 use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
@@ -18,13 +18,13 @@ pub struct Litematic<'l> {
     pub version: u32,
     pub minecraft_data_version: u32,
 
-    #[cfg(feature = "datetime")]
+    #[cfg(feature = "chrono")]
     pub time_created: DateTime<Utc>,
-    #[cfg(not(feature = "datetime"))]
+    #[cfg(not(feature = "chrono"))]
     pub time_created: i64,
-    #[cfg(feature = "datetime")]
+    #[cfg(feature = "chrono")]
     pub time_modified: DateTime<Utc>,
-    #[cfg(not(feature = "datetime"))]
+    #[cfg(not(feature = "chrono"))]
     pub time_modified: i64,
 }
 
@@ -54,13 +54,13 @@ impl <'l> Litematic<'l> {
             version: raw.version,
             minecraft_data_version: raw.minecraft_data_version,
 
-            #[cfg(feature = "datetime")]
+            #[cfg(feature = "chrono")]
             time_created: Utc.timestamp_millis(raw.metadata.time_created),
-            #[cfg(not(feature = "datetime"))]
+            #[cfg(not(feature = "chrono"))]
             time_created: raw.metadata.time_created,
-            #[cfg(feature = "datetime")]
+            #[cfg(feature = "chrono")]
             time_modified: Utc.timestamp_millis(raw.metadata.time_modified),
-            #[cfg(not(feature = "datetime"))]
+            #[cfg(not(feature = "chrono"))]
             time_modified: raw.metadata.time_modified,
         };
     }
@@ -85,13 +85,13 @@ impl <'l> Litematic<'l> {
                 total_volume: self.total_volume(),
                 enclosing_size: self.enclosing_size(),
 
-                #[cfg(feature = "datetime")]
+                #[cfg(feature = "chrono")]
                 time_created: self.time_created.timestamp_millis(),
-                #[cfg(not(feature = "datetime"))]
+                #[cfg(not(feature = "chrono"))]
                 time_created: self.time_created,
-                #[cfg(feature = "datetime")]
+                #[cfg(feature = "chrono")]
                 time_modified: current_time().timestamp_millis(),
-                #[cfg(not(feature = "datetime"))]
+                #[cfg(not(feature = "chrono"))]
                 time_modified: current_time(),
             }
         };

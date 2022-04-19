@@ -14,8 +14,8 @@ opt-level = 0
 
 [features]
 lists = ["dep:strum"]
-datetime = ["dep:chrono"]
-default = ["lists", "datetime"]
+chrono = ["dep:chrono"]
+default = ["lists", "chrono"]
 
 [dependencies]
 fastnbt = "2.0.2"
