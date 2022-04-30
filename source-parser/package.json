@@ -1,0 +1,29 @@
+{
+  "name": "minecraft-source-parser",
+  "version": "1.0.0",
+  "description": "TODO",
+  "main": "out/main.js",
+  "scripts": {
+    "watch": "tsc --watch",
+    "start": "tsc && node ."
+  },
+  "author": "RubixDev",
+  "license": "GPL-2.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RubixDev/rustmatica.git",
+    "directory": "source-parser"
+  },
+  "bugs": {
+    "url": "https://github.com/RubixDev/rustmatica/issues"
+  },
+  "homepage": "https://github.com/RubixDev/rustmatica/source-parser",
+  "devDependencies": {
+    "@types/node": "^17.0.25",
+    "java-parser": "^2.0.1",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "json-stringify-pretty-compact": "^3.0.0"
+  }
+}

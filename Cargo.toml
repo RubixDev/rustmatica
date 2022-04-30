@@ -15,10 +15,12 @@ opt-level = 0
 [features]
 lists = ["dep:strum"]
 chrono = ["dep:chrono"]
+entity-list = []
 default = ["lists", "chrono"]
 
 [dependencies]
-fastnbt = "2.0.2"
+# TODO: use stable release when available
+fastnbt = { git = "https://github.com/RubixDev/fastnbt", branch = "value-serde" }
 flate2 = "1.0.23"
 serde = "1.0.136"
 strum = { version = "0.24.0", features = ["derive"], optional = true }

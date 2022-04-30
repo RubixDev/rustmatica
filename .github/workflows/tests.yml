@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: ['cargo test --profile no-opt tests::', wasm-pack test --node]
-        features: [all, no-default]
+        command: ['cargo test tests::', wasm-pack test --node]
+        features: [--all, --profile no-opt --no-default]
     steps:
       - uses: actions/checkout@v3
       - name: Install Toolchain
@@ -20,4 +20,4 @@ jobs:
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.3.0
       - name: Run
-        run: '${{ matrix.command }} --${{ matrix.features }}-features --lib -- tests::'
+        run: '${{ matrix.command }} ${{ matrix.features }}-features --lib -- tests::'

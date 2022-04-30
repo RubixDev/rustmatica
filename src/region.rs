@@ -2,7 +2,7 @@ use std::{borrow::Cow, ops::RangeInclusive};
 
 use fastnbt::LongArray;
 
-use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity, Litematic};
+use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity, Litematic, Entity};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Region<'l> {
@@ -10,6 +10,7 @@ pub struct Region<'l> {
     pub position: UVec3,
     pub size: Vec3,
     pub tile_entities: Vec<TileEntity<'l>>,
+    pub entities: Vec<Entity<'l>>,
     palette: Vec<BlockState<'l>>,
     blocks: Vec<usize>,
 }
@@ -21,6 +22,7 @@ impl <'l> Region<'l> {
             position,
             size,
             tile_entities: vec![],
+            entities: vec![],
             palette: vec![block!()],
             blocks: vec![0; size.volume()],
         };
@@ -30,6 +32,7 @@ impl <'l> Region<'l> {
         let mut new = Self::new(name, raw.position, raw.size);
         new.palette = raw.block_state_palette.to_owned();
         new.tile_entities = raw.tile_entities.to_owned();
+        new.entities = raw.entities.to_owned();
 
         let num_bits = new.num_bits();
         new.blocks = raw.block_states.iter()
@@ -49,7 +52,7 @@ impl <'l> Region<'l> {
             size: self.size,
             block_state_palette: self.palette.to_owned(),
             tile_entities: self.tile_entities.to_owned(),
-            entities: vec![],
+            entities: self.entities.to_owned(),
             pending_fluid_ticks: vec![],
             pending_block_ticks: vec![],
             block_states: LongArray::new(vec![]),

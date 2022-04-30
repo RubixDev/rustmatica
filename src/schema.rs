@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap};
 use fastnbt::{Value, LongArray};
 use serde::{Serialize, Deserialize};
 
-use crate::{util::{Vec3, UVec3}, BlockState, TileEntity};
+use crate::{util::{Vec3, UVec3}, BlockState, TileEntity, Entity};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
@@ -20,9 +20,9 @@ pub struct Region<'a> {
     pub size: Vec3,
     pub block_state_palette: Vec<BlockState<'a>>,
     pub tile_entities: Vec<TileEntity<'a>>,
-    pub entities: Vec<Value>,
-    pub pending_fluid_ticks: Vec<Value>,
-    pub pending_block_ticks: Vec<Value>,
+    pub entities: Vec<Entity<'a>>,
+    pub pending_fluid_ticks: Vec<Value>, /* TODO */
+    pub pending_block_ticks: Vec<Value>, /* TODO */
     pub block_states: LongArray,
 }
 

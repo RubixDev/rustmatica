@@ -80,7 +80,7 @@ macro_rules! blocks {
                         let name = name.ok_or_else(|| serde::de::Error::missing_field("name"))?;
                         Ok(match name.as_ref() {
                             $(
-                                $str => make!($name $(, name, properties; $($prop $($prop_str)?),+)?)
+                                $str => make_block!($name $(, name, properties; $($prop $($prop_str)?),+)?)
                             ),+,
                             _ => Self::Value::Other { name, properties },
                         })
@@ -107,7 +107,7 @@ macro_rules! blocks {
     };
 }
 
-macro_rules! make {
+macro_rules! make_block {
     ($block:ident) => { Self::Value::$block };
     ($block:ident, $name:ident, $props:ident; $($prop:ident $($prop_str:expr)?),+) => {
         match $props.as_ref() {
