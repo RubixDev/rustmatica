@@ -12,7 +12,7 @@ macro_rules! tile_entity {
         $crate::TileEntity {
             pos: $pos,
             properties: std::collections::HashMap::from([$(
-                (std::borrow::Cow::Borrowed($key), $value)
+                ($key.into(), $value)
             ),*]),
         }
     };

@@ -98,7 +98,7 @@ macro_rules! blocks {
             pub fn as_other(&self) -> Self {
                 match self {
                     $(
-                        Self::$name $({ $($prop),+ })? => Self::Other { name: Cow::Borrowed($str), properties: props!($($($prop $($prop_str)?),+)?) },
+                        Self::$name $({ $($prop),+ })? => Self::Other { name: $str.into(), properties: props!($($($prop $($prop_str)?),+)?) },
                     )+
                     Self::Other { name, properties } => Self::Other { name: name.to_owned(), properties: properties.to_owned() },
                 }
@@ -136,7 +136,7 @@ macro_rules! props {
     () => { None };
     ($($prop:ident $($prop_str:expr)?),+) => {
         Some(HashMap::from([$(
-            (Cow::Borrowed(prop_str!($prop $($prop_str)?)), Cow::Owned($prop.to_string()))
+            (prop_str!($prop $($prop_str)?).into(), Cow::Owned($prop.to_string()))
         ),+]))
     };
 }

@@ -1,6 +1,6 @@
 #[cfg(feature = "lists")]
 mod with_list {
-    use std::{borrow::Cow, collections::HashMap};
+    use std::collections::HashMap;
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use crate::{Litematic, BlockState, util::UVec3, block_state::types::HorizontalDirection};
@@ -44,14 +44,14 @@ mod with_list {
     fn block_state_eq() {
         assert_eq!(
             BlockState::Air,
-            BlockState::Other { name: Cow::Borrowed("minecraft:air"), properties: None },
+            BlockState::Other { name: "minecraft:air".into(), properties: None },
         );
         assert_eq!(
             BlockState::GrassBlock { snowy: true },
             BlockState::Other {
-                name: Cow::Borrowed("minecraft:grass_block"),
+                name: "minecraft:grass_block".into(),
                 properties: Some(HashMap::from([
-                    (Cow::Borrowed("snowy"), Cow::Borrowed("true")),
+                    ("snowy".into(), "true".into()),
                 ])),
             },
         );
@@ -63,12 +63,12 @@ mod with_list {
                 powered: true,
             },
             BlockState::Other {
-                name: Cow::Borrowed("minecraft:repeater"),
+                name: "minecraft:repeater".into(),
                 properties: Some(HashMap::from([
-                    (Cow::Borrowed("delay"), Cow::Borrowed("3")),
-                    (Cow::Borrowed("facing"), Cow::Borrowed("west")),
-                    (Cow::Borrowed("locked"), Cow::Borrowed("true")),
-                    (Cow::Borrowed("powered"), Cow::Borrowed("true")),
+                    ("delay".into(), "3".into()),
+                    ("facing".into(), "west".into()),
+                    ("locked".into(), "true".into()),
+                    ("powered".into(), "true".into()),
                 ])),
             },
         );
@@ -102,7 +102,7 @@ mod with_list {
 
 #[cfg(not(feature = "lists"))]
 mod without_list {
-    use std::{borrow::Cow, collections::HashMap};
+    use std::collections::HashMap;
     use wasm_bindgen_test::wasm_bindgen_test;
 
     use crate::{Litematic, BlockState, util::UVec3};
@@ -144,35 +144,35 @@ mod without_list {
     fn macros() {
         assert_eq!(
             BlockState {
-                name: Cow::Borrowed("minecraft:air"),
+                name: "minecraft:air".into(),
                 properties: None,
             },
             block!(),
         );
         assert_eq!(
             BlockState {
-                name: Cow::Borrowed("minecraft:stone"),
+                name: "minecraft:stone".into(),
                 properties: None,
             },
             block!("minecraft:stone"),
         );
         assert_eq!(
             BlockState {
-                name: Cow::Borrowed("minecraft:grass_block"),
+                name: "minecraft:grass_block".into(),
                 properties: Some(HashMap::from([
-                    (Cow::Borrowed("snowy"), Cow::Borrowed("false")),
+                    ("snowy".into(), "false".into()),
                 ])),
             },
             block!("minecraft:grass_block"; "snowy" => "false"),
         );
         assert_eq!(
             BlockState {
-                name: Cow::Borrowed("minecraft:repeater"),
+                name: "minecraft:repeater".into(),
                 properties: Some(HashMap::from([
-                    (Cow::Borrowed("delay"), Cow::Borrowed("2")),
-                    (Cow::Borrowed("facing"), Cow::Borrowed("south")),
-                    (Cow::Borrowed("locked"), Cow::Borrowed("false")),
-                    (Cow::Borrowed("powered"), Cow::Borrowed("false")),
+                    ("delay".into(), "2".into()),
+                    ("facing".into(), "south".into()),
+                    ("locked".into(), "false".into()),
+                    ("powered".into(), "false".into()),
                 ])),
             },
             block!(

@@ -24,16 +24,16 @@ macro_rules! block {
     ($block:ident $props:tt) => { $crate::BlockState::$block $props };
     ($name:expr) => {
         $crate::BlockState::Other {
-            name: std::borrow::Cow::Borrowed($name),
+            name: $name.into(),
             properties: None,
         }
     };
     ($name:expr; $($key:expr => $val:expr),+ $(,)?) => {
         $crate::BlockState::Other {
-            name: std::borrow::Cow::Borrowed($name),
+            name: $name.into(),
             properties: Some(std::collections::HashMap::from([
                 $(
-                    (std::borrow::Cow::Borrowed($key), std::borrow::Cow::Borrowed($val))
+                    ($key.into(), $val.into())
                 ),+
             ]))
         }
@@ -46,16 +46,16 @@ macro_rules! block {
     () => { block!("minecraft:air") };
     ($name:expr) => {
         $crate::BlockState {
-            name: std::borrow::Cow::Borrowed($name),
+            name: $name.into(),
             properties: None,
         }
     };
     ($name:expr; $($key:expr => $val:expr),+ $(,)?) => {
         $crate::BlockState {
-            name: std::borrow::Cow::Borrowed($name),
+            name: $name.into(),
             properties: Some(std::collections::HashMap::from([
                 $(
-                    (std::borrow::Cow::Borrowed($key), std::borrow::Cow::Borrowed($val))
+                    ($key.into(), $val.into())
                 ),+
             ]))
         }

@@ -74,7 +74,7 @@ macro_rules! entities {
                 match self {
                     $(
                         Self::$name { uuid, $($prop),+ } => Self::Other {
-                            id: Cow::Borrowed($str),
+                            id: $str.into(),
                             uuid: uuid.to_owned(),
                             properties: {
                                 let mut map = HashMap::new();
@@ -126,12 +126,12 @@ macro_rules! make_entity_prop {
     (@some $val:ident) => { $val };
     (@some $val:ident as $opt:ident) => { Some($val) };
     (@map $map:ident, $prop:ident) => {
-        $map.insert(Cow::Borrowed(stringify!($prop)), fastnbt::to_value($prop).unwrap());
+        $map.insert(stringify!($prop).into(), fastnbt::to_value($prop).unwrap());
     };
     (@map $map:ident, $prop:ident as $opt:ident) => {
         #[allow(non_snake_case)]
         if let Some($prop) = $prop {
-            $map.insert(Cow::Borrowed(stringify!($prop)), fastnbt::to_value($prop).unwrap());
+            $map.insert(stringify!($prop).into(), fastnbt::to_value($prop).unwrap());
         }
     };
 }
