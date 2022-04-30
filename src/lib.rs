@@ -1,5 +1,7 @@
 #[cfg(feature = "chrono")]
 pub extern crate chrono;
+#[allow(unused_imports)]
+#[macro_use(nbt)]
 pub extern crate fastnbt;
 
 #[macro_use]

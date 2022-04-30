@@ -1,4 +1,3 @@
-use fastnbt::Value;
 use wasm_bindgen_test::wasm_bindgen_test;
 
 use crate::{Litematic, util::UVec3};
@@ -10,15 +9,45 @@ fn tile_entities() {
     {
         let region = axolotl.regions.get_mut(0).unwrap();
         assert_eq!(region.get_tile_entity(UVec3::new(2, 2, 2)), None);
-        // TODO: test chest when fastnbt has nbt! macro
         assert_eq!(region.get_tile_entity(UVec3::new(1, 1, 1)), Some(&tile_entity!(
             1, 1, 1;
-            "Text1" => Value::String(r#"{"text":"a"}"#.to_string()),
-            "Text2" => Value::String(r#"{"text":"b"}"#.to_string()),
-            "Text3" => Value::String(r#"{"text":"c"}"#.to_string()),
-            "Text4" => Value::String(r#"{"text":"d"}"#.to_string()),
-            "Color" => Value::String("black".to_string()),
-            "GlowingText" => Value::Byte(0),
+            "Text1" => nbt!(r#"{"text":"a"}"#),
+            "Text2" => nbt!(r#"{"text":"b"}"#),
+            "Text3" => nbt!(r#"{"text":"c"}"#),
+            "Text4" => nbt!(r#"{"text":"d"}"#),
+            "Color" => nbt!("black"),
+            "GlowingText" => nbt!(0_u8),
+        )));
+        assert_eq!(region.get_tile_entity(UVec3::new(1, 1, 0)), Some(&tile_entity!(
+            1, 1, 0;
+            "Items" => nbt!([
+                {
+                    "Count": 1_u8,
+                    "Slot": 0_u8,
+                    "id": "minecraft:axolotl_bucket",
+                    "tag": {},
+                },
+                {
+                    "Count": 1_u8,
+                    "Slot": 1_u8,
+                    "id": "minecraft:stick",
+                },
+                {
+                    "Count": 1_u8,
+                    "Slot": 11_u8,
+                    "id": "minecraft:stone",
+                },
+                {
+                    "Count": 1_u8,
+                    "Slot": 21_u8,
+                    "id": "minecraft:chest",
+                },
+                {
+                    "Count": 1_u8,
+                    "Slot": 23_u8,
+                    "id": "minecraft:oak_sign",
+                },
+            ]),
         )));
         region.set_tile_entity(tile_entity!(UVec3::new(2, 2, 2);));
         assert_eq!(
