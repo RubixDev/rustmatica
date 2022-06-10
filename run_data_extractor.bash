@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Custom exit function to always delete the temp folder
 _exit () {
