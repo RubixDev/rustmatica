@@ -20,9 +20,9 @@ default = ["lists", "chrono"]
 
 [dependencies]
 # TODO: use stable release when available
-fastnbt = { git = "https://github.com/RubixDev/fastnbt", branch = "value-serde" }
-flate2 = "1.0.23"
-serde = "1.0.136"
+fastnbt = { git = "https://github.com/owengage/fastnbt" }
+flate2 = "1.0.24"
+serde = "1.0.137"
 strum = { version = "0.24.0", features = ["derive"], optional = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
