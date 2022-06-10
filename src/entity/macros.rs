@@ -120,11 +120,21 @@ macro_rules! make_entity {
 
 macro_rules! make_entity_prop {
     (@none $prop:ident, $id:ident, $uuid:ident, $props:ident) => {
-        return Ok(Self::Value::Other { id: $id, uuid: $uuid, properties: $props })
+        return Ok(Self::Value::Other {
+            id: $id,
+            uuid: $uuid,
+            properties: $props,
+        })
     };
-    (@none $prop:ident as $opt:ident, $id:ident, $uuid:ident, $props:ident) => { None };
-    (@some $val:ident) => { $val };
-    (@some $val:ident as $opt:ident) => { Some($val) };
+    (@none $prop:ident as $opt:ident, $id:ident, $uuid:ident, $props:ident) => {
+        None
+    };
+    (@some $val:ident) => {
+        $val
+    };
+    (@some $val:ident as $opt:ident) => {
+        Some($val)
+    };
     (@map $map:ident, $prop:ident) => {
         $map.insert(stringify!($prop).into(), fastnbt::to_value($prop).unwrap());
     };

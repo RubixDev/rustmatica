@@ -1,11 +1,20 @@
-use std::{io::{Read, Write}, borrow::Cow, collections::HashMap, fs::File};
+use std::{
+    borrow::Cow,
+    collections::HashMap,
+    fs::File,
+    io::{Read, Write},
+};
 
 #[cfg(feature = "chrono")]
-use chrono::{DateTime, Utc, TimeZone};
+use chrono::{DateTime, TimeZone, Utc};
 use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 
-use crate::{schema, util::{UVec3, current_time}, error::Result};
+use crate::{
+    error::Result,
+    schema,
+    util::{current_time, UVec3},
+};
 
 use super::Region;
 
@@ -28,10 +37,10 @@ pub struct Litematic<'l> {
     pub time_modified: i64,
 }
 
-impl <'l> Litematic<'l> {
+impl<'l> Litematic<'l> {
     pub fn new(name: Cow<'l, str>, description: Cow<'l, str>, author: Cow<'l, str>) -> Self {
         let now = current_time();
-        return Self {
+        Self {
             regions: vec![],
             name,
             description,
@@ -40,13 +49,17 @@ impl <'l> Litematic<'l> {
             minecraft_data_version: 2975,
             time_created: now,
             time_modified: now,
-        };
+        }
     }
 
     pub fn from_raw(raw: Cow<'l, schema::Litematic<'l>>) -> Self {
         return Self {
-            regions: raw.regions.iter()
-                .map(|(name, region)| Region::from_raw(Cow::Owned(region.to_owned()), name.to_owned()))
+            regions: raw
+                .regions
+                .iter()
+                .map(|(name, region)| {
+                    Region::from_raw(Cow::Owned(region.to_owned()), name.to_owned())
+                })
                 .collect(),
             name: raw.metadata.name.to_owned(),
             description: raw.metadata.description.to_owned(),
@@ -93,7 +106,7 @@ impl <'l> Litematic<'l> {
                 time_modified: current_time().timestamp_millis(),
                 #[cfg(not(feature = "chrono"))]
                 time_modified: current_time(),
-            }
+            },
         };
     }
 
@@ -117,14 +130,14 @@ impl <'l> Litematic<'l> {
         let mut gz = GzEncoder::new(&mut buf, Compression::default());
         gz.write_all(&self.to_uncompressed_bytes()?)?;
         gz.finish()?;
-        return Ok(buf);
+        Ok(buf)
     }
 
     pub fn read_file(filename: &str) -> Result<Self> {
         let mut file = File::open(filename)?;
         let mut bytes = vec![];
         file.read_to_end(&mut bytes)?;
-        return Litematic::from_bytes(&bytes);
+        Litematic::from_bytes(&bytes)
     }
 
     pub fn write_file(&self, filename: &str) -> Result<()> {
@@ -151,10 +164,10 @@ impl <'l> Litematic<'l> {
             bounds[4] = bounds[4].min(region.min_global_z());
             bounds[5] = bounds[5].max(region.max_global_z());
         }
-        return UVec3 {
+        UVec3 {
             x: bounds[1] - bounds[0] + 1,
             y: bounds[3] - bounds[2] + 1,
             z: bounds[5] - bounds[4] + 1,
-        };
+        }
     }
 }

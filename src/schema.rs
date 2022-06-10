@@ -1,8 +1,11 @@
+use fastnbt::{LongArray, Value};
+use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, collections::HashMap};
-use fastnbt::{Value, LongArray};
-use serde::{Serialize, Deserialize};
 
-use crate::{util::{Vec3, UVec3}, BlockState, TileEntity, Entity};
+use crate::{
+    util::{UVec3, Vec3},
+    BlockState, Entity, TileEntity,
+};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]

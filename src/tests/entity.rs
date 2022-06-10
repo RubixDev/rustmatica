@@ -4,15 +4,19 @@ mod with_list {
 
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use crate::{Litematic, Entity};
+    use crate::{Entity, Litematic};
 
     #[test]
     #[wasm_bindgen_test]
     fn read_write() {
-        let axolotl = Litematic::from_bytes(include_bytes!("../../test_files/axolotl.litematic")).unwrap();
+        let axolotl =
+            Litematic::from_bytes(include_bytes!("../../test_files/axolotl.litematic")).unwrap();
         let region = &axolotl.regions[0];
         assert_eq!(
-            region.entities.iter().find(|e| matches!(e, Entity::ItemFrame { .. })),
+            region
+                .entities
+                .iter()
+                .find(|e| matches!(e, Entity::ItemFrame { .. })),
             Some(&Entity::ItemFrame {
                 uuid: 154833529407457947883461787053576218097,
                 Air: 300,
@@ -141,30 +145,28 @@ mod with_list {
                 Tags: None,
                 Passengers: None,
             },
-            entity!(
-                Tnt {
-                    uuid: 1234,
-                    Fuse: 123,
-                    Pos: nbt!(0_u8),
-                    Motion: nbt!(0_u8),
-                    Rotation: nbt!(0_u8),
-                    FallDistance: 1.0,
-                    Fire: 321,
-                    Air: 42,
-                    OnGround: false,
-                    Invulnerable: true,
-                    PortalCooldown: 1001,
-                    CustomName: Some("Boom".into()),
-                    CustomNameVisible: Some(true),
-                    Silent: Some(true),
-                    NoGravity: None,
-                    Glowing: None,
-                    TicksFrozen: None,
-                    HasVisualFire: None,
-                    Tags: None,
-                    Passengers: None,
-                }
-            )
+            entity!(Tnt {
+                uuid: 1234,
+                Fuse: 123,
+                Pos: nbt!(0_u8),
+                Motion: nbt!(0_u8),
+                Rotation: nbt!(0_u8),
+                FallDistance: 1.0,
+                Fire: 321,
+                Air: 42,
+                OnGround: false,
+                Invulnerable: true,
+                PortalCooldown: 1001,
+                CustomName: Some("Boom".into()),
+                CustomNameVisible: Some(true),
+                Silent: Some(true),
+                NoGravity: None,
+                Glowing: None,
+                TicksFrozen: None,
+                HasVisualFire: None,
+                Tags: None,
+                Passengers: None,
+            })
         );
         assert_eq!(
             Entity::Other {
@@ -202,15 +204,19 @@ mod without_list {
 
     use wasm_bindgen_test::wasm_bindgen_test;
 
-    use crate::{Litematic, Entity};
+    use crate::{Entity, Litematic};
 
     #[test]
     #[wasm_bindgen_test]
     fn read_write() {
-        let axolotl = Litematic::from_bytes(include_bytes!("../../test_files/axolotl.litematic")).unwrap();
+        let axolotl =
+            Litematic::from_bytes(include_bytes!("../../test_files/axolotl.litematic")).unwrap();
         let region = &axolotl.regions[0];
         assert_eq!(
-            region.entities.iter().find(|e| e.id == "minecraft:item_frame"),
+            region
+                .entities
+                .iter()
+                .find(|e| e.id == "minecraft:item_frame"),
             Some(&Entity {
                 id: "minecraft:item_frame".into(),
                 uuid: 154833529407457947883461787053576218097,
@@ -222,10 +228,13 @@ mod without_list {
                     ("Fixed".into(), nbt!(false)),
                     ("Invisible".into(), nbt!(false)),
                     ("Invulnerable".into(), nbt!(false)),
-                    ("Item".into(), nbt!({
-                        "Count": 1_u8,
-                        "id": "minecraft:furnace",
-                    })),
+                    (
+                        "Item".into(),
+                        nbt!({
+                            "Count": 1_u8,
+                            "id": "minecraft:furnace",
+                        })
+                    ),
                     ("ItemDropChance".into(), nbt!(1_f32)),
                     ("ItemRotation".into(), nbt!(0_u8)),
                     ("Motion".into(), nbt!([0.0, 0.0, 0.0])),
@@ -248,17 +257,23 @@ mod without_list {
                     ("AbsorptionAmount".into(), nbt!(0_f32)),
                     ("Age".into(), nbt!(0)),
                     ("Air".into(), nbt!(6000_i16)),
-                    ("ArmorDropChances".into(), nbt!([
-                        0.08500000089406967_f32,
-                        0.08500000089406967_f32,
-                        0.08500000089406967_f32,
-                        0.08500000089406967_f32,
-                    ])),
+                    (
+                        "ArmorDropChances".into(),
+                        nbt!([
+                            0.08500000089406967_f32,
+                            0.08500000089406967_f32,
+                            0.08500000089406967_f32,
+                            0.08500000089406967_f32,
+                        ])
+                    ),
                     ("ArmorItems".into(), nbt!([{}, {}, {}, {}])),
-                    ("Attributes".into(), nbt!([{
-                        "Base": 1.0,
-                        "Name": "minecraft:generic.movement_speed",
-                    }])),
+                    (
+                        "Attributes".into(),
+                        nbt!([{
+                            "Base": 1.0,
+                            "Name": "minecraft:generic.movement_speed",
+                        }])
+                    ),
                     ("Brain".into(), nbt!({ "memories": {} })),
                     ("CanPickUpLoot".into(), nbt!(false)),
                     ("DeathTime".into(), nbt!(0_i16)),
@@ -267,10 +282,10 @@ mod without_list {
                     ("Fire".into(), nbt!(-1_i16)),
                     ("ForcedAge".into(), nbt!(0)),
                     ("FromBucket".into(), nbt!(true)),
-                    ("HandDropChances".into(), nbt!([
-                        0.08500000089406967_f32,
-                        0.08500000089406967_f32,
-                    ])),
+                    (
+                        "HandDropChances".into(),
+                        nbt!([0.08500000089406967_f32, 0.08500000089406967_f32,])
+                    ),
                     ("HandItems".into(), nbt!([{}, {}])),
                     ("Health".into(), nbt!(14_f32)),
                     ("HurtByTimestamp".into(), nbt!(0)),
@@ -283,10 +298,7 @@ mod without_list {
                     ("PersistenceRequired".into(), nbt!(false)),
                     ("PortalCooldown".into(), nbt!(0)),
                     ("Pos".into(), nbt!([-0.5, 0.0, 1.5])),
-                    ("Rotation".into(), nbt!([
-                        -107.68714904785156_f32,
-                        0_f32,
-                    ])),
+                    ("Rotation".into(), nbt!([-107.68714904785156_f32, 0_f32,])),
                     ("Variant".into(), nbt!(0)),
                 ]),
             })

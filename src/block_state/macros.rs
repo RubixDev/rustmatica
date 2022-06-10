@@ -128,8 +128,12 @@ macro_rules! make_block {
 }
 
 macro_rules! prop_str {
-    ($prop:ident $prop_str:expr) => { $prop_str };
-    ($prop:ident) => { stringify!($prop) };
+    ($prop:ident $prop_str:expr) => {
+        $prop_str
+    };
+    ($prop:ident) => {
+        stringify!($prop)
+    };
 }
 
 macro_rules! props {

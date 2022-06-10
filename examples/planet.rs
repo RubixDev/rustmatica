@@ -2,17 +2,21 @@
 
 use std::borrow::Cow;
 
-use rustmatica::{Region, util::{Vec3, UVec3}, BlockState, Litematic};
+use rustmatica::{
+    util::{UVec3, Vec3},
+    BlockState, Litematic, Region,
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut region = Region::new("Planet".into(), UVec3::new(0, 0, 0), Vec3::new(21, 21, 21));
 
     for (pos, _) in region.clone().blocks() {
-        if ((
-            (pos.x as i32 - 10).pow(2) +
-            (pos.y as i32 - 10).pow(2) +
-            (pos.z as i32 - 10).pow(2)
-        ) as f64).sqrt().round() <= 10.0 {
+        if (((pos.x as i32 - 10).pow(2) + (pos.y as i32 - 10).pow(2) + (pos.z as i32 - 10).pow(2))
+            as f64)
+            .sqrt()
+            .round()
+            <= 10.0
+        {
             region.set_block(pos, BlockState::LightBlueConcrete)
         }
     }

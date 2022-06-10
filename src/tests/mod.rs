@@ -1,3 +1,3 @@
-mod core;
 mod block_state;
+mod core;
 mod entity;

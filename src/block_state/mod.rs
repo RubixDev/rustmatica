@@ -12,7 +12,7 @@ pub mod types;
 pub use list::*;
 
 #[cfg(not(feature = "lists"))]
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 #[cfg(not(feature = "lists"))]
 use std::{borrow::Cow, collections::HashMap};
 

@@ -1,7 +1,7 @@
-use std::{collections::HashMap, borrow::Cow, marker::PhantomData};
-use fastnbt::Value;
-use serde::{Deserialize, de::Visitor, Serialize, ser::SerializeMap};
 use crate::util::UVec3;
+use fastnbt::Value;
+use serde::{de::Visitor, ser::SerializeMap, Deserialize, Serialize};
+use std::{borrow::Cow, collections::HashMap, marker::PhantomData};
 
 #[macro_export]
 macro_rules! tile_entity {
@@ -24,14 +24,16 @@ pub struct TileEntity<'a> {
     pub properties: HashMap<Cow<'a, str>, Value>,
 }
 
-impl <'de, 'a> Deserialize<'de> for TileEntity<'a> {
+impl<'de, 'a> Deserialize<'de> for TileEntity<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where D: serde::Deserializer<'de> {
+    where
+        D: serde::Deserializer<'de>,
+    {
         struct _Visitor<'de, 'a> {
             marker: PhantomData<TileEntity<'a>>,
             lifetime: PhantomData<&'de ()>,
         }
-        impl <'de, 'a> Visitor<'de> for _Visitor<'de, 'a> {
+        impl<'de, 'a> Visitor<'de> for _Visitor<'de, 'a> {
             type Value = TileEntity<'a>;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -39,7 +41,9 @@ impl <'de, 'a> Deserialize<'de> for TileEntity<'a> {
             }
 
             fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
-            where A: serde::de::MapAccess<'de> {
+            where
+                A: serde::de::MapAccess<'de>,
+            {
                 let mut x = None;
                 let mut y = None;
                 let mut z = None;
@@ -51,22 +55,22 @@ impl <'de, 'a> Deserialize<'de> for TileEntity<'a> {
                                 return Err(serde::de::Error::duplicate_field("x"));
                             }
                             x = Some(map.next_value()?);
-                        },
+                        }
                         "y" => {
                             if y.is_some() {
                                 return Err(serde::de::Error::duplicate_field("y"));
                             }
                             y = Some(map.next_value()?);
-                        },
+                        }
                         "z" => {
                             if z.is_some() {
                                 return Err(serde::de::Error::duplicate_field("z"));
                             }
                             z = Some(map.next_value()?);
-                        },
+                        }
                         _ => {
                             properties.insert(key, map.next_value()?);
-                        },
+                        }
                     }
                 }
                 let x = x.ok_or_else(|| serde::de::Error::missing_field("x"))?;
@@ -85,9 +89,11 @@ impl <'de, 'a> Deserialize<'de> for TileEntity<'a> {
     }
 }
 
-impl <'a> Serialize for TileEntity<'a> {
+impl<'a> Serialize for TileEntity<'a> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where S: serde::Serializer {
+    where
+        S: serde::Serializer,
+    {
         let mut ser = serializer.serialize_map(Some(self.properties.len() + 3))?;
         ser.serialize_entry("x", &self.pos.x)?;
         ser.serialize_entry("y", &self.pos.y)?;

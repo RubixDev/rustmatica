@@ -2,7 +2,11 @@ use std::{borrow::Cow, ops::RangeInclusive};
 
 use fastnbt::LongArray;
 
-use crate::{schema, util::{Vec3, UVec3}, BlockState, TileEntity, Litematic, Entity};
+use crate::{
+    schema,
+    util::{UVec3, Vec3},
+    BlockState, Entity, Litematic, TileEntity,
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Region<'l> {
@@ -15,9 +19,9 @@ pub struct Region<'l> {
     blocks: Vec<usize>,
 }
 
-impl <'l> Region<'l> {
+impl<'l> Region<'l> {
     pub fn new(name: Cow<'l, str>, position: UVec3, size: Vec3) -> Self {
-        return Self {
+        Self {
             name,
             position,
             size,
@@ -25,7 +29,7 @@ impl <'l> Region<'l> {
             entities: vec![],
             palette: vec![block!()],
             blocks: vec![0; size.volume()],
-        };
+        }
     }
 
     pub fn from_raw(raw: Cow<'l, schema::Region>, name: Cow<'l, str>) -> Self {
@@ -35,15 +39,21 @@ impl <'l> Region<'l> {
         new.entities = raw.entities.to_owned();
 
         let num_bits = new.num_bits();
-        new.blocks = raw.block_states.iter()
-            .map(|block| (0..64).map(move |bit| block >> bit & 1))
-            .flatten()
+        new.blocks = raw
+            .block_states
+            .iter()
+            .flat_map(|block| (0..64).map(move |bit| block >> bit & 1))
             .collect::<Vec<i64>>()
             .chunks(num_bits)
-            .map(|slice| slice.iter().rev().fold(0, |acc, bit| acc << 1 | *bit as usize))
+            .map(|slice| {
+                slice
+                    .iter()
+                    .rev()
+                    .fold(0, |acc, bit| acc << 1 | *bit as usize)
+            })
             .collect::<Vec<usize>>();
 
-        return new;
+        new
     }
 
     pub fn to_raw(&self) -> schema::Region {
@@ -59,15 +69,17 @@ impl <'l> Region<'l> {
         };
 
         let num_bits = self.num_bits();
-        new.block_states = LongArray::new(self.blocks.iter()
-            .map(|id| (0..num_bits).map(move |bit| id >> bit & 1))
-            .flatten()
-            .collect::<Vec<usize>>()
-            .chunks(64)
-            .map(|bits| bits.iter().rev().fold(0, |acc, bit| acc << 1 | *bit as i64))
-            .collect());
+        new.block_states = LongArray::new(
+            self.blocks
+                .iter()
+                .flat_map(|id| (0..num_bits).map(move |bit| id >> bit & 1))
+                .collect::<Vec<usize>>()
+                .chunks(64)
+                .map(|bits| bits.iter().rev().fold(0, |acc, bit| acc << 1 | *bit as i64))
+                .collect(),
+        );
 
-        return new;
+        new
     }
 
     fn num_bits(&self) -> usize {
@@ -75,14 +87,12 @@ impl <'l> Region<'l> {
         while 1 << num_bits < self.palette.len() {
             num_bits += 1;
         }
-        return num_bits;
+        num_bits
     }
 
     fn pos_to_index(&self, pos: UVec3) -> usize {
         let size = self.size.abs();
-        return pos.x
-             + pos.y * size.z * size.x
-             + pos.z * size.z;
+        pos.x + pos.y * size.z * size.x + pos.z * size.z
     }
 
     pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState {
@@ -105,7 +115,11 @@ impl <'l> Region<'l> {
     }
 
     pub fn set_tile_entity(&mut self, tile_entity: TileEntity<'l>) {
-        if let Some(index) = self.tile_entities.iter().position(|e| e.pos == tile_entity.pos) {
+        if let Some(index) = self
+            .tile_entities
+            .iter()
+            .position(|e| e.pos == tile_entity.pos)
+        {
             self.tile_entities[index] = tile_entity;
         } else {
             self.tile_entities.push(tile_entity);
@@ -118,25 +132,57 @@ impl <'l> Region<'l> {
         }
     }
 
-    pub fn min_global_x(&self) -> usize { (self.position.x as i32).min(self.position.x as i32 + self.size.x + 1) as usize }
-    pub fn max_global_x(&self) -> usize { (self.position.x as i32).max(self.position.x as i32 + self.size.x - 1) as usize }
-    pub fn min_global_y(&self) -> usize { (self.position.y as i32).min(self.position.y as i32 + self.size.y + 1) as usize }
-    pub fn max_global_y(&self) -> usize { (self.position.y as i32).max(self.position.y as i32 + self.size.y - 1) as usize }
-    pub fn min_global_z(&self) -> usize { (self.position.z as i32).min(self.position.z as i32 + self.size.z + 1) as usize }
-    pub fn max_global_z(&self) -> usize { (self.position.z as i32).max(self.position.z as i32 + self.size.z - 1) as usize }
+    pub fn min_global_x(&self) -> usize {
+        (self.position.x as i32).min(self.position.x as i32 + self.size.x + 1) as usize
+    }
+    pub fn max_global_x(&self) -> usize {
+        (self.position.x as i32).max(self.position.x as i32 + self.size.x - 1) as usize
+    }
+    pub fn min_global_y(&self) -> usize {
+        (self.position.y as i32).min(self.position.y as i32 + self.size.y + 1) as usize
+    }
+    pub fn max_global_y(&self) -> usize {
+        (self.position.y as i32).max(self.position.y as i32 + self.size.y - 1) as usize
+    }
+    pub fn min_global_z(&self) -> usize {
+        (self.position.z as i32).min(self.position.z as i32 + self.size.z + 1) as usize
+    }
+    pub fn max_global_z(&self) -> usize {
+        (self.position.z as i32).max(self.position.z as i32 + self.size.z - 1) as usize
+    }
 
-    pub fn min_x(&self) -> usize { 0                            }
-    pub fn max_x(&self) -> usize { 0.max(self.size.abs().x - 1) }
-    pub fn min_y(&self) -> usize { 0                            }
-    pub fn max_y(&self) -> usize { 0.max(self.size.abs().y - 1) }
-    pub fn min_z(&self) -> usize { 0                            }
-    pub fn max_z(&self) -> usize { 0.max(self.size.abs().z - 1) }
+    pub fn min_x(&self) -> usize {
+        0
+    }
+    pub fn max_x(&self) -> usize {
+        0.max(self.size.abs().x - 1)
+    }
+    pub fn min_y(&self) -> usize {
+        0
+    }
+    pub fn max_y(&self) -> usize {
+        0.max(self.size.abs().y - 1)
+    }
+    pub fn min_z(&self) -> usize {
+        0
+    }
+    pub fn max_z(&self) -> usize {
+        0.max(self.size.abs().z - 1)
+    }
 
-    pub fn x_range(&self) -> RangeInclusive<usize> { self.min_x()..=self.max_x() }
-    pub fn y_range(&self) -> RangeInclusive<usize> { self.min_y()..=self.max_y() }
-    pub fn z_range(&self) -> RangeInclusive<usize> { self.min_z()..=self.max_z() }
+    pub fn x_range(&self) -> RangeInclusive<usize> {
+        self.min_x()..=self.max_x()
+    }
+    pub fn y_range(&self) -> RangeInclusive<usize> {
+        self.min_y()..=self.max_y()
+    }
+    pub fn z_range(&self) -> RangeInclusive<usize> {
+        self.min_z()..=self.max_z()
+    }
 
-    pub fn total_blocks(&self) -> usize { self.blocks.iter().filter(|b| b != &&0).count() }
+    pub fn total_blocks(&self) -> usize {
+        self.blocks.iter().filter(|b| b != &&0).count()
+    }
 
     pub fn blocks(&'l self) -> Blocks<'l> {
         Blocks {
@@ -161,11 +207,13 @@ pub struct Blocks<'b> {
     size: UVec3,
 }
 
-impl <'b> Iterator for Blocks<'b> {
+impl<'b> Iterator for Blocks<'b> {
     type Item = (UVec3, &'b BlockState<'b>);
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.size.volume() { return None; }
+        if self.index >= self.size.volume() {
+            return None;
+        }
         let block = self.palette.get(*self.blocks.get(self.index)?)?;
         let x = self.index % self.size.x;
         let y = self.index / self.size.z / self.size.y % self.size.y;
