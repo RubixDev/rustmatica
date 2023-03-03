@@ -1,7 +1,13 @@
 [package]
 name = "rustmatica"
 version = "0.1.0"
+authors = ["RubixDev"]
+categories = ["encoding", "parser-implementations", "wasm"]
 edition = "2021"
+keywords = ["minecraft", "serde", "litematic"]
+license = "GPL-3.0-only"
+repository = "https://github.com/RubixDev/rustmatica"
+description = "A Rust library for reading, editing, and writing Minecraft litematic files"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -19,8 +25,8 @@ entity-list = []
 default = ["lists", "chrono"]
 
 [dependencies]
-# TODO: use stable release when available
-fastnbt = { git = "https://github.com/owengage/fastnbt" }
+# TODO: use newest version when https://github.com/owengage/fastnbt/issues/74 is closed
+fastnbt = "~2.2"
 flate2 = "1.0.24"
 serde = "1.0.137"
 strum = { version = "0.24.0", features = ["derive"], optional = true }
