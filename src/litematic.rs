@@ -57,13 +57,11 @@ impl<'l> Litematic<'l> {
             regions: raw
                 .regions
                 .iter()
-                .map(|(name, region)| {
-                    Region::from_raw(Cow::Owned(region.to_owned()), name.to_owned())
-                })
+                .map(|(name, region)| Region::from_raw(Cow::Owned(region.to_owned()), name.clone()))
                 .collect(),
-            name: raw.metadata.name.to_owned(),
-            description: raw.metadata.description.to_owned(),
-            author: raw.metadata.author.to_owned(),
+            name: raw.metadata.name.clone(),
+            description: raw.metadata.description.clone(),
+            author: raw.metadata.author.clone(),
             version: raw.version,
             minecraft_data_version: raw.minecraft_data_version,
 
@@ -78,21 +76,21 @@ impl<'l> Litematic<'l> {
         };
     }
 
-    pub fn to_raw(&self) -> schema::Litematic {
+    pub fn to_raw(&self) -> schema::Litematic<'_> {
         return schema::Litematic {
             regions: {
                 let mut map = HashMap::new();
                 for region in self.regions.iter() {
-                    map.insert(region.name.to_owned(), region.to_raw());
+                    map.insert(region.name.clone(), region.to_raw());
                 }
                 map
             },
             version: self.version,
             minecraft_data_version: self.minecraft_data_version,
             metadata: schema::Metadata {
-                name: self.name.to_owned(),
-                description: self.description.to_owned(),
-                author: self.author.to_owned(),
+                name: self.name.clone(),
+                description: self.description.clone(),
+                author: self.author.clone(),
                 region_count: self.regions.len() as u32,
                 total_blocks: self.total_blocks(),
                 total_volume: self.total_volume(),

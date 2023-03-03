@@ -1,7 +1,5 @@
 //! Example taken from [litemapy README](https://github.com/SmylerMC/litemapy#example)
 
-use std::borrow::Cow;
-
 use rustmatica::{
     util::{UVec3, Vec3},
     BlockState, Litematic, Region,

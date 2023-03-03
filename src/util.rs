@@ -12,14 +12,16 @@ impl Vec3 {
     }
 
     pub fn volume(&self) -> usize {
-        self.x.abs() as usize * self.y.abs() as usize * self.z.abs() as usize
+        self.x.unsigned_abs() as usize
+            * self.y.unsigned_abs() as usize
+            * self.z.unsigned_abs() as usize
     }
 
     pub fn abs(&self) -> UVec3 {
         UVec3 {
-            x: self.x.abs() as usize,
-            y: self.y.abs() as usize,
-            z: self.z.abs() as usize,
+            x: self.x.unsigned_abs() as usize,
+            y: self.y.unsigned_abs() as usize,
+            z: self.z.unsigned_abs() as usize,
         }
     }
 }

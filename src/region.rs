@@ -32,7 +32,7 @@ impl<'l> Region<'l> {
         }
     }
 
-    pub fn from_raw(raw: Cow<'l, schema::Region>, name: Cow<'l, str>) -> Self {
+    pub fn from_raw(raw: Cow<'l, schema::Region<'_>>, name: Cow<'l, str>) -> Self {
         let mut new = Self::new(name, raw.position, raw.size);
         new.palette = raw.block_state_palette.to_owned();
         new.tile_entities = raw.tile_entities.to_owned();
@@ -56,7 +56,7 @@ impl<'l> Region<'l> {
         new
     }
 
-    pub fn to_raw(&self) -> schema::Region {
+    pub fn to_raw(&self) -> schema::Region<'_> {
         let mut new = schema::Region {
             position: self.position,
             size: self.size,
@@ -95,7 +95,7 @@ impl<'l> Region<'l> {
         pos.x + pos.y * size.z * size.x + pos.z * size.z
     }
 
-    pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState {
+    pub fn get_block(&'l self, pos: UVec3) -> &'l BlockState<'_> {
         &self.palette[self.blocks[self.pos_to_index(pos)]]
     }
 
@@ -110,7 +110,7 @@ impl<'l> Region<'l> {
         self.blocks[pos] = id;
     }
 
-    pub fn get_tile_entity(&'l self, pos: UVec3) -> Option<&'l TileEntity> {
+    pub fn get_tile_entity(&'l self, pos: UVec3) -> Option<&'l TileEntity<'_>> {
         self.tile_entities.iter().find(|e| e.pos == pos)
     }
 

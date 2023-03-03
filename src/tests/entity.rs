@@ -259,12 +259,7 @@ mod without_list {
                     ("Air".into(), nbt!(6000_i16)),
                     (
                         "ArmorDropChances".into(),
-                        nbt!([
-                            0.08500000089406967_f32,
-                            0.08500000089406967_f32,
-                            0.08500000089406967_f32,
-                            0.08500000089406967_f32,
-                        ])
+                        nbt!([0.085_f32, 0.085_f32, 0.085_f32, 0.085_f32])
                     ),
                     ("ArmorItems".into(), nbt!([{}, {}, {}, {}])),
                     (
@@ -282,10 +277,7 @@ mod without_list {
                     ("Fire".into(), nbt!(-1_i16)),
                     ("ForcedAge".into(), nbt!(0)),
                     ("FromBucket".into(), nbt!(true)),
-                    (
-                        "HandDropChances".into(),
-                        nbt!([0.08500000089406967_f32, 0.08500000089406967_f32,])
-                    ),
+                    ("HandDropChances".into(), nbt!([0.085_f32, 0.085_f32])),
                     ("HandItems".into(), nbt!([{}, {}])),
                     ("Health".into(), nbt!(14_f32)),
                     ("HurtByTimestamp".into(), nbt!(0)),
@@ -298,7 +290,7 @@ mod without_list {
                     ("PersistenceRequired".into(), nbt!(false)),
                     ("PortalCooldown".into(), nbt!(0)),
                     ("Pos".into(), nbt!([-0.5, 0.0, 1.5])),
-                    ("Rotation".into(), nbt!([-107.68714904785156_f32, 0_f32,])),
+                    ("Rotation".into(), nbt!([-107.68715_f32, 0_f32,])),
                     ("Variant".into(), nbt!(0)),
                 ]),
             })
