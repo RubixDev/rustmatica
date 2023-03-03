@@ -3,8 +3,10 @@ build:
 
 update:
 	cargo update
-	./run_data_extractor.bash
+	./run_data_extractor.sh
 	python make_lists.py
+	./generate_sources.sh
+	cd source-parser && npm start
 
 test:
 	cargo test tests:: --all-features -- --nocapture

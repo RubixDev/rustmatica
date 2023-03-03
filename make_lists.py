@@ -1,6 +1,7 @@
 """
-This script uses the data extracted from Minecraft by DataExtractor.java in data.txt
-to create the following Rust source files:
+This script uses the data extracted from Minecraft by DataExtractor.java in
+data.txt and by source-parser in entityData.json to create the following
+Rust source files:
 
 - `src/block_state/list.rs`
 - `src/block_state/types.rs`

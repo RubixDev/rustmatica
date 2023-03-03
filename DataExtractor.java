@@ -1,6 +1,6 @@
 /**
  * This file contains java code to get the block list from minecraft.
- * It is run by `run_data_extractor.bash` inside a temporary mod.
+ * It is run by `run_data_extractor.sh` inside a temporary mod.
  * The output is piped into `data.txt`. After this you can run
  * make_lists.py to generate the Rust source files.
  */

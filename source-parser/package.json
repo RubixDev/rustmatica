@@ -1,14 +1,14 @@
 {
   "name": "minecraft-source-parser",
   "version": "1.0.0",
-  "description": "TODO",
+  "description": "A script to extract information about entities from Minecraft's source code",
   "main": "out/main.js",
   "scripts": {
     "watch": "tsc --watch",
     "start": "tsc && node ."
   },
   "author": "RubixDev",
-  "license": "GPL-2.0-only",
+  "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RubixDev/rustmatica.git",
