@@ -47,7 +47,7 @@ jobs:
         with:
           java-version: 17
       - name: build
-        run: ./run_data_extractor.bash
+        run: ./run_data_extractor.sh
   python:
     name: make_lists
     runs-on: ubuntu-latest
