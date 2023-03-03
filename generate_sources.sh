@@ -17,12 +17,12 @@ cd temp || _exit 1
 # Generate mapped minecraft sources with the CFR decompiler
 ./gradlew genSourcesWithCfr || _exit 2
 # Unzip the generated source jar into ./source-parser/mc_src_cfr
-unzip -od ../source-parser/mc_src_cfr .gradle/loom-cache/*/net.fabricmc.yarn.*/minecraft-project-@-merged-named-sources.jar
+unzip -od ../source-parser/mc_src_cfr .gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-project-root/*-net.fabricmc.yarn.*/minecraft-merged-project-root-*-sources.jar
 
 # Generate mapped minecraft sources with the FernFlower decompiler
 ./gradlew genSourcesWithFernFlower || _exit 2
 # Unzip the generated source jar into ./source-parser/mc_src_ff
-unzip -od ../source-parser/mc_src_ff .gradle/loom-cache/*/net.fabricmc.yarn.*/minecraft-project-@-merged-named-sources.jar
+unzip -od ../source-parser/mc_src_ff .gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-project-root/*-net.fabricmc.yarn.*/minecraft-merged-project-root-*-sources.jar
 
 # Cd back into root
 cd .. || _exit 1

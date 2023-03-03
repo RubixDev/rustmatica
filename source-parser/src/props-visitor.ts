@@ -74,6 +74,10 @@ export class FindPropsVisitor extends BaseJavaCstVisitorWithDefaults {
     }
 
     run() {
+        if (this.#nbtMethods === undefined) {
+            console.warn('\x1b[1;33mWarning: No NBT methods found for class\x1b[0m')
+            return
+        }
         if (this.#nbtMethods.length === 0) console.log('\x1b[1;90m UNIMPORTANT \x1b[0m')
         for (const nbtMethod of this.#nbtMethods) {
             this.#nbtParam = nbtMethod[0]

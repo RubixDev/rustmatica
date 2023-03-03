@@ -22,7 +22,7 @@ enums! {
     HorizontalAxis => X, Z;
     WallMountLocation => Floor, Wall, Ceiling;
     RailShape => NorthSouth, EastWest, AscendingEast, AscendingWest, AscendingNorth, AscendingSouth, SouthEast, SouthWest, NorthWest, NorthEast;
-    Instrument => Harp, Basedrum, Snare, Hat, Bass, Flute, Bell, Guitar, Chime, Xylophone, IronXylophone, CowBell, Didgeridoo, Bit, Banjo, Pling;
+    Instrument => Harp, Basedrum, Snare, Hat, Bass, Flute, Bell, Guitar, Chime, Xylophone, IronXylophone, CowBell, Didgeridoo, Bit, Banjo, Pling, Zombie, Skeleton, Creeper, Dragon, WitherSkeleton, Piglin, CustomHead;
     HorizontalDirection => North, South, West, East;
     Tilt => None, Unstable, Partial, Full;
     ChestType => Single, Left, Right;
