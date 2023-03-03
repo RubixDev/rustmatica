@@ -1,11 +1,6 @@
-import {
-    BlockStatementsCstNode,
-    CstNode,
-    parse,
-    VariableInitializerCtx,
-} from 'java-parser'
-import stringify from 'json-stringify-pretty-compact'
 import fs from 'fs'
+import { BlockStatementsCstNode, CstNode, parse, VariableInitializerCtx } from 'java-parser'
+import stringify from 'json-stringify-pretty-compact'
 import { SaveMembersVisitor } from './member-visitor'
 import { FindPropsVisitor } from './props-visitor'
 
@@ -29,11 +24,15 @@ for (const entityClass of Object.keys(entityClasses)) {
     try {
         cst = parse(fs.readFileSync('./mc_src_cfr/' + entityClass) + '')
     } catch {
-        console.warn(`\x1b[1;33mWarning: Failed to parse class ${entityClass} from CFR decompilation. Trying FernFlower...\x1b[0m`)
+        console.warn(
+            `\x1b[1;33mWarning: Failed to parse class ${entityClass} from CFR decompilation. Trying FernFlower...\x1b[0m`,
+        )
         try {
             cst = parse(fs.readFileSync('./mc_src_ff/' + entityClass) + '')
         } catch {
-            console.error(`\x1b[1;31mError: Failed to parse class ${entityClass}. Please manually provide properties\x1b[0m`)
+            console.error(
+                `\x1b[1;31mError: Failed to parse class ${entityClass}. Please manually provide properties\x1b[0m`,
+            )
             continue
         }
     }

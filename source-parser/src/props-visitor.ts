@@ -9,7 +9,7 @@ import {
     LiteralCtx,
     PrimaryCtx,
     VariableInitializerCtx,
-} from "java-parser";
+} from 'java-parser'
 
 enum Step {
     SearchPutCalls,
@@ -34,7 +34,7 @@ export class FindPropsVisitor extends BaseJavaCstVisitorWithDefaults {
     #_isOptional: boolean = false
 
     constructor(
-        currentClass:string,
+        currentClass: string,
         superClasses: string[],
         classFields: { [key: string]: [string, string, VariableInitializerCtx?][] },
         classMethods: { [key: string]: [string, string][] },
@@ -49,11 +49,20 @@ export class FindPropsVisitor extends BaseJavaCstVisitorWithDefaults {
         this.validateVisitor()
     }
 
-    #getStep(): Step { return this.#steps.slice(-1)[0] }
-    #pushStep(step: Step) { this.#steps.push(step) }
+    #getStep(): Step {
+        return this.#steps.slice(-1)[0]
+    }
+    #pushStep(step: Step) {
+        this.#steps.push(step)
+    }
     #popStep(step?: Step) {
-        if (step !== undefined && this.#getStep() !== step)
-            console.warn(`\x1b[1;33mWarning: Expected to pop step ${Step[step]}, but current step is ${Step[this.#getStep()]}\x1b[0m`)
+        if (step !== undefined && this.#getStep() !== step) {
+            console.warn(
+                `\x1b[1;33mWarning: Expected to pop step ${Step[step]}, but current step is ${
+                    Step[this.#getStep()]
+                }\x1b[0m`,
+            )
+        }
         this.#steps.pop()
     }
 
@@ -129,15 +138,12 @@ export class FindPropsVisitor extends BaseJavaCstVisitorWithDefaults {
             const idx = this.props.findIndex(p => p[0] === this.#_propKey)
             if (this.#_isOptional) {
                 // Only push prop if not yet saved
-                if (idx === -1)
-                    this.props.push([this.#_propKey, this.#_propType + '?'])
+                if (idx === -1) this.props.push([this.#_propKey, this.#_propType + '?'])
             } else {
                 // Only push prop if not yet saved
-                if (idx === -1)
-                    this.props.push([this.#_propKey, this.#_propType])
+                if (idx === -1) this.props.push([this.#_propKey, this.#_propType])
                 // Else reassign the prop type in case it was marked optional before
-                else if (this.props[idx][1].endsWith('?'))
-                    this.props[idx][1] = this.#_propType
+                else if (this.props[idx][1].endsWith('?')) this.props[idx][1] = this.#_propType
             }
         } else {
             this.visitAll(ctx.primaryPrefix)
@@ -146,8 +152,7 @@ export class FindPropsVisitor extends BaseJavaCstVisitorWithDefaults {
     }
 
     fqnOrRefType(ctx: FqnOrRefTypeCtx) {
-        if (this.#getStep() === Step.TestIfNbtCall)
-            if (ctx.fqnOrRefTypePartRest === undefined) return
+        if (this.#getStep() === Step.TestIfNbtCall) if (ctx.fqnOrRefTypePartRest === undefined) return
         this.visitAll(ctx.fqnOrRefTypePartFirst)
         this.visitAll(ctx.fqnOrRefTypePartRest)
     }

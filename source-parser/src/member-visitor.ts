@@ -55,11 +55,20 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         }
     }
 
-    #getStep(): Step { return this.#steps.slice(-1)[0] }
-    #pushStep(step: Step) { this.#steps.push(step) }
+    #getStep(): Step {
+        return this.#steps.slice(-1)[0]
+    }
+    #pushStep(step: Step) {
+        this.#steps.push(step)
+    }
     #popStep(step?: Step) {
-        if (step !== undefined && this.#getStep() !== step)
-            console.warn(`\x1b[1;33mWarning: Expected to pop step ${Step[step]}, but current step is ${Step[this.#getStep()]}\x1b[0m`)
+        if (step !== undefined && this.#getStep() !== step) {
+            console.warn(
+                `\x1b[1;33mWarning: Expected to pop step ${Step[step]}, but current step is ${
+                    Step[this.#getStep()]
+                }\x1b[0m`,
+            )
+        }
         this.#steps.pop()
     }
 
@@ -70,8 +79,12 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         this.visitAll(node)
         this.#popStep(Step.SearchClassMembers)
     }
-    classBody(ctx: ClassBodyCtx) { this.#body(ctx.classBodyDeclaration) }
-    interfaceBody(ctx: InterfaceBodyCtx) { this.#body(ctx.interfaceMemberDeclaration) }
+    classBody(ctx: ClassBodyCtx) {
+        this.#body(ctx.classBodyDeclaration)
+    }
+    interfaceBody(ctx: InterfaceBodyCtx) {
+        this.#body(ctx.interfaceMemberDeclaration)
+    }
 
     #memberDeclaration(fieldNode?: CstNode[], methodNode?: CstNode[]) {
         if (this.#getStep() !== Step.SearchClassMembers) return
@@ -80,8 +93,12 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         this.visitAll(methodNode)
         this.#popStep(Step.GetMemberInfo)
     }
-    classMemberDeclaration(ctx: ClassMemberDeclarationCtx) { this.#memberDeclaration(ctx.fieldDeclaration, ctx.methodDeclaration) }
-    interfaceMemberDeclaration(ctx: InterfaceMemberDeclarationCtx) { this.#memberDeclaration(ctx.constantDeclaration, ctx.interfaceMethodDeclaration) }
+    classMemberDeclaration(ctx: ClassMemberDeclarationCtx) {
+        this.#memberDeclaration(ctx.fieldDeclaration, ctx.methodDeclaration)
+    }
+    interfaceMemberDeclaration(ctx: InterfaceMemberDeclarationCtx) {
+        this.#memberDeclaration(ctx.constantDeclaration, ctx.interfaceMethodDeclaration)
+    }
 
     #fieldDeclaration(ctx: FieldDeclarationCtx | ConstantDeclarationCtx) {
         if (this.#getStep() !== Step.GetMemberInfo) return
@@ -90,15 +107,19 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         this.#pushStep(Step.GetMemberName)
         this.visitAll(ctx.variableDeclaratorList)
     }
-    fieldDeclaration(ctx: FieldDeclarationCtx) { this.#fieldDeclaration(ctx) }
-    constantDeclaration(ctx: ConstantDeclarationCtx) { this.#fieldDeclaration(ctx) }
+    fieldDeclaration(ctx: FieldDeclarationCtx) {
+        this.#fieldDeclaration(ctx)
+    }
+    constantDeclaration(ctx: ConstantDeclarationCtx) {
+        this.#fieldDeclaration(ctx)
+    }
 
     variableDeclarator(ctx: VariableDeclaratorCtx) {
         if (this.#getStep() !== Step.GetMemberName) return
         this.fields.push([
             ctx.variableDeclaratorId[0].children.Identifier[0].image,
             this.#_savedType,
-            ctx.variableInitializer === undefined ? undefined : ctx.variableInitializer[0].children
+            ctx.variableInitializer === undefined ? undefined : ctx.variableInitializer[0].children,
         ])
         this.#popStep(Step.GetMemberName)
     }
@@ -115,13 +136,17 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
                 block === undefined
                     ? []
                     : block[0].children.blockStatements === undefined
-                        ? []
-                        : block[0].children.blockStatements,
+                    ? []
+                    : block[0].children.blockStatements,
             ])
         }
     }
-    methodDeclaration(ctx: MethodDeclarationCtx) { this.#methodDeclaration(ctx) }
-    interfaceMethodDeclaration(ctx: InterfaceMethodDeclarationCtx) { this.#methodDeclaration(ctx) }
+    methodDeclaration(ctx: MethodDeclarationCtx) {
+        this.#methodDeclaration(ctx)
+    }
+    interfaceMethodDeclaration(ctx: InterfaceMethodDeclarationCtx) {
+        this.#methodDeclaration(ctx)
+    }
 
     methodHeader(ctx: MethodHeaderCtx) {
         if (this.#getStep() !== Step.GetMemberInfo) return
@@ -160,7 +185,6 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         }
     }
 
-    //#region get type
     result(ctx: ResultCtx) {
         if (this.#getStep() !== Step.GetType) return
         if (ctx.Void !== undefined) {
@@ -222,5 +246,4 @@ export class SaveMembersVisitor extends BaseJavaCstVisitorWithDefaults {
         this.#_savedType = ctx.Identifier.slice(-1)[0].image
         this.#popStep(Step.GetType)
     }
-    //#endregion
 }
