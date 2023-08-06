@@ -19,6 +19,7 @@ blocks! {
     "minecraft:birch_planks", BirchPlanks;
     "minecraft:jungle_planks", JunglePlanks;
     "minecraft:acacia_planks", AcaciaPlanks;
+    "minecraft:cherry_planks", CherryPlanks;
     "minecraft:dark_oak_planks", DarkOakPlanks;
     "minecraft:mangrove_planks", MangrovePlanks;
     "minecraft:bamboo_planks", BambooPlanks;
@@ -28,14 +29,17 @@ blocks! {
     "minecraft:birch_sapling", BirchSapling - stage: u8;
     "minecraft:jungle_sapling", JungleSapling - stage: u8;
     "minecraft:acacia_sapling", AcaciaSapling - stage: u8;
+    "minecraft:cherry_sapling", CherrySapling - stage: u8;
     "minecraft:dark_oak_sapling", DarkOakSapling - stage: u8;
     "minecraft:mangrove_propagule", MangrovePropagule - age: u8, hanging: bool, stage: u8, waterlogged: bool;
     "minecraft:bedrock", Bedrock;
     "minecraft:water", Water - level: u8;
     "minecraft:lava", Lava - level: u8;
     "minecraft:sand", Sand;
+    "minecraft:suspicious_sand", SuspiciousSand - dusted: u8;
     "minecraft:red_sand", RedSand;
     "minecraft:gravel", Gravel;
+    "minecraft:suspicious_gravel", SuspiciousGravel - dusted: u8;
     "minecraft:gold_ore", GoldOre;
     "minecraft:deepslate_gold_ore", DeepslateGoldOre;
     "minecraft:iron_ore", IronOre;
@@ -48,6 +52,7 @@ blocks! {
     "minecraft:birch_log", BirchLog - axis: Axis;
     "minecraft:jungle_log", JungleLog - axis: Axis;
     "minecraft:acacia_log", AcaciaLog - axis: Axis;
+    "minecraft:cherry_log", CherryLog - axis: Axis;
     "minecraft:dark_oak_log", DarkOakLog - axis: Axis;
     "minecraft:mangrove_log", MangroveLog - axis: Axis;
     "minecraft:mangrove_roots", MangroveRoots - waterlogged: bool;
@@ -57,6 +62,7 @@ blocks! {
     "minecraft:stripped_birch_log", StrippedBirchLog - axis: Axis;
     "minecraft:stripped_jungle_log", StrippedJungleLog - axis: Axis;
     "minecraft:stripped_acacia_log", StrippedAcaciaLog - axis: Axis;
+    "minecraft:stripped_cherry_log", StrippedCherryLog - axis: Axis;
     "minecraft:stripped_dark_oak_log", StrippedDarkOakLog - axis: Axis;
     "minecraft:stripped_oak_log", StrippedOakLog - axis: Axis;
     "minecraft:stripped_mangrove_log", StrippedMangroveLog - axis: Axis;
@@ -66,6 +72,7 @@ blocks! {
     "minecraft:birch_wood", BirchWood - axis: Axis;
     "minecraft:jungle_wood", JungleWood - axis: Axis;
     "minecraft:acacia_wood", AcaciaWood - axis: Axis;
+    "minecraft:cherry_wood", CherryWood - axis: Axis;
     "minecraft:dark_oak_wood", DarkOakWood - axis: Axis;
     "minecraft:mangrove_wood", MangroveWood - axis: Axis;
     "minecraft:stripped_oak_wood", StrippedOakWood - axis: Axis;
@@ -73,6 +80,7 @@ blocks! {
     "minecraft:stripped_birch_wood", StrippedBirchWood - axis: Axis;
     "minecraft:stripped_jungle_wood", StrippedJungleWood - axis: Axis;
     "minecraft:stripped_acacia_wood", StrippedAcaciaWood - axis: Axis;
+    "minecraft:stripped_cherry_wood", StrippedCherryWood - axis: Axis;
     "minecraft:stripped_dark_oak_wood", StrippedDarkOakWood - axis: Axis;
     "minecraft:stripped_mangrove_wood", StrippedMangroveWood - axis: Axis;
     "minecraft:oak_leaves", OakLeaves - distance: u8, persistent: bool, waterlogged: bool;
@@ -80,6 +88,7 @@ blocks! {
     "minecraft:birch_leaves", BirchLeaves - distance: u8, persistent: bool, waterlogged: bool;
     "minecraft:jungle_leaves", JungleLeaves - distance: u8, persistent: bool, waterlogged: bool;
     "minecraft:acacia_leaves", AcaciaLeaves - distance: u8, persistent: bool, waterlogged: bool;
+    "minecraft:cherry_leaves", CherryLeaves - distance: u8, persistent: bool, waterlogged: bool;
     "minecraft:dark_oak_leaves", DarkOakLeaves - distance: u8, persistent: bool, waterlogged: bool;
     "minecraft:mangrove_leaves", MangroveLeaves - distance: u8, persistent: bool, waterlogged: bool;
     "minecraft:azalea_leaves", AzaleaLeaves - distance: u8, persistent: bool, waterlogged: bool;
@@ -140,6 +149,7 @@ blocks! {
     "minecraft:black_wool", BlackWool;
     "minecraft:moving_piston", MovingPiston - facing: Direction, r#type: PistonType as "type";
     "minecraft:dandelion", Dandelion;
+    "minecraft:torchflower", Torchflower;
     "minecraft:poppy", Poppy;
     "minecraft:blue_orchid", BlueOrchid;
     "minecraft:allium", Allium;
@@ -181,6 +191,7 @@ blocks! {
     "minecraft:spruce_sign", SpruceSign - rotation: u8, waterlogged: bool;
     "minecraft:birch_sign", BirchSign - rotation: u8, waterlogged: bool;
     "minecraft:acacia_sign", AcaciaSign - rotation: u8, waterlogged: bool;
+    "minecraft:cherry_sign", CherrySign - rotation: u8, waterlogged: bool;
     "minecraft:jungle_sign", JungleSign - rotation: u8, waterlogged: bool;
     "minecraft:dark_oak_sign", DarkOakSign - rotation: u8, waterlogged: bool;
     "minecraft:mangrove_sign", MangroveSign - rotation: u8, waterlogged: bool;
@@ -193,6 +204,7 @@ blocks! {
     "minecraft:spruce_wall_sign", SpruceWallSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:birch_wall_sign", BirchWallSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:acacia_wall_sign", AcaciaWallSign - facing: HorizontalDirection, waterlogged: bool;
+    "minecraft:cherry_wall_sign", CherryWallSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:jungle_wall_sign", JungleWallSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:dark_oak_wall_sign", DarkOakWallSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:mangrove_wall_sign", MangroveWallSign - facing: HorizontalDirection, waterlogged: bool;
@@ -201,6 +213,7 @@ blocks! {
     "minecraft:spruce_hanging_sign", SpruceHangingSign - attached: bool, rotation: u8, waterlogged: bool;
     "minecraft:birch_hanging_sign", BirchHangingSign - attached: bool, rotation: u8, waterlogged: bool;
     "minecraft:acacia_hanging_sign", AcaciaHangingSign - attached: bool, rotation: u8, waterlogged: bool;
+    "minecraft:cherry_hanging_sign", CherryHangingSign - attached: bool, rotation: u8, waterlogged: bool;
     "minecraft:jungle_hanging_sign", JungleHangingSign - attached: bool, rotation: u8, waterlogged: bool;
     "minecraft:dark_oak_hanging_sign", DarkOakHangingSign - attached: bool, rotation: u8, waterlogged: bool;
     "minecraft:crimson_hanging_sign", CrimsonHangingSign - attached: bool, rotation: u8, waterlogged: bool;
@@ -211,6 +224,7 @@ blocks! {
     "minecraft:spruce_wall_hanging_sign", SpruceWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:birch_wall_hanging_sign", BirchWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:acacia_wall_hanging_sign", AcaciaWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
+    "minecraft:cherry_wall_hanging_sign", CherryWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:jungle_wall_hanging_sign", JungleWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:dark_oak_wall_hanging_sign", DarkOakWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
     "minecraft:mangrove_wall_hanging_sign", MangroveWallHangingSign - facing: HorizontalDirection, waterlogged: bool;
@@ -225,6 +239,7 @@ blocks! {
     "minecraft:birch_pressure_plate", BirchPressurePlate - powered: bool;
     "minecraft:jungle_pressure_plate", JunglePressurePlate - powered: bool;
     "minecraft:acacia_pressure_plate", AcaciaPressurePlate - powered: bool;
+    "minecraft:cherry_pressure_plate", CherryPressurePlate - powered: bool;
     "minecraft:dark_oak_pressure_plate", DarkOakPressurePlate - powered: bool;
     "minecraft:mangrove_pressure_plate", MangrovePressurePlate - powered: bool;
     "minecraft:bamboo_pressure_plate", BambooPressurePlate - powered: bool;
@@ -276,6 +291,7 @@ blocks! {
     "minecraft:birch_trapdoor", BirchTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
     "minecraft:jungle_trapdoor", JungleTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
     "minecraft:acacia_trapdoor", AcaciaTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
+    "minecraft:cherry_trapdoor", CherryTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
     "minecraft:dark_oak_trapdoor", DarkOakTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
     "minecraft:mangrove_trapdoor", MangroveTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
     "minecraft:bamboo_trapdoor", BambooTrapdoor - facing: HorizontalDirection, half: BlockHalf, open: bool, powered: bool, waterlogged: bool;
@@ -341,11 +357,13 @@ blocks! {
     "minecraft:cobblestone_wall", CobblestoneWall - east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape;
     "minecraft:mossy_cobblestone_wall", MossyCobblestoneWall - east: WallShape, north: WallShape, south: WallShape, up: bool, waterlogged: bool, west: WallShape;
     "minecraft:flower_pot", FlowerPot;
+    "minecraft:potted_torchflower", PottedTorchflower;
     "minecraft:potted_oak_sapling", PottedOakSapling;
     "minecraft:potted_spruce_sapling", PottedSpruceSapling;
     "minecraft:potted_birch_sapling", PottedBirchSapling;
     "minecraft:potted_jungle_sapling", PottedJungleSapling;
     "minecraft:potted_acacia_sapling", PottedAcaciaSapling;
+    "minecraft:potted_cherry_sapling", PottedCherrySapling;
     "minecraft:potted_dark_oak_sapling", PottedDarkOakSapling;
     "minecraft:potted_mangrove_propagule", PottedMangrovePropagule;
     "minecraft:potted_fern", PottedFern;
@@ -373,6 +391,7 @@ blocks! {
     "minecraft:birch_button", BirchButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
     "minecraft:jungle_button", JungleButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
     "minecraft:acacia_button", AcaciaButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
+    "minecraft:cherry_button", CherryButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
     "minecraft:dark_oak_button", DarkOakButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
     "minecraft:mangrove_button", MangroveButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
     "minecraft:bamboo_button", BambooButton - face: WallMountLocation, facing: HorizontalDirection, powered: bool;
@@ -440,6 +459,7 @@ blocks! {
     "minecraft:red_stained_glass_pane", RedStainedGlassPane - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:black_stained_glass_pane", BlackStainedGlassPane - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:acacia_stairs", AcaciaStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
+    "minecraft:cherry_stairs", CherryStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
     "minecraft:dark_oak_stairs", DarkOakStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
     "minecraft:mangrove_stairs", MangroveStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
     "minecraft:bamboo_stairs", BambooStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
@@ -525,6 +545,7 @@ blocks! {
     "minecraft:birch_slab", BirchSlab - r#type: SlabType as "type", waterlogged: bool;
     "minecraft:jungle_slab", JungleSlab - r#type: SlabType as "type", waterlogged: bool;
     "minecraft:acacia_slab", AcaciaSlab - r#type: SlabType as "type", waterlogged: bool;
+    "minecraft:cherry_slab", CherrySlab - r#type: SlabType as "type", waterlogged: bool;
     "minecraft:dark_oak_slab", DarkOakSlab - r#type: SlabType as "type", waterlogged: bool;
     "minecraft:mangrove_slab", MangroveSlab - r#type: SlabType as "type", waterlogged: bool;
     "minecraft:bamboo_slab", BambooSlab - r#type: SlabType as "type", waterlogged: bool;
@@ -551,6 +572,7 @@ blocks! {
     "minecraft:birch_fence_gate", BirchFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
     "minecraft:jungle_fence_gate", JungleFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
     "minecraft:acacia_fence_gate", AcaciaFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
+    "minecraft:cherry_fence_gate", CherryFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
     "minecraft:dark_oak_fence_gate", DarkOakFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
     "minecraft:mangrove_fence_gate", MangroveFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
     "minecraft:bamboo_fence_gate", BambooFenceGate - facing: HorizontalDirection, in_wall: bool, open: bool, powered: bool;
@@ -558,6 +580,7 @@ blocks! {
     "minecraft:birch_fence", BirchFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:jungle_fence", JungleFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:acacia_fence", AcaciaFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
+    "minecraft:cherry_fence", CherryFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:dark_oak_fence", DarkOakFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:mangrove_fence", MangroveFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
     "minecraft:bamboo_fence", BambooFence - east: bool, north: bool, south: bool, waterlogged: bool, west: bool;
@@ -565,6 +588,7 @@ blocks! {
     "minecraft:birch_door", BirchDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
     "minecraft:jungle_door", JungleDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
     "minecraft:acacia_door", AcaciaDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
+    "minecraft:cherry_door", CherryDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
     "minecraft:dark_oak_door", DarkOakDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
     "minecraft:mangrove_door", MangroveDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
     "minecraft:bamboo_door", BambooDoor - facing: HorizontalDirection, half: DoubleBlockHalf, hinge: DoorHinge, open: bool, powered: bool;
@@ -575,6 +599,9 @@ blocks! {
     "minecraft:purpur_pillar", PurpurPillar - axis: Axis;
     "minecraft:purpur_stairs", PurpurStairs - facing: HorizontalDirection, half: BlockHalf, shape: StairShape, waterlogged: bool;
     "minecraft:end_stone_bricks", EndStoneBricks;
+    "minecraft:torchflower_crop", TorchflowerCrop - age: u8;
+    "minecraft:pitcher_crop", PitcherCrop - age: u8, half: DoubleBlockHalf;
+    "minecraft:pitcher_plant", PitcherPlant - half: DoubleBlockHalf;
     "minecraft:beetroots", Beetroots - age: u8;
     "minecraft:dirt_path", DirtPath;
     "minecraft:end_gateway", EndGateway;
@@ -656,6 +683,7 @@ blocks! {
     "minecraft:kelp_plant", KelpPlant;
     "minecraft:dried_kelp_block", DriedKelpBlock;
     "minecraft:turtle_egg", TurtleEgg - eggs: u8, hatch: u8;
+    "minecraft:sniffer_egg", SnifferEgg - hatch: u8;
     "minecraft:dead_tube_coral_block", DeadTubeCoralBlock;
     "minecraft:dead_brain_coral_block", DeadBrainCoralBlock;
     "minecraft:dead_bubble_coral_block", DeadBubbleCoralBlock;
@@ -887,6 +915,7 @@ blocks! {
     "minecraft:tinted_glass", TintedGlass;
     "minecraft:powder_snow", PowderSnow;
     "minecraft:sculk_sensor", SculkSensor - power: u8, sculk_sensor_phase: SculkSensorPhase, waterlogged: bool;
+    "minecraft:calibrated_sculk_sensor", CalibratedSculkSensor - facing: HorizontalDirection, power: u8, sculk_sensor_phase: SculkSensorPhase, waterlogged: bool;
     "minecraft:sculk", Sculk;
     "minecraft:sculk_vein", SculkVein - down: bool, east: bool, north: bool, south: bool, up: bool, waterlogged: bool, west: bool;
     "minecraft:sculk_catalyst", SculkCatalyst - bloom: bool;
@@ -934,6 +963,7 @@ blocks! {
     "minecraft:azalea", Azalea;
     "minecraft:flowering_azalea", FloweringAzalea;
     "minecraft:moss_carpet", MossCarpet;
+    "minecraft:pink_petals", PinkPetals - facing: HorizontalDirection, flower_amount: u8;
     "minecraft:moss_block", MossBlock;
     "minecraft:big_dripleaf", BigDripleaf - facing: HorizontalDirection, tilt: Tilt, waterlogged: bool;
     "minecraft:big_dripleaf_stem", BigDripleafStem - facing: HorizontalDirection, waterlogged: bool;
@@ -973,4 +1003,5 @@ blocks! {
     "minecraft:pearlescent_froglight", PearlescentFroglight - axis: Axis;
     "minecraft:frogspawn", Frogspawn;
     "minecraft:reinforced_deepslate", ReinforcedDeepslate;
+    "minecraft:decorated_pot", DecoratedPot - cracked: bool, facing: HorizontalDirection, waterlogged: bool;
 }
