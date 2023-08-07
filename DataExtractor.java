@@ -1,3 +1,9 @@
+/**
+ * This file contains java code to get block states and other info
+ * from minecraft. It is run by `run_data_extractor.sh` inside a
+ * temporary mod. The output is piped into `data.txt`. After this
+ * you can run make_lists.py to generate the Rust source files.
+ */
 package com.example;
 
 import net.fabricmc.api.EnvType;
