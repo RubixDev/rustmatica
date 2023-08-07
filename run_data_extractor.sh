@@ -15,7 +15,12 @@ git clone https://github.com/FabricMC/fabric-example-mod.git temp || exit 1
 cd temp || _exit 1
 
 # Copy the DataExtracttor.java into the mod sources
-cp -v ../DataExtractor.java src/main/java/net/fabricmc/example/ExampleMod.java
+cp -v ../DataExtractor.java src/main/java/com/example/ExampleMod.java
+
+# Fill out EULA
+mkdir run
+echo "eula=true" > run/eula.txt
+
 # Run the mod and write stderr into data.txt
 ./gradlew runServer 2> ../data.txt
 
