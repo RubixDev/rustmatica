@@ -11,7 +11,7 @@ use crate::{
 #[derive(Debug, Clone, PartialEq)]
 pub struct Region<'l> {
     pub name: Cow<'l, str>,
-    pub position: UVec3,
+    pub position: Vec3,
     pub size: Vec3,
     pub tile_entities: Vec<TileEntity<'l>>,
     pub entities: Vec<Entity<'l>>,
@@ -20,7 +20,7 @@ pub struct Region<'l> {
 }
 
 impl<'l> Region<'l> {
-    pub fn new(name: Cow<'l, str>, position: UVec3, size: Vec3) -> Self {
+    pub fn new(name: Cow<'l, str>, position: Vec3, size: Vec3) -> Self {
         Self {
             name,
             position,

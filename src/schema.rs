@@ -19,7 +19,7 @@ pub struct Litematic<'a> {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Region<'a> {
-    pub position: UVec3,
+    pub position: Vec3,
     pub size: Vec3,
     pub block_state_palette: Vec<BlockState<'a>>,
     pub tile_entities: Vec<TileEntity<'a>>,
