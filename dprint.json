@@ -24,6 +24,7 @@
   },
 
   "toml": {
+    "comment.forceLeadingSpace": false
   },
 
   "prettier": {

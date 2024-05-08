@@ -20,6 +20,15 @@ const SCHEMATIC_VERSION: u32 = 6;
 
 type CowStr = std::borrow::Cow<'static, str>;
 
+/// A litematica schematic.
+///
+/// The type has three generic type parameters for the types of block states, entities, and block
+/// entities. These types must implement the corresponding [`mcdata`] trait and default to
+/// [`mcdata`]s "generic" types.
+///
+/// A litematica schematic consists of some metadata and a list of [`Region`]s. The metadata
+/// contains information like the name, description, and author, while the [`Region`]s contain the
+/// blocks and entities.
 #[derive(Debug)]
 pub struct Litematic<
     BlockState = GenericBlockState,
@@ -30,19 +39,40 @@ pub struct Litematic<
     Entity: mcdata::Entity + Serialize + DeserializeOwned,
     BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
 {
+    /// The list of [`Region`]s for this schematic.
     pub regions: Vec<Region<BlockState, Entity, BlockEntity>>,
+
+    /// The name of this schematic.
     pub name: CowStr,
+
+    /// The description of this schematic.
     pub description: CowStr,
+
+    /// The author of this schematic.
     pub author: CowStr,
+
+    /// The schematic version.
     pub version: u32,
+
+    /// The Minecraft [data version](https://minecraft.wiki/w/Data_version) used for blocks and
+    /// entities in this schematic.
+    ///
+    /// See [`mcdata::data_version`] for a list of some important versions.
     pub minecraft_data_version: u32,
 
+    /// The datetime of when this schematic was created.
     #[cfg(feature = "chrono")]
     pub time_created: DateTime<Utc>,
+
+    /// The unix timestamp of when this schematic was created.
     #[cfg(not(feature = "chrono"))]
     pub time_created: i64,
+
+    /// The datetime of when this schematic was last modified.
     #[cfg(feature = "chrono")]
     pub time_modified: DateTime<Utc>,
+
+    /// The unix timestamp of when this schematic was last modified.
     #[cfg(not(feature = "chrono"))]
     pub time_modified: i64,
 }
@@ -53,6 +83,7 @@ where
     Entity: mcdata::Entity + Serialize + DeserializeOwned,
     BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
 {
+    /// Create a new, empty schematic with the given name, description, and author.
     pub fn new(
         name: impl Into<CowStr>,
         description: impl Into<CowStr>,
@@ -71,7 +102,8 @@ where
         }
     }
 
-    pub fn from_raw(raw: schema::Litematic<BlockState, Entity, BlockEntity>) -> Self {
+    /// Construct a [`Litematic`] from a [raw NBT litematic](schema::Litematic).
+    pub(crate) fn from_raw(raw: schema::Litematic<BlockState, Entity, BlockEntity>) -> Self {
         return Self {
             regions: raw
                 .regions
@@ -97,7 +129,8 @@ where
         };
     }
 
-    pub fn to_raw(&self) -> schema::Litematic<BlockState, Entity, BlockEntity> {
+    /// Create a new [raw NBT litematic](schema::Litematic) from this [`Litematic`].
+    pub(crate) fn to_raw(&self) -> schema::Litematic<BlockState, Entity, BlockEntity> {
         schema::Litematic {
             regions: {
                 let mut map = HashMap::new();
@@ -129,14 +162,17 @@ where
         }
     }
 
+    /// Load a schematic from uncompressed bytes.
     pub fn from_uncompressed_bytes(bytes: &[u8]) -> Result<Self> {
         Ok(Self::from_raw(fastnbt::from_bytes(bytes)?))
     }
 
+    /// Write this schematic to uncompressed bytes.
     pub fn to_uncompressed_bytes(&self) -> Result<Vec<u8>> {
         Ok(fastnbt::to_bytes(&self.to_raw())?)
     }
 
+    /// Load a schematic from gzip compressed bytes.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         let mut gz = GzDecoder::new(bytes);
         let mut extracted = vec![];
@@ -144,6 +180,7 @@ where
         Self::from_uncompressed_bytes(&extracted)
     }
 
+    /// Write this schematic to gzip compressed bytes.
     pub fn to_bytes(&self) -> Result<Vec<u8>> {
         let mut buf = vec![];
         let mut gz = GzEncoder::new(&mut buf, Compression::default());
@@ -152,6 +189,7 @@ where
         Ok(buf)
     }
 
+    /// Load a schematic from a file.
     pub fn read_file(filename: &str) -> Result<Self> {
         let mut file = File::open(filename)?;
         let mut bytes = vec![];
@@ -159,20 +197,24 @@ where
         Litematic::from_bytes(&bytes)
     }
 
+    /// Write this schematic to a file.
     pub fn write_file(&self, filename: &str) -> Result<()> {
         let mut file = File::create(filename)?;
         file.write_all(&self.to_bytes()?)?;
         Ok(())
     }
 
+    /// The total number of blocks all regions combined contain.
     pub fn total_blocks(&self) -> u64 {
         self.regions.iter().map(|r| r.total_blocks() as u64).sum()
     }
 
+    /// The total volume of all regions combined.
     pub fn total_volume(&self) -> u32 {
         self.regions.iter().map(|r| r.size.volume() as u32).sum()
     }
 
+    /// The enclosing size of all regions.
     pub fn enclosing_size(&self) -> UVec3 {
         let mut bounds = [0; 6];
         for region in self.regions.iter() {

@@ -12,11 +12,17 @@ description = "A Rust library for reading, editing, and writing Minecraft litema
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
+#! ## Features
 default = ["chrono"]
 
+## Use [`chrono`] types for timestamps.
 chrono = ["dep:chrono"]
 
+## Enable this when building the docs
+docs = ["dep:document-features", "dep:rustc_version"]
+
 [dependencies]
+document-features = { version = "0.2.8", optional = true }
 fastnbt = "2.5.0"
 flate2 = "1.0.30"
 mcdata = { version = "0.2.0", features = ["serde"] }
@@ -31,7 +37,11 @@ chrono = { version = "0.4.38", features = ["wasmbind"], optional = true }
 js-sys = "0.3.69" # for current time without chrono feature
 
 [dev-dependencies]
+bounded-integer = "0.5.7"
 mcdata = { version = "0.2.0", features = ["serde", "latest", "block-states"] }
+
+[build-dependencies]
+rustc_version = { version = "0.4.0", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true

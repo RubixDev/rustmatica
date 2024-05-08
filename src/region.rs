@@ -11,6 +11,17 @@ use crate::{schema, Litematic};
 
 type CowStr = std::borrow::Cow<'static, str>;
 
+/// A single region of a litematica schematic.
+///
+/// Just like [`Litematic`], the type has three generic type parameters for the types of block
+/// states, entities, and block entities. These types must implement the corresponding [`mcdata`]
+/// trait and default to [`mcdata`]s "generic" types.
+///
+/// A region has a [name](Self::name), [position](Self::position), and [size](Self::size), as well
+/// as a list of [entities](Self::entities), a list of [block entities](Self::block_entities), and
+/// an internal representation for storing block states of all contained positions. To interact
+/// with the block states, see the [`get_block`](Self::get_block), [`set_block`](Self::set_block),
+/// and [`blocks`](Self::blocks) functions.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Region<
     BlockState = GenericBlockState,
@@ -21,11 +32,21 @@ pub struct Region<
     Entity: mcdata::Entity + Serialize + DeserializeOwned,
     BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
 {
+    /// The name of this region.
     pub name: CowStr,
+
+    /// The position of this region within the schematic.
     pub position: BlockPos,
+
+    /// The size of this region.
     pub size: BlockPos,
+
+    /// The list of block entities in this region.
     pub block_entities: Vec<BlockEntity>,
+
+    /// The list of entities in this region.
     pub entities: Vec<Entity>,
+
     palette: Vec<BlockState>,
     blocks: Vec<usize>,
 }
@@ -36,6 +57,7 @@ where
     Entity: mcdata::Entity + Serialize + DeserializeOwned,
     BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
 {
+    /// Create a new, empty region with the given name, position, and size.
     pub fn new(name: impl Into<CowStr>, position: BlockPos, size: BlockPos) -> Self {
         Self {
             name: name.into(),
@@ -48,34 +70,46 @@ where
         }
     }
 
-    pub fn from_raw(
+    /// Construct a [`Region`] from a [raw NBT region](schema::Region) with the given name.
+    pub(crate) fn from_raw(
         raw: schema::Region<BlockState, Entity, BlockEntity>,
         name: impl Into<CowStr>,
     ) -> Self {
-        let mut new = Self::new(name, raw.position, raw.size);
-        new.palette = raw.block_state_palette.to_owned();
-        new.block_entities = raw.tile_entities.to_owned();
-        new.entities = raw.entities.to_owned();
+        fn inner<
+            B: mcdata::BlockState + Serialize + DeserializeOwned,
+            E: mcdata::Entity + Serialize + DeserializeOwned,
+            T: mcdata::BlockEntity + Serialize + DeserializeOwned,
+        >(
+            raw: schema::Region<B, E, T>,
+            name: CowStr,
+        ) -> Region<B, E, T> {
+            let mut new = Region::new(name, raw.position, raw.size);
+            new.palette = raw.block_state_palette.to_owned();
+            new.block_entities = raw.tile_entities.to_owned();
+            new.entities = raw.entities.to_owned();
 
-        let num_bits = new.num_bits();
-        new.blocks = raw
-            .block_states
-            .iter()
-            .flat_map(|block| (0..64).map(move |bit| block >> bit & 1))
-            .collect::<Vec<i64>>()
-            .chunks(num_bits)
-            .map(|slice| {
-                slice
-                    .iter()
-                    .rev()
-                    .fold(0, |acc, bit| acc << 1 | *bit as usize)
-            })
-            .collect::<Vec<usize>>();
+            let num_bits = new.num_bits();
+            new.blocks = raw
+                .block_states
+                .iter()
+                .flat_map(|block| (0..64).map(move |bit| block >> bit & 1))
+                .collect::<Vec<i64>>()
+                .chunks(num_bits)
+                .map(|slice| {
+                    slice
+                        .iter()
+                        .rev()
+                        .fold(0, |acc, bit| acc << 1 | *bit as usize)
+                })
+                .collect::<Vec<usize>>();
 
-        new
+            new
+        }
+        inner(raw, name.into())
     }
 
-    pub fn to_raw(&self) -> schema::Region<BlockState, Entity, BlockEntity> {
+    /// Create a new [raw NBT region](schema::Region) from this [`Region`].
+    pub(crate) fn to_raw(&self) -> schema::Region<BlockState, Entity, BlockEntity> {
         let mut new = schema::Region {
             position: self.position,
             size: self.size,
@@ -114,10 +148,12 @@ where
         (pos.x + pos.y * size.z * size.x + pos.z * size.z) as usize
     }
 
+    /// Get the block state at the given position within this region.
     pub fn get_block(&self, pos: UVec3) -> &BlockState {
         &self.palette[self.blocks[self.pos_to_index(pos)]]
     }
 
+    /// Set the block state at the given position within this region.
     pub fn set_block(&mut self, pos: UVec3, block: BlockState) {
         let block = block;
         let id = if let Some(pos) = self.palette.iter().position(|b| b == &block) {
@@ -130,80 +166,118 @@ where
         self.blocks[pos] = id;
     }
 
+    /// Find a block entity by its position.
     pub fn get_block_entity(&self, pos: BlockPos) -> Option<&BlockEntity> {
         self.block_entities.iter().find(|e| e.position() == pos)
     }
 
-    pub fn set_block_entity(&mut self, block_entity: BlockEntity) {
-        if let Some(index) = self
+    /// Replace or add a block entity.
+    ///
+    /// Returns the previous block entity if there already was one at the same position.
+    pub fn set_block_entity(&mut self, block_entity: BlockEntity) -> Option<BlockEntity> {
+        if let Some(prev) = self
             .block_entities
-            .iter()
-            .position(|e| e.position() == block_entity.position())
+            .iter_mut()
+            .find(|e| e.position() == block_entity.position())
         {
-            self.block_entities[index] = block_entity;
+            Some(std::mem::replace(prev, block_entity))
         } else {
             self.block_entities.push(block_entity);
+            None
         }
     }
 
-    pub fn remove_block_entity(&mut self, pos: BlockPos) {
-        if let Some(index) = self.block_entities.iter().position(|e| e.position() == pos) {
-            self.block_entities.remove(index);
-        }
+    /// Removes the block entity at the given position.
+    ///
+    /// Returns the removed block entity if there was one.
+    pub fn remove_block_entity(&mut self, pos: BlockPos) -> Option<BlockEntity> {
+        self.block_entities
+            .iter()
+            .position(|e| e.position() == pos)
+            .map(|idx| self.block_entities.swap_remove(idx))
     }
 
+    /// Calculate the minimum x coordinate of this region in the schematic's coordinate system.
     pub fn min_global_x(&self) -> i32 {
         self.position.x.min(self.position.x + self.size.x)
     }
+
+    /// Calculate the maximum x coordinate of this region in the schematic's coordinate system.
     pub fn max_global_x(&self) -> i32 {
         self.position.x.max(self.position.x + self.size.x - 1)
     }
+
+    /// Calculate the minimum y coordinate of this region in the schematic's coordinate system.
     pub fn min_global_y(&self) -> i32 {
         self.position.y.min(self.position.y + self.size.y + 1)
     }
+
+    /// Calculate the maximum y coordinate of this region in the schematic's coordinate system.
     pub fn max_global_y(&self) -> i32 {
         self.position.y.max(self.position.y + self.size.y - 1)
     }
+
+    /// Calculate the minimum z coordinate of this region in the schematic's coordinate system.
     pub fn min_global_z(&self) -> i32 {
         self.position.z.min(self.position.z + self.size.z + 1)
     }
+
+    /// Calculate the maximum z coordinate of this region in the schematic's coordinate system.
     pub fn max_global_z(&self) -> i32 {
         self.position.z.max(self.position.z + self.size.z - 1)
     }
 
+    /// Calculate the minimum x coordinate of this region in the regions's coordinate system.
     pub fn min_x(&self) -> u32 {
         0
     }
+
+    /// Calculate the maximum x coordinate of this region in the regions's coordinate system.
     pub fn max_x(&self) -> u32 {
         0.max(self.size.abs().x - 1)
     }
+
+    /// Calculate the minimum y coordinate of this region in the regions's coordinate system.
     pub fn min_y(&self) -> u32 {
         0
     }
+
+    /// Calculate the maximum y coordinate of this region in the regions's coordinate system.
     pub fn max_y(&self) -> u32 {
         0.max(self.size.abs().y - 1)
     }
+
+    /// Calculate the minimum z coordinate of this region in the regions's coordinate system.
     pub fn min_z(&self) -> u32 {
         0
     }
+
+    /// Calculate the maximum z coordinate of this region in the regions's coordinate system.
     pub fn max_z(&self) -> u32 {
         0.max(self.size.abs().z - 1)
     }
 
+    /// Get the range of possible x coordinates within this region.
     pub fn x_range(&self) -> RangeInclusive<u32> {
         self.min_x()..=self.max_x()
     }
+
+    /// Get the range of possible y coordinates within this region.
     pub fn y_range(&self) -> RangeInclusive<u32> {
         self.min_y()..=self.max_y()
     }
+
+    /// Get the range of possible z coordinates within this region.
     pub fn z_range(&self) -> RangeInclusive<u32> {
         self.min_z()..=self.max_z()
     }
 
+    /// Calculate the total count of non-air blocks in this region.
     pub fn total_blocks(&self) -> usize {
         self.blocks.iter().filter(|b| b != &&0).count()
     }
 
+    /// Create an iterator over all blocks in this region.
     pub fn blocks(&self) -> Blocks<'_, BlockState> {
         Blocks {
             palette: &self.palette,
@@ -213,6 +287,10 @@ where
         }
     }
 
+    /// Create a new [`Litematic`] from this [`Region`] with a given description and author.
+    ///
+    /// The created schematic will have the same name as this region and will include this region
+    /// as its only region.
     pub fn as_litematic(
         self,
         description: impl Into<CowStr>,
@@ -224,6 +302,7 @@ where
     }
 }
 
+/// An iterator over all blocks in a [`Region`].
 #[derive(Debug)]
 pub struct Blocks<'b, BlockState>
 where
