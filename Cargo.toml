@@ -1,9 +1,10 @@
 [package]
 name = "rustmatica"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["RubixDev"]
 categories = ["encoding", "wasm"]
 edition = "2021"
+exclude = [".github", "dprint.json", "test_files"]
 keywords = ["minecraft", "serde", "litematic", "litematica", "nbt"]
 license = "GPL-3.0-only"
 repository = "https://github.com/RubixDev/rustmatica"
@@ -25,7 +26,7 @@ docs = ["dep:document-features", "dep:rustc_version"]
 document-features = { version = "0.2.8", optional = true }
 fastnbt = "2.5.0"
 flate2 = "1.0.30"
-mcdata = { version = "0.2.0", features = ["serde"] }
+mcdata = { version = "0.2.1", features = ["serde"] }
 serde = { version = "1.0.201", features = ["derive"] }
 thiserror = "1.0.60"
 

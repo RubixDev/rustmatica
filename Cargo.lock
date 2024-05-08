@@ -195,9 +195,9 @@ checksum = "90ed8c1e510134f979dbc4f070f87d4313098b704861a105fe34231c70a3901c"
 
 [[package]]
 name = "mcdata"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "332d7066f501bd7690c8dd5ebe579cc90ac964750a368082df0a92070ab52da5"
+checksum = "ebe4de25087739028233d98605026260d91e5c7298b6690e716a6f7d32768787"
 dependencies = [
  "bounded-integer",
  "either",
@@ -259,7 +259,7 @@ dependencies = [
 
 [[package]]
 name = "rustmatica"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "bounded-integer",
  "chrono",
