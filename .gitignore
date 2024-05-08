@@ -1,7 +1,3 @@
 /target
 /schematics
-/.idea
-
-/.vscode/settings.json
-Cargo.lock
 /planet.litematic

@@ -1,5 +1,4 @@
 use std::{
-    borrow::Cow,
     collections::HashMap,
     fs::File,
     io::{Read, Write},
@@ -7,23 +6,34 @@ use std::{
 
 #[cfg(feature = "chrono")]
 use chrono::{DateTime, TimeZone, Utc};
-use fastnbt::{from_bytes, to_bytes};
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
+use mcdata::{util::UVec3, GenericBlockEntity, GenericBlockState, GenericEntity};
+use serde::{de::DeserializeOwned, Serialize};
 
-use crate::{
-    error::Result,
-    schema,
-    util::{current_time, UVec3},
-};
+use crate::{error::Result, schema, util};
 
 use super::Region;
 
+// TODO: require version 6 when reading?
+// TODO: support multiple versions?
+const SCHEMATIC_VERSION: u32 = 6;
+
+type CowStr = std::borrow::Cow<'static, str>;
+
 #[derive(Debug)]
-pub struct Litematic<'l> {
-    pub regions: Vec<Region<'l>>,
-    pub name: Cow<'l, str>,
-    pub description: Cow<'l, str>,
-    pub author: Cow<'l, str>,
+pub struct Litematic<
+    BlockState = GenericBlockState,
+    Entity = GenericEntity,
+    BlockEntity = GenericBlockEntity,
+> where
+    BlockState: mcdata::BlockState + Serialize + DeserializeOwned,
+    Entity: mcdata::Entity + Serialize + DeserializeOwned,
+    BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
+{
+    pub regions: Vec<Region<BlockState, Entity, BlockEntity>>,
+    pub name: CowStr,
+    pub description: CowStr,
+    pub author: CowStr,
     pub version: u32,
     pub minecraft_data_version: u32,
 
@@ -37,60 +47,71 @@ pub struct Litematic<'l> {
     pub time_modified: i64,
 }
 
-impl<'l> Litematic<'l> {
-    pub fn new(name: Cow<'l, str>, description: Cow<'l, str>, author: Cow<'l, str>) -> Self {
-        let now = current_time();
+impl<BlockState, Entity, BlockEntity> Litematic<BlockState, Entity, BlockEntity>
+where
+    BlockState: mcdata::BlockState + Serialize + DeserializeOwned,
+    Entity: mcdata::Entity + Serialize + DeserializeOwned,
+    BlockEntity: mcdata::BlockEntity + Serialize + DeserializeOwned,
+{
+    pub fn new(
+        name: impl Into<CowStr>,
+        description: impl Into<CowStr>,
+        author: impl Into<CowStr>,
+    ) -> Self {
+        let now = util::current_time();
         Self {
             regions: vec![],
-            name,
-            description,
-            author,
-            version: 6,
+            name: name.into(),
+            description: description.into(),
+            author: author.into(),
+            version: SCHEMATIC_VERSION,
             minecraft_data_version: 2975,
             time_created: now,
             time_modified: now,
         }
     }
 
-    pub fn from_raw(raw: Cow<'l, schema::Litematic<'l>>) -> Self {
+    pub fn from_raw(raw: schema::Litematic<BlockState, Entity, BlockEntity>) -> Self {
         return Self {
             regions: raw
                 .regions
                 .iter()
-                .map(|(name, region)| Region::from_raw(Cow::Owned(region.to_owned()), name.clone()))
+                .map(|(name, region)| Region::from_raw(region.to_owned(), name.clone()))
                 .collect(),
-            name: raw.metadata.name.clone(),
-            description: raw.metadata.description.clone(),
-            author: raw.metadata.author.clone(),
+            name: CowStr::Owned(raw.metadata.name.clone()),
+            description: CowStr::Owned(raw.metadata.description.clone()),
+            author: CowStr::Owned(raw.metadata.author.clone()),
             version: raw.version,
             minecraft_data_version: raw.minecraft_data_version,
 
             #[cfg(feature = "chrono")]
-            time_created: Utc.timestamp_millis(raw.metadata.time_created),
+            time_created: Utc.timestamp_millis_opt(raw.metadata.time_created).unwrap(),
             #[cfg(not(feature = "chrono"))]
             time_created: raw.metadata.time_created,
             #[cfg(feature = "chrono")]
-            time_modified: Utc.timestamp_millis(raw.metadata.time_modified),
+            time_modified: Utc
+                .timestamp_millis_opt(raw.metadata.time_modified)
+                .unwrap(),
             #[cfg(not(feature = "chrono"))]
             time_modified: raw.metadata.time_modified,
         };
     }
 
-    pub fn to_raw(&self) -> schema::Litematic<'_> {
-        return schema::Litematic {
+    pub fn to_raw(&self) -> schema::Litematic<BlockState, Entity, BlockEntity> {
+        schema::Litematic {
             regions: {
                 let mut map = HashMap::new();
                 for region in self.regions.iter() {
-                    map.insert(region.name.clone(), region.to_raw());
+                    map.insert(region.name.clone().into_owned(), region.to_raw());
                 }
                 map
             },
             version: self.version,
             minecraft_data_version: self.minecraft_data_version,
             metadata: schema::Metadata {
-                name: self.name.clone(),
-                description: self.description.clone(),
-                author: self.author.clone(),
+                name: self.name.clone().into_owned(),
+                description: self.description.clone().into_owned(),
+                author: self.author.clone().into_owned(),
                 region_count: self.regions.len() as u32,
                 total_blocks: self.total_blocks(),
                 total_volume: self.total_volume(),
@@ -101,19 +122,19 @@ impl<'l> Litematic<'l> {
                 #[cfg(not(feature = "chrono"))]
                 time_created: self.time_created,
                 #[cfg(feature = "chrono")]
-                time_modified: current_time().timestamp_millis(),
+                time_modified: util::current_time().timestamp_millis(),
                 #[cfg(not(feature = "chrono"))]
-                time_modified: current_time(),
+                time_modified: util::current_time(),
             },
-        };
+        }
     }
 
     pub fn from_uncompressed_bytes(bytes: &[u8]) -> Result<Self> {
-        Ok(Self::from_raw(Cow::Owned(from_bytes(bytes)?)))
+        Ok(Self::from_raw(fastnbt::from_bytes(bytes)?))
     }
 
     pub fn to_uncompressed_bytes(&self) -> Result<Vec<u8>> {
-        Ok(to_bytes(&self.to_raw())?)
+        Ok(fastnbt::to_bytes(&self.to_raw())?)
     }
 
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
@@ -163,9 +184,9 @@ impl<'l> Litematic<'l> {
             bounds[5] = bounds[5].max(region.max_global_z());
         }
         UVec3 {
-            x: bounds[1] - bounds[0] + 1,
-            y: bounds[3] - bounds[2] + 1,
-            z: bounds[5] - bounds[4] + 1,
+            x: (bounds[1] - bounds[0] + 1).unsigned_abs(),
+            y: (bounds[3] - bounds[2] + 1).unsigned_abs(),
+            z: (bounds[5] - bounds[4] + 1).unsigned_abs(),
         }
     }
 }

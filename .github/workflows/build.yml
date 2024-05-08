@@ -10,28 +10,25 @@ jobs:
         features: [all, no-default]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+        uses: dtolnay/toolchain@stable
+
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --${{ matrix.features }}-features
+        run: cargo build --release --${{ matrix.features }}-features
   wasm:
     name: rustmatica_wasm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Install Toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/toolchain@stable
         with:
-          toolchain: stable
           target: wasm32-unknown-unknown
+
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --all-features --target wasm32-unknown-unknown
+        run: cargo build --release --all-features --target wasm32-unknown-unknown

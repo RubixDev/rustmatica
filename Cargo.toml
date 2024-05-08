@@ -1,42 +1,37 @@
 [package]
 name = "rustmatica"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["RubixDev"]
-categories = ["encoding", "parser-implementations", "wasm"]
+categories = ["encoding", "wasm"]
 edition = "2021"
-keywords = ["minecraft", "serde", "litematic"]
+keywords = ["minecraft", "serde", "litematic", "litematica", "nbt"]
 license = "GPL-3.0-only"
 repository = "https://github.com/RubixDev/rustmatica"
 description = "A Rust library for reading, editing, and writing Minecraft litematic files"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[profile.dev]
-opt-level = 1
-
-[profile.no-opt]
-inherits = "dev"
-opt-level = 0
-
 [features]
-lists = ["dep:strum"]
+default = ["chrono"]
+
 chrono = ["dep:chrono"]
-entity-list = []
-default = ["lists", "chrono"]
 
 [dependencies]
-# TODO: use newest version when https://github.com/owengage/fastnbt/issues/74 is closed
-fastnbt = "~2.2"
-flate2 = "1.0.24"
-serde = "1.0.137"
-strum = { version = "0.24.0", features = ["derive"], optional = true }
+fastnbt = "2.5.0"
+flate2 = "1.0.30"
+mcdata = { version = "0.2.0", features = ["serde"] }
+serde = { version = "1.0.201", features = ["derive"] }
+thiserror = "1.0.60"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-chrono = { version = "0.4.19", optional = true }
+chrono = { version = "0.4.38", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-chrono = { version = "0.4.19", features = ["wasmbind"], optional = true }
-js-sys = "0.3.57"
+chrono = { version = "0.4.38", features = ["wasmbind"], optional = true }
+js-sys = "0.3.69" # for current time without chrono feature
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.30"
+mcdata = { version = "0.2.0", features = ["serde", "latest", "block-states"] }
+
+[package.metadata.docs.rs]
+all-features = true

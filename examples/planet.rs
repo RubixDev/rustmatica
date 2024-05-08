@@ -1,12 +1,14 @@
 //! Example taken from [litemapy README](https://github.com/SmylerMC/litemapy#example)
 
-use rustmatica::{
-    util::{UVec3, Vec3},
-    BlockState, Litematic, Region,
+use mcdata::{
+    latest::BlockState,
+    util::{BlockPos, UVec3},
 };
+use rustmatica::{Litematic, Region};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut region = Region::new("Planet".into(), Vec3::new(0, 0, 0), Vec3::new(21, 21, 21));
+    let mut region: Region<BlockState> =
+        Region::new("Planet", BlockPos::new(0, 0, 0), BlockPos::new(21, 21, 21));
 
     for (pos, _) in region.clone().blocks() {
         if (((pos.x as i32 - 10).pow(2) + (pos.y as i32 - 10).pow(2) + (pos.z as i32 - 10).pow(2))
@@ -19,10 +21,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    let planet = region.as_litematic("Made with rustmatica".into(), "RubixDev".into());
+    let planet = region.as_litematic("Made with rustmatica", "RubixDev");
     planet.write_file("planet.litematic")?;
 
-    let planet = Litematic::read_file("planet.litematic")?;
+    let planet: Litematic<BlockState> = Litematic::read_file("planet.litematic")?;
     let region = &planet.regions[0];
 
     for x in region.x_range() {

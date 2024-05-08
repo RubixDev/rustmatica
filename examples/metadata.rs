@@ -1,7 +1,8 @@
-use rustmatica::{chrono::Local, Litematic};
+use chrono::Local;
+use rustmatica::Litematic;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let donut = Litematic::read_file("test_files/axolotl.litematic")?;
+    let donut: Litematic = Litematic::read_file("test_files/axolotl.litematic")?;
 
     println!("Name:                  {}", donut.name);
     println!("Description:           {}", donut.description);
