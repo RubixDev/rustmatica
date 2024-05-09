@@ -4,11 +4,16 @@ use std::{
     io::{Read, Write},
 };
 
-#[cfg(feature = "chrono")]
-use chrono::{DateTime, TimeZone, Utc};
+use fastnbt::IntArray;
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
 use mcdata::{util::UVec3, GenericBlockEntity, GenericBlockState, GenericEntity};
 use serde::{de::DeserializeOwned, Serialize};
+
+#[cfg(feature = "chrono")]
+use chrono::{DateTime, TimeZone, Utc};
+
+#[cfg(feature = "image")]
+use image::{imageops::FilterType, DynamicImage, RgbaImage};
 
 use crate::{error::Result, schema, util};
 
@@ -75,6 +80,14 @@ pub struct Litematic<
     /// The unix timestamp of when this schematic was last modified.
     #[cfg(not(feature = "chrono"))]
     pub time_modified: i64,
+
+    /// An optional preview image.
+    #[cfg(feature = "image")]
+    preview_image: Option<DynamicImage>,
+
+    /// The raw ARGB preview image data.
+    #[cfg(not(feature = "image"))]
+    preview_image: Option<Vec<i32>>,
 }
 
 impl<BlockState, Entity, BlockEntity> Litematic<BlockState, Entity, BlockEntity>
@@ -99,6 +112,7 @@ where
             minecraft_data_version: 2975,
             time_created: now,
             time_modified: now,
+            preview_image: None,
         }
     }
 
@@ -126,6 +140,30 @@ where
                 .unwrap(),
             #[cfg(not(feature = "chrono"))]
             time_modified: raw.metadata.time_modified,
+
+            #[cfg(feature = "image")]
+            preview_image: raw.metadata.preview_image_data.map(|data| {
+                RgbaImage::from_raw(
+                    140,
+                    140,
+                    data.iter()
+                        .flat_map(|int| {
+                            let mut px = int.to_be_bytes();
+                            // data is ARGB, convert it to RGBA
+                            px.rotate_left(1);
+                            px
+                        })
+                        .collect(),
+                )
+                .expect("preview image data should have 140x140 pixels")
+                .into()
+            }),
+            #[cfg(not(feature = "image"))]
+            preview_image: raw
+                .metadata
+                .preview_image_data
+                .clone()
+                .map(|data| data.into_inner()),
         };
     }
 
@@ -158,6 +196,24 @@ where
                 time_modified: util::current_time().timestamp_millis(),
                 #[cfg(not(feature = "chrono"))]
                 time_modified: util::current_time(),
+
+                #[cfg(feature = "image")]
+                preview_image_data: self.preview_image.as_ref().map(|img| {
+                    IntArray::new(
+                        img.to_rgba8()
+                            .into_vec()
+                            .chunks_exact(4)
+                            .map(|px| {
+                                let mut px = [px[0], px[1], px[2], px[3]];
+                                // convert RGBA to ARGB
+                                px.rotate_right(1);
+                                i32::from_be_bytes(px)
+                            })
+                            .collect(),
+                    )
+                }),
+                #[cfg(not(feature = "image"))]
+                preview_image_data: self.preview_image.clone().map(IntArray::new),
             },
         }
     }
@@ -229,6 +285,52 @@ where
             x: (bounds[1] - bounds[0] + 1).unsigned_abs(),
             y: (bounds[3] - bounds[2] + 1).unsigned_abs(),
             z: (bounds[5] - bounds[4] + 1).unsigned_abs(),
+        }
+    }
+
+    /// Get the optional preview image.
+    #[cfg(feature = "image")]
+    pub fn preview_image(&self) -> Option<&DynamicImage> {
+        self.preview_image.as_ref()
+    }
+
+    /// Set the preview image.
+    ///
+    /// Returns the previous image if there was one.
+    #[cfg(feature = "image")]
+    pub fn set_preview_image(&mut self, image: Option<DynamicImage>) -> Option<DynamicImage> {
+        match image {
+            Some(img) => {
+                let scaled = img.resize(140, 140, FilterType::CatmullRom);
+                self.preview_image.replace(scaled)
+            }
+            None => self.preview_image.take(),
+        }
+    }
+
+    /// Get the optional raw ARGB preview image data.
+    #[cfg(not(feature = "image"))]
+    pub fn preview_image_data(&self) -> Option<&Vec<i32>> {
+        self.preview_image.as_ref()
+    }
+
+    /// Set the preview image.
+    ///
+    /// Returns the previous image data if there was some.
+    ///
+    /// Panics if the data length is not exactly `140 * 140`.
+    #[cfg(not(feature = "image"))]
+    pub fn set_preview_image_data(&mut self, data: Option<Vec<i32>>) -> Option<Vec<i32>> {
+        match data {
+            Some(data) => {
+                assert_eq!(
+                    data.len(),
+                    140 * 140,
+                    "preview image must be 140x140 pixels in size"
+                );
+                self.preview_image.replace(data)
+            }
+            None => self.preview_image.take(),
         }
     }
 }

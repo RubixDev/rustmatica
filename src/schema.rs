@@ -1,4 +1,4 @@
-use fastnbt::{LongArray, Value};
+use fastnbt::{IntArray, LongArray, Value};
 use mcdata::{
     util::{BlockPos, UVec3},
     GenericBlockEntity, GenericBlockState, GenericEntity,
@@ -47,14 +47,14 @@ pub struct Region<
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct Metadata {
-    pub total_blocks: u64,
     pub name: String,
-    pub time_modified: i64,
-    pub time_created: i64,
-    pub region_count: u32,
-    pub enclosing_size: UVec3,
-    pub total_volume: u32,
-    pub description: String,
     pub author: String,
-    // TODO: PreviewImageData: IntArray,
+    pub description: String,
+    pub region_count: u32,
+    pub total_volume: u32,
+    pub total_blocks: u64,
+    pub time_created: i64,
+    pub time_modified: i64,
+    pub enclosing_size: UVec3,
+    pub preview_image_data: Option<IntArray>,
 }
