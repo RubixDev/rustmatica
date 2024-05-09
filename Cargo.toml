@@ -1,6 +1,6 @@
 [package]
 name = "rustmatica"
-version = "0.3.2"
+version = "0.4.0"
 authors = ["RubixDev"]
 categories = ["encoding", "wasm"]
 edition = "2021"
@@ -25,12 +25,14 @@ image = ["dep:image"]
 ## Enable this when building the docs
 docs = ["dep:document-features", "dep:rustc_version"]
 
+_mcdata-all = ["mcdata/entities", "mcdata/block-entities", "mcdata/mc-all"]
+
 [dependencies]
 document-features = { version = "0.2.8", optional = true }
 fastnbt = "2.5.0"
 flate2 = "1.0.30"
 image = { version = "0.25.1", optional = true }
-mcdata = { version = "0.2.1", features = ["serde"] }
+mcdata = { version = "0.2.3", features = ["serde"] }
 serde = { version = "1.0.201", features = ["derive"] }
 thiserror = "1.0.60"
 
@@ -43,7 +45,7 @@ js-sys = "0.3.69" # for current time without chrono feature
 
 [dev-dependencies]
 bounded-integer = "0.5.7"
-mcdata = { version = "0.2.0", features = ["serde", "latest", "block-states"] }
+mcdata = { version = "0.2.3", features = ["serde", "latest", "block-states"] }
 viuer = "0.7.1"
 
 [build-dependencies]

@@ -4,15 +4,15 @@ use rustmatica::Litematic;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args().nth(1);
     let path = path.as_deref().unwrap_or("test_files/axolotl.litematic");
-    let donut: Litematic = Litematic::read_file(path)?;
+    let schem: Litematic = Litematic::read_file(path)?;
 
-    println!("Name:                  {}", donut.name);
-    println!("Description:           {}", donut.description);
-    println!("Author:                {}", donut.author);
-    println!("Regions:               {}", donut.regions.len());
+    println!("Name:                   {}", schem.metadata.name);
+    println!("Description:            {}", schem.metadata.description);
+    println!("Author:                 {}", schem.metadata.author);
+    println!("Regions:                {}", schem.regions.len());
     println!(
-        "Region Names:          {}",
-        donut
+        "Region Names:           {}",
+        schem
             .regions
             .iter()
             .map(|r| r.name.clone())
@@ -20,37 +20,45 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .join(", ")
     );
     println!(
-        "Created at (UTC):      {}",
-        donut.time_created.format("%H:%M %d.%m.%Y")
+        "Created at (UTC):       {}",
+        schem.metadata.time_created.format("%H:%M %d.%m.%Y")
     );
     println!(
-        "Created at (Local):    {}",
-        donut
+        "Created at (Local):     {}",
+        schem
+            .metadata
             .time_created
             .with_timezone(&Local)
             .format("%H:%M %d.%m.%Y")
     );
     println!(
-        "Last modified (UTC):   {}",
-        donut.time_modified.format("%H:%M %d.%m.%Y")
+        "Last modified (UTC):    {}",
+        schem.metadata.time_modified.format("%H:%M %d.%m.%Y")
     );
     println!(
-        "Last modified (Local): {}",
-        donut
+        "Last modified (Local):  {}",
+        schem
+            .metadata
             .time_modified
             .with_timezone(&Local)
             .format("%H:%M %d.%m.%Y")
     );
     println!(
-        "Size:                  {}x{}x{}",
-        donut.enclosing_size().x,
-        donut.enclosing_size().y,
-        donut.enclosing_size().z
+        "Size:                   {}x{}x{}",
+        schem.enclosing_size().x,
+        schem.enclosing_size().y,
+        schem.enclosing_size().z
     );
-    println!("Blocks:                {}", donut.total_blocks());
-    println!("Volume:                {}", donut.total_volume());
+    println!("Blocks:                 {}", schem.total_blocks());
+    println!("Volume:                 {}", schem.total_volume());
+    println!("Format version:         {}", schem.metadata.version);
+    println!("Format sub-version:     {:?}", schem.metadata.sub_version);
+    println!(
+        "Minecraft data version: {}",
+        schem.metadata.minecraft_data_version
+    );
 
-    if let Some(img) = donut.preview_image() {
+    if let Some(img) = schem.metadata.preview_image() {
         // display preview image using `viuer`
         let config = viuer::Config {
             transparent: true,

@@ -176,6 +176,11 @@ where
         self.blocks[pos] = id;
     }
 
+    /// Get a reference to the current block state palette.
+    pub fn block_palette(&self) -> &[BlockState] {
+        &self.palette
+    }
+
     /// Find a block entity by its position.
     pub fn get_block_entity(&self, pos: BlockPos) -> Option<&BlockEntity> {
         self.block_entities.iter().find(|e| e.position() == pos)

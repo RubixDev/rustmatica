@@ -19,7 +19,29 @@ pub struct Litematic<
     Entity: mcdata::Entity,
     BlockEntity: mcdata::BlockEntity,
 {
+    #[serde(flatten)]
+    pub regions: LitematicRegions<BlockState, Entity, BlockEntity>,
+    #[serde(flatten)]
+    pub metadata: LitematicMetadata,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct LitematicRegions<
+    BlockState = GenericBlockState,
+    Entity = GenericEntity,
+    BlockEntity = GenericBlockEntity,
+> where
+    BlockState: mcdata::BlockState,
+    Entity: mcdata::Entity,
+    BlockEntity: mcdata::BlockEntity,
+{
     pub regions: HashMap<String, Region<BlockState, Entity, BlockEntity>>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub struct LitematicMetadata {
     pub minecraft_data_version: u32,
     pub version: u32,
     pub sub_version: Option<u32>,
