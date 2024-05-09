@@ -15,3 +15,4 @@ pub(crate) mod util;
 pub use error::*;
 pub use litematic::*;
 pub use region::*;
+pub use schema::{PendingBlockTick, PendingFluidTick};

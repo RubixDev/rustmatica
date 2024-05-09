@@ -22,6 +22,7 @@ use super::Region;
 // TODO: require version 6 when reading?
 // TODO: support multiple versions?
 const SCHEMATIC_VERSION: u32 = 6;
+const SCHEMATIC_VERSION_SUB: u32 = 1;
 
 type CowStr = std::borrow::Cow<'static, str>;
 
@@ -56,8 +57,11 @@ pub struct Litematic<
     /// The author of this schematic.
     pub author: CowStr,
 
-    /// The schematic version.
+    /// The litematica format version this schematic was created with.
     pub version: u32,
+
+    /// An optional litematica format subversion.
+    pub sub_version: Option<u32>,
 
     /// The Minecraft [data version](https://minecraft.wiki/w/Data_version) used for blocks and
     /// entities in this schematic.
@@ -109,6 +113,7 @@ where
             description: description.into(),
             author: author.into(),
             version: SCHEMATIC_VERSION,
+            sub_version: Some(SCHEMATIC_VERSION_SUB),
             minecraft_data_version: 2975,
             time_created: now,
             time_modified: now,
@@ -128,6 +133,7 @@ where
             description: CowStr::Owned(raw.metadata.description.clone()),
             author: CowStr::Owned(raw.metadata.author.clone()),
             version: raw.version,
+            sub_version: raw.sub_version,
             minecraft_data_version: raw.minecraft_data_version,
 
             #[cfg(feature = "chrono")]
@@ -178,6 +184,7 @@ where
                 map
             },
             version: self.version,
+            sub_version: self.sub_version,
             minecraft_data_version: self.minecraft_data_version,
             metadata: schema::Metadata {
                 name: self.name.clone().into_owned(),

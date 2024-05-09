@@ -7,7 +7,7 @@ use mcdata::{
 };
 use serde::{de::DeserializeOwned, Serialize};
 
-use crate::{schema, Litematic};
+use crate::{schema, Litematic, PendingBlockTick, PendingFluidTick};
 
 type CowStr = std::borrow::Cow<'static, str>;
 
@@ -47,6 +47,12 @@ pub struct Region<
     /// The list of entities in this region.
     pub entities: Vec<Entity>,
 
+    /// Pending block ticks in this region.
+    pub pending_block_ticks: Vec<PendingBlockTick>,
+
+    /// Pending fluid ticks in this region.
+    pub pending_fluid_ticks: Vec<PendingFluidTick>,
+
     palette: Vec<BlockState>,
     blocks: Vec<usize>,
 }
@@ -65,6 +71,8 @@ where
             size,
             block_entities: vec![],
             entities: vec![],
+            pending_block_ticks: vec![],
+            pending_fluid_ticks: vec![],
             palette: vec![BlockState::air()],
             blocks: vec![0; size.volume()],
         }
@@ -87,6 +95,8 @@ where
             new.palette = raw.block_state_palette.to_owned();
             new.block_entities = raw.tile_entities.to_owned();
             new.entities = raw.entities.to_owned();
+            new.pending_block_ticks = raw.pending_block_ticks.clone();
+            new.pending_fluid_ticks = raw.pending_fluid_ticks.clone();
 
             let num_bits = new.num_bits();
             new.blocks = raw
@@ -116,8 +126,8 @@ where
             block_state_palette: self.palette.to_owned(),
             tile_entities: self.block_entities.to_owned(),
             entities: self.entities.to_owned(),
-            pending_fluid_ticks: vec![],
-            pending_block_ticks: vec![],
+            pending_block_ticks: self.pending_block_ticks.clone(),
+            pending_fluid_ticks: self.pending_fluid_ticks.clone(),
             block_states: LongArray::new(vec![]),
         };
 
