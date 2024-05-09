@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fs::File,
-    io::{Read, Write},
+    io::{Read, Write}, path::Path,
 };
 
 use fastnbt::IntArray;
@@ -253,7 +253,7 @@ where
     }
 
     /// Load a schematic from a file.
-    pub fn read_file(filename: &str) -> Result<Self> {
+    pub fn read_file(filename: impl AsRef<Path>) -> Result<Self> {
         let mut file = File::open(filename)?;
         let mut bytes = vec![];
         file.read_to_end(&mut bytes)?;
@@ -261,7 +261,7 @@ where
     }
 
     /// Write this schematic to a file.
-    pub fn write_file(&self, filename: &str) -> Result<()> {
+    pub fn write_file(&self, filename: impl AsRef<Path>) -> Result<()> {
         let mut file = File::create(filename)?;
         file.write_all(&self.to_bytes()?)?;
         Ok(())
