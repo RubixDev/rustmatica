@@ -3,7 +3,7 @@ use rustmatica::{Litematic, LitematicMetadata};
 
 #[cfg(not(feature = "_mcdata-all"))]
 fn main() {
-    compile_error!("this test requires the `_mcdata-all` feature to be enabled");
+    panic!("this test requires the `_mcdata-all` feature to be enabled");
 }
 
 #[cfg(feature = "_mcdata-all")]
