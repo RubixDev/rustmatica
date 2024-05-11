@@ -17,7 +17,10 @@ use serde::{de::DeserializeOwned, Serialize};
 use chrono::{DateTime, TimeZone, Utc};
 
 #[cfg(feature = "image")]
-use image::{imageops::FilterType, DynamicImage, RgbaImage};
+use image::{
+    imageops::{self, FilterType},
+    DynamicImage, RgbaImage,
+};
 
 use crate::{error::Result, schema, util};
 
@@ -422,7 +425,14 @@ impl LitematicMetadata {
         match image {
             Some(img) => {
                 let scaled = img.resize(140, 140, FilterType::CatmullRom);
-                self.preview_image.replace(scaled)
+                let mut preview = RgbaImage::new(140, 140);
+                imageops::overlay(
+                    &mut preview,
+                    &scaled,
+                    (140 - scaled.width() as i64) / 2,
+                    (140 - scaled.height() as i64) / 2,
+                );
+                self.preview_image.replace(preview.into())
             }
             None => self.preview_image.take(),
         }

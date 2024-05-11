@@ -86,14 +86,14 @@ fn pixels_to_ansi(pixels: &[Vec<MapColor>]) -> String {
             if top_invis && bot_invis {
                 out += " ";
             } else if top_invis && !bot_invis {
-                let (r, g, b) = bot_pix.rgb();
+                let [r, g, b, _] = bot_pix.rgba();
                 let _ = write!(out, "\x1b[38;2;{r};{g};{b}m{BOTTOM_HALF}\x1b[0m");
             } else if !top_invis && bot_invis {
-                let (r, g, b) = top_pix.rgb();
+                let [r, g, b, _] = top_pix.rgba();
                 let _ = write!(out, "\x1b[38;2;{r};{g};{b}m{TOP_HALF}\x1b[0m");
             } else {
-                let (br, bg, bb) = bot_pix.rgb();
-                let (tr, tg, tb) = top_pix.rgb();
+                let [br, bg, bb, _] = bot_pix.rgba();
+                let [tr, tg, tb, _] = top_pix.rgba();
                 let _ = write!(
                     out,
                     "\x1b[38;2;{br};{bg};{bb};48;2;{tr};{tg};{tb}m{BOTTOM_HALF}\x1b[0m"
