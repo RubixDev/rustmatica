@@ -1,8 +1,5 @@
 use fastnbt::{IntArray, LongArray};
-use mcdata::{
-    util::{BlockPos, UVec3},
-    GenericBlockEntity, GenericBlockState, GenericEntity,
-};
+use mcdata::{util::BlockPos, GenericBlockEntity, GenericBlockState, GenericEntity};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -42,9 +39,9 @@ pub struct LitematicRegions<
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "PascalCase")]
 pub struct LitematicMetadata {
-    pub minecraft_data_version: u32,
-    pub version: u32,
-    pub sub_version: Option<u32>,
+    pub minecraft_data_version: i32,
+    pub version: i32,
+    pub sub_version: Option<i32>,
     pub metadata: Metadata,
 }
 
@@ -78,12 +75,12 @@ pub struct Metadata {
     pub name: String,
     pub author: String,
     pub description: String,
-    pub region_count: u32,
-    pub total_volume: u32,
-    pub total_blocks: u64,
+    pub region_count: i32,
+    pub total_volume: i32,
+    pub total_blocks: i64,
     pub time_created: i64,
     pub time_modified: i64,
-    pub enclosing_size: UVec3,
+    pub enclosing_size: BlockPos,
     pub preview_image_data: Option<IntArray>,
 }
 

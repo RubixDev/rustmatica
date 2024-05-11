@@ -1,9 +1,6 @@
 //! Example taken from [litemapy README](https://github.com/SmylerMC/litemapy#example)
 
-use mcdata::{
-    latest::BlockState,
-    util::{BlockPos, UVec3},
-};
+use mcdata::{latest::BlockState, util::BlockPos};
 use rustmatica::{Litematic, Region};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,8 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Region::new("Planet", BlockPos::new(0, 0, 0), BlockPos::new(21, 21, 21));
 
     for (pos, _) in region.clone().blocks() {
-        if (((pos.x as i32 - 10).pow(2) + (pos.y as i32 - 10).pow(2) + (pos.z as i32 - 10).pow(2))
-            as f64)
+        if (((pos.x - 10).pow(2) + (pos.y - 10).pow(2) + (pos.z - 10).pow(2)) as f64)
             .sqrt()
             .round()
             <= 10.0
@@ -29,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for x in region.x_range() {
         for z in region.z_range() {
-            if region.get_block(UVec3::new(x, 10, z)) == &BlockState::Air {
+            if region.get_block(BlockPos::new(x, 10, z)) == &BlockState::Air {
                 print!(" ");
             } else {
                 print!("#")

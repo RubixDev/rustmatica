@@ -1,6 +1,9 @@
+[workspace.dependencies]
+mcdata = { version = "0.3.0", features = ["serde"] }
+
 [package]
 name = "rustmatica"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["RubixDev"]
 categories = ["encoding", "wasm"]
 edition = "2021"
@@ -32,7 +35,7 @@ document-features = { version = "0.2.8", optional = true }
 fastnbt = "2.5.0"
 flate2 = "1.0.30"
 image = { version = "0.25.1", optional = true }
-mcdata = { version = "0.2.3", features = ["serde"] }
+mcdata.workspace = true
 serde = { version = "1.0.201", features = ["derive"] }
 thiserror = "1.0.60"
 
@@ -45,7 +48,7 @@ js-sys = "0.3.69" # for current time without chrono feature
 
 [dev-dependencies]
 bounded-integer = "0.5.7"
-mcdata = { version = "0.2.3", features = ["serde", "latest", "block-states"] }
+mcdata = { workspace = true, features = ["latest", "block-states"] }
 viuer = "0.7.1"
 
 [build-dependencies]

@@ -7,7 +7,10 @@ use std::{
 
 use fastnbt::IntArray;
 use flate2::{read::GzDecoder, write::GzEncoder, Compression};
-use mcdata::{util::UVec3, GenericBlockEntity, GenericBlockState, GenericEntity};
+use mcdata::{
+    util::{BlockPos, Cuboid},
+    GenericBlockEntity, GenericBlockState, GenericEntity,
+};
 use serde::{de::DeserializeOwned, Serialize};
 
 #[cfg(feature = "chrono")]
@@ -22,8 +25,8 @@ use super::Region;
 
 // TODO: require version 6 when reading?
 // TODO: support multiple versions?
-const SCHEMATIC_VERSION: u32 = 6;
-const SCHEMATIC_VERSION_SUB: u32 = 1;
+const SCHEMATIC_VERSION: i32 = 6;
+const SCHEMATIC_VERSION_SUB: i32 = 1;
 
 type CowStr = std::borrow::Cow<'static, str>;
 
@@ -46,16 +49,16 @@ pub struct LitematicMetadata {
     pub author: CowStr,
 
     /// The litematica format version this schematic was created with.
-    pub version: u32,
+    pub version: i32,
 
     /// An optional litematica format subversion.
-    pub sub_version: Option<u32>,
+    pub sub_version: Option<i32>,
 
     /// The Minecraft [data version](https://minecraft.wiki/w/Data_version) used for blocks and
     /// entities in this schematic.
     ///
     /// See [`mcdata::data_version`] for a list of some important versions.
-    pub minecraft_data_version: u32,
+    pub minecraft_data_version: i32,
 
     /// The datetime of when this schematic was created.
     #[cfg(feature = "chrono")]
@@ -91,6 +94,21 @@ pub struct LitematicMetadata {
 /// A litematica schematic consists of some [metadata](LitematicMetadata) and a list of
 /// [`Region`]s. The metadata contains information like the name, description, and author, while
 /// the [`Region`]s contain the blocks and entities.
+///
+/// ## Coordinate Systems
+///
+/// Litematica schematics operate on two different coordinate systems: "global" and "region-local".
+/// In this documentation, "global" may sometimes also be referred to as "schematic-wide" and
+/// "region-local" may be shortened to just "local", completely omitted, or referred to as "within
+/// this region". The difference between the two is that the global coordinates can describe every
+/// position in the entire schematic, i.e. every position in [`Self::enclosing_box`], whereas local
+/// coordinates are specific to one [`Region`] and relative to the regions position. Local
+/// coordinates are also always positive and start at 0.
+///
+/// Usually, when there is one function that takes local coordinates, there is another function
+/// that does the same with global coordinates. For example [`Region::get_block`] and
+/// [`Region::get_block_global`]. You can also convert between the two systems with
+/// [`Region::pos_to_global`] and [`Region::pos_from_global`].
 #[derive(Debug)]
 pub struct Litematic<
     BlockState = GenericBlockState,
@@ -171,7 +189,7 @@ where
                     name: self.metadata.name.clone().into_owned(),
                     description: self.metadata.description.clone().into_owned(),
                     author: self.metadata.author.clone().into_owned(),
-                    region_count: self.regions.len() as u32,
+                    region_count: self.regions.len() as i32,
                     total_blocks: self.total_blocks(),
                     total_volume: self.total_volume(),
                     enclosing_size: self.enclosing_size(),
@@ -280,17 +298,23 @@ where
     }
 
     /// The total number of blocks all regions combined contain.
-    pub fn total_blocks(&self) -> u64 {
-        self.regions.iter().map(|r| r.total_blocks() as u64).sum()
+    pub fn total_blocks(&self) -> i64 {
+        self.regions.iter().map(|r| r.total_blocks() as i64).sum()
     }
 
     /// The total volume of all regions combined.
-    pub fn total_volume(&self) -> u32 {
-        self.regions.iter().map(|r| r.size.volume() as u32).sum()
+    pub fn total_volume(&self) -> i32 {
+        self.regions.iter().map(|r| r.size.volume() as i32).sum()
     }
 
-    /// The enclosing size of all regions.
-    pub fn enclosing_size(&self) -> UVec3 {
+    /// Calculate the size of the box enclosing all regions.
+    #[inline]
+    pub fn enclosing_size(&self) -> BlockPos {
+        self.enclosing_box().size
+    }
+
+    /// Calculate the box enclosing all regions.
+    pub fn enclosing_box(&self) -> Cuboid {
         let mut bounds = [0; 6];
         for region in self.regions.iter() {
             bounds[0] = bounds[0].min(region.min_global_x());
@@ -300,10 +324,17 @@ where
             bounds[4] = bounds[4].min(region.min_global_z());
             bounds[5] = bounds[5].max(region.max_global_z());
         }
-        UVec3 {
-            x: (bounds[1] - bounds[0] + 1).unsigned_abs(),
-            y: (bounds[3] - bounds[2] + 1).unsigned_abs(),
-            z: (bounds[5] - bounds[4] + 1).unsigned_abs(),
+        Cuboid {
+            origin: BlockPos {
+                x: bounds[0],
+                y: bounds[2],
+                z: bounds[4],
+            },
+            size: BlockPos {
+                x: (bounds[1] - bounds[0] + 1).abs(),
+                y: (bounds[3] - bounds[2] + 1).abs(),
+                z: (bounds[5] - bounds[4] + 1).abs(),
+            },
         }
     }
 }
