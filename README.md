@@ -22,13 +22,13 @@ block states, entities, and block entities. By default, schematics will use
 
 ```rust
 use rustmatica::Litematic;
-use mcdata::util::UVec3;
+use mcdata::util::BlockPos;
 
 // type must be declared explicitly for Rust to use the default generics
 let schem: Litematic = Litematic::read_file("test_files/axolotl.litematic")?;
 
 // block has type `mcdata::GenericBlockState`
-let block = schem.regions[0].get_block(UVec3::new(1, 0, 1));
+let block = schem.regions[0].get_block(BlockPos::new(1, 0, 1));
 assert_eq!(block.name, "minecraft:water");
 // properties aren't typed
 assert_eq!(block.properties["level"], "0");
@@ -46,13 +46,13 @@ Then you can use the `mcdata::latest::BlockState` type instead:
 
 ```rust
 use rustmatica::Litematic;
-use mcdata::{util::UVec3, latest::BlockState};
+use mcdata::{util::BlockPos, latest::BlockState};
 use bounded_integer::BoundedU8;
 
 let schem: Litematic<BlockState> = Litematic::read_file("test_files/axolotl.litematic")?;
 
 // block has type `BlockState`
-let block = schem.regions[0].get_block(UVec3::new(1, 0, 1));
+let block = schem.regions[0].get_block(BlockPos::new(1, 0, 1));
 assert_eq!(block, &BlockState::Water {
     level: BoundedU8::new(0).unwrap(),
 });
