@@ -66,12 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             width: Some(30),
             ..Default::default()
         };
-        // `viuer` is currently using an incompatible outdated version of `image`
-        // viuer::print(img, &config);
-        // so we need to save the image as a file instead
-        img.save("tmp.png")?;
-        viuer::print_from_file("tmp.png", &config)?;
-        std::fs::remove_file("tmp.png")?;
+        viuer::print(img, &config)?;
     }
 
     Ok(())

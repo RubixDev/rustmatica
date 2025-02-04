@@ -93,7 +93,7 @@ fn main() -> Result<()> {
     }
 
     // manually resize to use `FilterType::Nearest` instead of `CatmullRom`
-    img.resize(140, 140, FilterType::Nearest);
+    let img = img.resize(140, 140, FilterType::Nearest);
     // set preview image and save
     ctx.schem.metadata.set_preview_image(Some(img));
     ctx.schem.write_file(schem_path)?;

@@ -3,7 +3,7 @@ mcdata = { version = "0.4.0", features = ["serde"] }
 
 [package]
 name = "rustmatica"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["RubixDev"]
 categories = ["encoding", "wasm"]
 edition = "2021"
@@ -31,30 +31,30 @@ docs = ["dep:document-features", "dep:rustc_version"]
 _mcdata-all = ["mcdata/entities", "mcdata/block-entities", "mcdata/mc-all"]
 
 [dependencies]
-document-features = { version = "0.2.8", optional = true }
+document-features = { version = "0.2.10", optional = true }
 fastnbt = "2.5.0"
-flate2 = "1.0.30"
-image = { version = "0.25.1", optional = true }
+flate2 = "1.0.35"
+image = { version = "0.25.5", optional = true }
 mcdata.workspace = true
-serde = { version = "1.0.201", features = ["derive"] }
-thiserror = "1.0.60"
+serde = { version = "1.0.217", features = ["derive"] }
+thiserror = "2.0.11"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-chrono = { version = "0.4.38", optional = true }
+chrono = { version = "0.4.39", optional = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-chrono = { version = "0.4.38", features = ["wasmbind"], optional = true }
-js-sys = "0.3.69" # for current time without chrono feature
+chrono = { version = "0.4.39", features = ["wasmbind"], optional = true }
+js-sys = "0.3.77" # for current time without chrono feature
 
 [dev-dependencies]
-bounded-integer = "0.5.7"
+bounded-integer = "0.5.8"
 mcdata = { workspace = true, features = ["latest", "block-states"] }
-serde_json = "1.0.117"
-viuer = "0.7.1"
-zip = { version = "1.2.3", default-features = false, features = ["deflate"] }
+serde_json = "1.0.138"
+viuer = "0.9.1"
+zip = { version = "2.2.2", default-features = false, features = ["deflate"] }
 
 [build-dependencies]
-rustc_version = { version = "0.4.0", optional = true }
+rustc_version = { version = "0.4.1", optional = true }
 
 [package.metadata.docs.rs]
 all-features = true

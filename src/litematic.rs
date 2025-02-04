@@ -345,7 +345,7 @@ where
 impl LitematicMetadata {
     /// Construct [`LitematicMetadata`] from [raw NBT litematic metadata](schema::LitematicMetadata).
     pub(crate) fn from_raw(raw: schema::LitematicMetadata) -> Self {
-        return Self {
+        Self {
             name: CowStr::Owned(raw.metadata.name),
             description: CowStr::Owned(raw.metadata.description),
             author: CowStr::Owned(raw.metadata.author),
@@ -387,7 +387,7 @@ impl LitematicMetadata {
                 .preview_image_data
                 .clone()
                 .map(|data| data.into_inner()),
-        };
+        }
     }
 
     /// Load schematic metadata from uncompressed bytes.

@@ -1,5 +1,6 @@
 #[cfg(not(feature = "docs"))]
 fn main() {
+    println!("cargo::rustc-check-cfg=cfg(CHANNEL_NIGHTLY)");
     println!("cargo:rerun-if-changed=build.rs");
 }
 
@@ -12,6 +13,7 @@ fn main() {
         rustc_version::Channel::Beta => "CHANNEL_BETA",
         rustc_version::Channel::Stable => "CHANNEL_STABLE",
     };
+    println!("cargo::rustc-check-cfg=cfg(CHANNEL_NIGHTLY)");
     println!("cargo:rustc-cfg={channel}");
     println!("cargo:rerun-if-changed=build.rs");
 }
